@@ -1,0 +1,214 @@
+MCUS.addYear({
+  year: 2026,
+  titleKo: '2026 학부생을 위한 수학 학술회',
+  titleEn: '2026 Mathematics Conference for Undergraduate Students',
+  start: '2026-01-16',
+  end: '2026-01-17',
+  dateLabel: '2026. 01. 16. (금) – 01. 17. (토)',
+  venueShort: '성균관대학교 자연과학캠퍼스 반도체관 400126',
+  host: '성균관대학교 수학 학술동아리 MIMIC',
+  kakao: 'https://open.kakao.com/o/sBKqgP0h',
+
+  overview: [
+    { label: 'MCUS란?', value: '수학을 좋아하는 학부생들이 모여 세미나와 함께 학술 교류의 장을 즐길 수 있는 학회' },
+    { label: '개최 일자', value: '2026. 01. 16. (금) – 01. 17. (토)' },
+    { label: '개최 장소', value: '성균관대학교 자연과학캠퍼스 (수원) 반도체관 (40동) 400126' },
+    { label: '대상', value: '수학에 관심이 있는 학부생 이상 누구나' },
+    { label: '참가비', value: '무료', note: '중식 및 첫날 석식 제공' },
+    { label: '주최', value: '성균관대학교 수학 학술동아리 MIMIC' },
+  ],
+
+  registration: {
+    open: false,
+    closedLabel: '신청이 마감되었습니다',
+    formUrl: 'https://forms.gle/wg7hN5YnuprABRhg6',
+    blocks: [
+      {
+        title: '참가 신청 안내',
+        rows: [
+          ['대상', '수학에 관심이 있는 학부생 이상 누구나'],
+          ['신청 방법', "'MCUS 2026 참가 신청서' 구글 폼 제출"],
+          ['신청 기한', '2025. 12. 28. (일) 23:59'],
+        ],
+        note: '최대 인원 초과 시 조기 마감될 수 있습니다.',
+      },
+      {
+        title: 'Lightning Talk 연사 모집',
+        rows: [
+          ['대상', "'MCUS 2026'에 참여하는 학부생"],
+          ['신청 방법', "참가 신청서의 'Lightning Talk 연사자 모집' 항목에서 '참여' 선택 후, skkumathmimic@gmail.com 으로 주제 및 간단한 발표 내용 보내기 (구글 폼에서 미참여를 선택하셨어도 이메일로 신청하실 수 있습니다.)"],
+          ['모집 기한', '2025. 12. 21. (일) 23:59'],
+        ],
+        note: '최대 인원 초과 시 조기 마감될 수 있습니다.',
+      },
+    ],
+  },
+
+  days: [
+    {
+      date: '2026-01-16',
+      label: '1/16 (금)',
+      chairs: ['한채영', '조수연'],
+      schedule: [
+        { time: '10:00 – 10:30', talk: 1 },
+        { time: '10:40 – 11:30', talk: 2 },
+        { time: '11:30 – 13:30', label: 'Lunch Break', kind: 'break' },
+        { time: '13:30 – 14:00', talk: 3 },
+        { time: '14:10 – 14:40', talk: 4 },
+        { time: '14:50 – 15:20', talk: 5 },
+        { time: '15:20 – 16:00', label: 'Coffee Break', kind: 'break' },
+        { time: '16:00 – 16:30', talk: 6 },
+        { time: '16:40 – 17:20', talk: 7 },
+        { time: '17:20 – 18:00', label: 'Lightning Talk', kind: 'lightning' },
+        { time: '18:00 –', label: 'Banquet', kind: 'social' },
+      ],
+      talks: [
+        {
+          ko: '신경민', en: 'Kyoungmin Shin',
+          title: 'Bi-orderability of knot groups',
+          tags: ['topology', 'algebra'],
+          abstract: 'A group is biorderable if it admits a strict total ordering that is invariant under both left and right multiplication. A knot is said to be biorderable if the fundamental group of its complement is biorderable. In this talk, we review the theory of biorderable groups and explore the relationship between topological invariants of knots and their biorderability.',
+        },
+        {
+          ko: '신동욱', en: 'Dongwook Shin',
+          title: 'New approaches to physics informed deep neural operator networks',
+          tags: ['analysis', 'applied'],
+          abstract: 'Partial differential equations (PDEs) play a central role in modeling natural and social phenomena. Although classical numerical methods based on the finite difference method (FDM) and the finite element method (FEM) provide reliable solutions, they suffer from high computational costs in real-time analysis and large-scale experiments. In this talk, we introduce two deep neural operator–based approaches for efficiently solving second-order elliptic PDEs with mixed boundary conditions. The first approach is a convolutional operator learning model based on a U-Net architecture, which takes FDM/FEM-discretized representations as inputs. The second approach adopts a sparse neural operator framework, in which structural sparsity is imposed on the network architecture or learned representations to reduce model complexity while preserving predictive accuracy. Numerical experiments demonstrate that the proposed two approaches achieve both high accuracy and fast inference compared to conventional DeepONet-based methods, and remain stable and effective even for significantly larger computational scales.',
+        },
+        {
+          ko: '이상훈', en: 'Sanghun Yi',
+          title: 'Characterization of Alternating Links',
+          tags: ['topology'],
+          abstract: 'Alternating links are traditionally defined by their diagrammatic representations. Therefore characterizing them through their intrinsic properties is one of the most fundamental questions in knot theory. This presentation explores a topological characterization of alternating links based on the intrinsic structures of the link exterior.',
+        },
+        {
+          ko: '이호준', en: 'Hojoon Lee',
+          title: 'Combinatorics of orthogonal polynomial sequences',
+          tags: ['combinatorics', 'analysis'],
+          abstract: 'Orthogonal polynomial sequences (OPS) form an orthogonal basis for the polynomial ring and appear widely in analysis, probability, and mathematical physics. Although orthogonality is defined through an inner product involving integrals, this inner product is often difficult to compute directly—this is where combinatorics enters the story. In this talk, we will explore how discrete models such as lattice paths and matchings naturally encode analytic properties of orthogonal polynomials.',
+        },
+        {
+          ko: '서동현', en: 'Donghyeon Seo',
+          title: 'Introduction to Quantum Groups and Crystal Bases',
+          tags: ['algebra', 'combinatorics'],
+          abstract: 'During the 1980s and 1990s, the theory of quantum groups was established by various mathematicians. Conceptually, a quantum group is a q-deformation of the universal enveloping algebra. The original algebra can be recovered in the classical limit where the parameter q → 1. In the 1990s, Kashiwara introduced and developed the theory of crystal bases. This theory serves as a powerful framework that encompasses the structure of existing Lie algebras while translating complex algebraic problems into manageable combinatorial ones. In this talk, we will first examine how these structures are realized in the simplest case, sl₂. Subsequently, we will discuss the case of type Aₗ and demonstrate the correspondence between crystal bases and the Semistandard Young Tableaux (SSYT) via the case of sl₃.',
+        },
+        {
+          ko: '성정현', en: 'Jeonghyun Sung',
+          title: 'Why do we count with q? : From Rook Placements to Hessenberg Varieties',
+          tags: ['combinatorics', 'geometry'],
+          abstract: 'In this talk, we introduce the palindromic linked q-hit numbers, which arise from counting rook placements on specific board shapes. While these numbers are defined combinatorially, we address the fundamental question: "Why do we count with q?" We answer this by exploring the connection between these combinatorial objects and regular semisimple Hessenberg Varieties. We explain the geometric role of q as the grading of the cohomology ring of the variety. And then, we discuss how the cohomology character can be expressed as a co-palindromic linear combination of these palindromic linked q-hit numbers. This talk is based on joint work with Seung Jin Lee.',
+        },
+        {
+          ko: '정홍택', en: 'Hongtaek Jung',
+          title: '원 위의 군 작용과 그 응용',
+          tags: ['topology', 'geometry'],
+          abstract: '원 (circle)은 가장 쉬운 다양체인 동시에 저차원 위상수학의 여러 문제에서 자연스럽게 등장하는 근본적인 공간이기도 하다. 본 강연에서는 우선 원 위의 group action이 유도되는 두 가지 대표적인 상황인 곡면의 hyperbolic geometry와 3차원 다양체의 pseudo-Anosov 흐름에 대해서 설명할 것이다. 곡면의 hyperbolic geometry나 pseudo-Anosov flow를 통해 얻어진 원 위의 작용들은 특별한 성질들을 가지게 되는데 이에 대해서도 알아볼 것이다. 최종적으로 이들의 inverse problem, 즉, 원에 특별한 방식으로 작용하는 군에 대해서 우리가 어떤 이야기를 할 수 있는지에 대해서 다뤄 볼 것이다.',
+        },
+      ],
+      lightning: [
+        { name: '박창제', title: 'Point Derivation and Directional Derivative' },
+        { name: '이민혁', title: 'Braid Form of Knot' },
+        { name: '최푸른하늘', title: 'What is Complex Geometry?' },
+        { name: '국예성', title: 'A Homology Sphere' },
+      ],
+    },
+    {
+      date: '2026-01-17',
+      label: '1/17 (토)',
+      chairs: ['이호준', '이민혁'],
+      schedule: [
+        { time: '10:00 – 10:30', talk: 1 },
+        { time: '10:40 – 11:30', talk: 2 },
+        { time: '11:30 – 13:30', label: 'Lunch Break', kind: 'break' },
+        { time: '13:30 – 14:00', talk: 3 },
+        { time: '14:10 – 14:40', talk: 4 },
+        { time: '14:50 – 15:20', talk: 5 },
+        { time: '15:20 – 16:00', label: 'Coffee Break', kind: 'break' },
+        { time: '16:00 – 16:30', talk: 6 },
+        { time: '16:40 – 17:20', talk: 7 },
+        { time: '17:20 – 18:00', label: 'Lightning Talk', kind: 'lightning' },
+      ],
+      talks: [
+        {
+          ko: '김민준', en: 'Minjun Kim',
+          title: 'On the Convergence of the Metropolis-Hastings Kernel',
+          tags: ['probability'],
+          abstract: 'The Metropolis-Hastings algorithm is a well-known Markov Chain Monte Carlo method for estimating posterior summaries in Bayesian statistics. In this talk, we prove the convergence and explore the behaviour of the Metropolis kernel via its ergodicity. The main reference is Tierney, L. (1994). Markov Chains for Exploring Posterior Distributions.',
+        },
+        {
+          ko: '오재성', en: 'Jaeseong Oh',
+          title: 'The Many Faces of n! : An Invitation to Algebraic Combinatorics',
+          tags: ['combinatorics', 'algebra'],
+          abstract: 'We all know that there are n! ways to order n distinct objects. In Algebraic Combinatorics, however, this is not the end of the story—it is only the beginning. In this talk, we will explore the surprising appearances of n! across the mathematical landscape. We will see how n! arises naturally in Algebra (finite fields), Geometry (flag varieties), Probability (random matrices), and Representation Theory (coinvariant rings), revealing deep structural connections between these seemingly disparate areas.',
+        },
+        {
+          ko: '정지태', en: 'Jitae Jung',
+          title: '영지식 증명(zero-knowledge proof)과 적용',
+          tags: ['crypto'],
+          abstract: '영지식 증명(zero-knowledge proof)은 증명자가 자신의 비밀 정보를 전혀 드러내지 않으면서도, 그 정보가 참임을 검증자에게 수학적으로 확신시키는 기술입니다. ZKP의 고전적 모델인 QR 프로토콜을 통해 ZKP의 3대 속성(completeness, soundness, zero knowledge)과 고전 모델의 한계를 살펴보고, 한계를 극복한 zk-SNARK 모델을 확인합니다. 끝으로 ZKP의 적용 방향을 제시합니다.',
+        },
+        {
+          ko: '김민국', en: 'Mingook Kim',
+          title: 'Teichmüller space : The key theory of geometric topology 1부',
+          tags: ['geometry', 'topology'],
+          abstract: 'Teichmüller 이론은 곡면에 기하구조를 부여함으로써 공간을 바라보는 보다 넓은 관점을 제공합니다. 특히 쌍곡기하학과 사영기하학을 곡면에 부여함으로써, 곡면의 위상과 기하 사이의 깊은 상호작용을 탐구합니다. 이번 발표 1부에서는 쌍곡기하학에 대한 설명 및 Teichmüller의 정의가 무엇인지 소개할 예정입니다.',
+        },
+        {
+          ko: '안희성', en: 'Huiseong An',
+          title: 'Teichmüller space : The key theory of geometric topology 2부',
+          tags: ['geometry', 'topology'],
+          abstract: '발표 2부에서는 먼저 Teichmüller space의 구조와 좌표화 과정을 살펴본다. 이를 통해 Teichmüller space를 PSL(n,ℝ) representation variety의 connected component로 해석하는 관점을 소개한다. 특히 n=3일 때 대응되는 기하구조인 convex real projective structure를 알아보고, 이를 hyperbolic structure와 비교함으로써 일반화된 Teichmüller space가 어떻게 기하적 의미를 갖게 되는지 설명한다.',
+        },
+        {
+          ko: '고관영', en: 'Gwanyoung Ko',
+          title: 'Relativistic Quantum Theory: From Birth to Death, and Rebirth',
+          tags: ['physics'],
+          abstract: 'In this lecture, we will examine the development of relativistic quantum theory (RQT), formulated in the 1920s by pioneers such as P. Dirac, J. Schwinger, and others. RQT originated by imposing the Lorentz symmetry on (original) quantum mechanics. We will begin by studying the Klein-Gordon equation and the Dirac equation, and then confront the limitations of them. This will lead us to the "death" of RQT in its original form.\n\nThe story continues, however, with the introduction of a completely new perspective: the field-theoretic approach. We will see how RQT undergoes a "rebirth" through this framework, guided by the concept of second quantization. Along the way, we will quantize the Klein-Gordon field and the Dirac field, and introduce the powerful idea of operator-valued fields, which lies at the foundation of modern quantum field theory (QFT).',
+        },
+        {
+          ko: '최주혁', en: 'Juhyeok Choi',
+          title: 'Convex Optimization and Minimax Problems',
+          tags: ['applied', 'analysis'],
+          abstract: 'Convex optimization is a cornerstone of modern machine learning and optimization theory. In this talk, I will introduce several methods for solving convex-concave minimax problems (such as GDA and Extragradient) and extend the discussion to stochastic settings.',
+        },
+      ],
+      lightning: [
+        { name: '오민규', title: 'Intuition for differential Galois Theory' },
+        { name: '조수연', title: 'Bradley-Terry Model for Pairwise Comparisons' },
+        { name: '한채영', title: 'From Stanley–Stembridge Conjecture to Positivity in Unit Interval Graphs' },
+        { name: '황다현', title: 'Hairy Ball Theorem' },
+      ],
+    },
+  ],
+
+  venue: {
+    campus: '성균관대학교 자연과학캠퍼스 (수원)',
+    address: '(16419) 경기도 수원시 장안구 서부로 2066 성균관대학교 자연과학캠퍼스',
+    building: '반도체관 (40동)',
+    rooms: [
+      ['연사 진행 장소', '1F 400126'],
+      ['휴게 공간', '반도체관, 화학관 사이 공터'],
+    ],
+  },
+
+  organizers: [
+    ['국예성', 'Yesung Kook'],
+    ['김승원', 'Seungwon Kim'],
+    ['김종근', 'Jonggeun Kim'],
+    ['박성하', 'Seongha Park'],
+    ['박종성', 'Jongseong Park'],
+    ['이나현', 'Nahyeon Lee'],
+    ['이민혁', 'Minhyuk Lee'],
+    ['이호준', 'Hojoon Lee'],
+    ['조수연', 'Suyeon Cho'],
+    ['한채영', 'Chaeyoung Han'],
+    ['홍선우', 'Sunwoo Hong'],
+  ],
+
+  gallery: [
+    { src: 'assets/img/2026-group.jpg', alt: 'MCUS 2026 단체 사진' },
+    { src: 'assets/img/2026-01.jpg', alt: 'MCUS 2026 발표 장면' },
+    { src: 'assets/img/2026-02.jpg', alt: 'MCUS 2026 성정현 연사 강연 장면' },
+  ],
+});
