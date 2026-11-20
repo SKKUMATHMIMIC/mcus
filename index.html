@@ -4,14 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MCUS · 학부생을 위한 수학 학술회</title>
-  <meta name="description" content="MCUS(Mathematics Conference for Undergraduate Students)는 성균관대학교 수학과 학술동아리 MIMIC이 주최하는 학부생 대상 수학 학술회입니다.">
+  <meta name="description" content="MCUS(Mathematics Conference for Undergraduate Students)는 학부생이 직접 발표하고 연구자의 강연을 들으며 서로의 관심 주제를 나누는 수학 학술회입니다.">
   <meta property="og:title" content="MCUS · 학부생을 위한 수학 학술회">
-  <meta property="og:description" content="수학 전공 학부생들의 발표와 연구자 강연을 통해 서로의 관심 주제를 나누는 학술회">
+  <meta property="og:description" content="학부생이 발표하고, 연구자가 강연하고, 함께 질문하는 수학 학술회">
   <meta property="og:image" content="assets/img/2026-group.jpg">
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
@@ -20,7 +17,7 @@
 
   <main>
     <!-- Hero -->
-    <section class="home-hero grid-bg">
+    <section class="hero-dark home-hero" data-plexus="11">
       <div class="wrap">
         <div>
           <svg class="hero-mark" viewBox="0 0 258 88" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" role="img" aria-label="MCUS">
@@ -30,12 +27,12 @@
             <path pathLength="1" d="M124 8V80"/>
             <path pathLength="1" d="M161 8V80"/>
           </svg>
-          <h1>학부생을 위한 수학 학술회</h1>
+          <h1>학부생을 위한<br>수학 학술회</h1>
           <p class="en-title"><b>M</b>athematics <b>C</b>onference for <b>U</b>ndergraduate <b>S</b>tudents</p>
-          <p class="lede">수학 전공 학부생들의 발표와 연구자 강연을 통해 서로의 관심 주제를 나누고, 다양한 수학적 관점을 접할 수 있도록 마련한 학부생 대상 학술회입니다.</p>
+          <p class="lede">학부생이 직접 발표하고, 연구자의 강연을 듣고, 함께 질문합니다. MCUS는 수학을 탐구하는 학부생들이 서로의 관심 주제를 나누고 더 넓은 수학을 만나는 자리입니다.</p>
           <div class="hero-actions">
             <a class="btn btn-primary" href="#latest">최신 정보 보기 <span class="arrow">→</span></a>
-            <a class="btn btn-ghost" href="#about">MCUS의 의의</a>
+            <a class="btn btn-ghost" href="#about">MCUS 소개</a>
           </div>
         </div>
         <aside class="next-card" id="next-card" aria-label="다가오는 학술회"></aside>
@@ -43,11 +40,12 @@
     </section>
 
     <!-- Latest -->
-    <section class="section" id="latest">
+    <section class="section soft" id="latest">
       <div class="wrap">
         <div class="section-head">
           <span class="eyebrow">Latest</span>
-          <h2>최신 정보<span class="en">What's new</span></h2>
+          <h2>최신 정보</h2>
+          <p>다가오는 MCUS의 주요 일정과 소식을 확인하세요.</p>
         </div>
         <div class="latest-grid">
           <div class="card milestones reveal" id="milestones"></div>
@@ -61,29 +59,29 @@
       <div class="wrap">
         <div class="section-head">
           <span class="eyebrow">About MCUS</span>
-          <h2>MCUS의 의의<span class="en">Why MCUS</span></h2>
-          <p>교실 밖에서 수학을 이야기할 자리가 필요하다는 생각에서 시작했습니다. MCUS는 학부생이 직접 발표하고, 연구자의 강연을 듣고, 서로의 관심사를 나누는 학술회입니다.</p>
+          <h2>MCUS의 의의</h2>
+          <p>수학 공부는 대부분 강의실과 교과서 안에서 이루어집니다. MCUS는 그 바깥에서, 배운 수학을 직접 설명해 보고 지금 연구되는 수학을 가까이에서 들을 수 있는 자리를 만듭니다.</p>
         </div>
         <div class="pillars">
           <div class="pillar reveal">
-            <span class="num">01</span>
-            <h3>학부생이 서는 무대</h3>
-            <p>학부생이 관심 있는 주제를 직접 정리해 발표합니다. 정규 강연부터 짧은 Lightning Talk까지, 공부한 수학을 말로 풀어내는 경험을 쌓습니다.</p>
+            <span class="num">1</span>
+            <h3>발표하며 배우는 수학</h3>
+            <p>학부생이 직접 주제를 정해 발표합니다. 정규 강연과 짧은 Lightning Talk을 통해 공부한 내용을 다른 사람에게 설명하는 경험을 쌓습니다.</p>
           </div>
           <div class="pillar reveal">
-            <span class="num">02</span>
-            <h3>연구의 현장을 엿보는 강연</h3>
-            <p>대학원생과 연구자가 지금 다루고 있는 주제를 학부생의 눈높이에서 소개합니다. 교과서 너머의 수학이 어떻게 이어지는지 직접 들을 수 있습니다.</p>
+            <span class="num">2</span>
+            <h3>연구를 가까이에서</h3>
+            <p>기조강연과 초청강연에서 연구자와 대학원생이 지금의 연구 주제를 학부생 눈높이로 소개합니다. 교과서 다음에 무엇이 있는지 직접 들어볼 수 있습니다.</p>
           </div>
           <div class="pillar reveal">
-            <span class="num">03</span>
-            <h3>분야를 넘나드는 대화</h3>
-            <p>매듭이론과 조합론, 해석학에서 기계학습과 수리물리까지. 서로 다른 관심사를 가진 사람들이 한자리에서 질문하고 토론합니다.</p>
+            <span class="num">3</span>
+            <h3>분야를 넘나드는 교류</h3>
+            <p>위상수학과 조합론부터 해석학, 수리물리, 인공지능까지. 서로 다른 관심사가 한자리에서 만나 질문과 토론으로 이어집니다.</p>
           </div>
           <div class="pillar reveal">
-            <span class="num">04</span>
-            <h3>누구에게나 열린 학술회</h3>
-            <p>수학에 관심 있는 학부생이라면 누구나 참여할 수 있습니다. 지금까지 참가비 없이 식사를 함께 나누며 운영해 왔습니다.</p>
+            <span class="num">4</span>
+            <h3>누구에게나 열린 자리</h3>
+            <p>수학에 관심 있는 학부생이라면 누구나 참여할 수 있습니다. 지금까지 모든 회차를 참가비 없이 운영했습니다.</p>
           </div>
         </div>
 
@@ -97,12 +95,12 @@
     </section>
 
     <!-- Editions -->
-    <section class="section" id="editions-section">
+    <section class="section soft" id="editions-section">
       <div class="wrap">
         <div class="section-head">
           <span class="eyebrow">Conferences</span>
-          <h2>역대 학술회<span class="en">All editions</span></h2>
-          <p>각 연도의 일정, 연사, 초록, 사진을 확인할 수 있습니다.</p>
+          <h2>역대 학술회</h2>
+          <p>연도별 일정과 연사, 초록, 현장 사진을 볼 수 있습니다.</p>
         </div>
         <div class="editions" id="editions"></div>
       </div>
@@ -112,24 +110,24 @@
     <section class="section" id="hosts">
       <div class="wrap">
         <div class="section-head">
-          <span class="eyebrow">Organizers</span>
-          <h2>주최<span class="en">Hosted by</span></h2>
+          <span class="eyebrow">Hosted by</span>
+          <h2>주최</h2>
         </div>
         <div class="hosts">
           <article class="card host reveal">
-            <div class="logo"><img class="mimic-logo" src="assets/img/mimic-logo.png" alt="MIMIC 로고"></div>
-            <h3>MIMIC<small>Mimic Is Math Interchanging Club · 성균관대학교 수학과 학술동아리</small></h3>
-            <p>MIMIC은 성균관대학교 유일의 수학 학술 동아리로, 수학을 좋아하는 학생들이 모여 교류하는 모임입니다. 2018년 창설 이후 수학 세미나를 중심으로 튜터링, 스터디, 친목 활동을 이어오며 많은 학우들과 수학의 즐거움을 나누고 있습니다. MCUS는 MIMIC이 기획하고 운영하는 학술회입니다.</p>
+            <div class="logo"><img src="assets/img/mimic-logo.png" alt="MIMIC 로고"></div>
+            <h3><span class="g">MIMIC</span><small>MIMIC Is Math Interchange Club · 성균관대학교 수학과 학술동아리</small></h3>
+            <p>2018년 성균관대학교 수학과 학생들이 함께 수학을 공부하기 위해 만든 학술 동아리입니다. 세미나와 튜터링, 스터디를 꾸준히 운영해 왔으며, 2025년부터 매년 MCUS를 기획하고 주최하고 있습니다.</p>
             <div class="links">
+              <a class="chip" href="https://skkumathmimic.github.io/" target="_blank" rel="noopener">동아리 홈페이지 ↗</a>
               <a class="chip" href="https://instagram.com/skku_math_mimic" target="_blank" rel="noopener">Instagram ↗</a>
               <a class="chip" href="https://www.youtube.com/channel/UCF4w8Niu8UBYFX97l0r4mLQ" target="_blank" rel="noopener">YouTube ↗</a>
-              <a class="chip" href="mailto:skkumathmimic@gmail.com">skkumathmimic@gmail.com</a>
             </div>
           </article>
           <article class="card host reveal">
-            <div class="logo"><span class="dept"><i>∑</i></span></div>
+            <div class="logo"><span class="dept">∑</span></div>
             <h3>성균관대학교 수학과<small>Department of Mathematics, Sungkyunkwan University</small></h3>
-            <p>MCUS 2027부터 성균관대학교 수학과가 MIMIC과 함께 학술회를 주최합니다. 학부생들이 수학을 깊이 있게 나눌 수 있는 자리가 더 넓게 이어질 수 있도록 함께합니다.</p>
+            <p>MCUS 2027부터 MIMIC과 함께 학술회를 공동 주최합니다. 학생들이 기획해 온 학술회에 학과가 함께하며, 학부생 학술 교류의 장이 한층 넓어집니다.</p>
             <div class="links">
               <a class="chip" href="https://math.skku.edu/math/index.do" target="_blank" rel="noopener">학과 홈페이지 ↗</a>
             </div>

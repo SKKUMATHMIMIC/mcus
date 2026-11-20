@@ -42,9 +42,14 @@ assets/js/data/
 1. `assets/js/data/2027.js` 를 복사해 `2028.js` 로 만들고 내용을 수정
 2. `2027.html` 을 복사해 `2028.html` 로 만들고, `data-year="2028"` 및 제목 수정
 3. 모든 HTML 파일 하단에 `<script src="assets/js/data/2028.js"></script>` 추가
-4. 연도별 색상은 `assets/css/style.css` 의 `[data-year='2028']` 에 지정 (없으면 기본 초록)
 
 메뉴, 메인 페이지의 '다가오는 학술회' 카드, 역대 학술회 목록은 자동으로 갱신됩니다.
+
+## 디자인
+
+- 색: MCUS 포스터의 navy · blue · gold (`assets/css/style.css` 맨 위 `:root` 변수)
+- 글꼴: Pretendard — MIMIC 동아리 사이트(skkumathmimic.github.io)와 동일
+- 연사의 `kind` 를 `'plenary'` / `'invited'` 로 지정하면 포스터처럼 기조강연 · 초청강연으로 나뉘어 '연사' 섹션에 표시됩니다.
 
 ## 미리보기 & 배포
 

@@ -12,6 +12,7 @@ window.MCUS = {
 
   contact: {
     email: 'skkumathmimic@gmail.com',
+    website: 'https://skkumathmimic.github.io/',
     instagram: 'https://instagram.com/skku_math_mimic',
     instagramHandle: '@skku_math_mimic',
     youtube: 'https://www.youtube.com/channel/UCF4w8Niu8UBYFX97l0r4mLQ',
@@ -31,21 +32,21 @@ window.MCUS = {
       date: '2026-11-20',
       year: 2027,
       title: 'MCUS 2027 개최 안내',
-      body: '2027년 1월 14일(목)부터 16일(토)까지 3일간 성균관대학교 자연과학캠퍼스에서 열립니다. 세부 장소와 참가 신청 일정은 추후 안내드립니다.',
+      body: '2027년 1월 14일(목)부터 16일(토)까지, 성균관대학교 자연과학캠퍼스에서 사흘간 열립니다. 세부 장소와 참가 신청 일정은 곧 안내드리겠습니다.',
       link: '2027.html',
     },
     {
       date: '2026-01-17',
       year: 2026,
       title: 'MCUS 2026 성료',
-      body: '14개의 강연과 8개의 Lightning Talk로 이틀간의 학술회를 마쳤습니다. 함께해 주신 연사와 참가자 여러분께 감사드립니다.',
+      body: '기조강연 3편을 포함한 14편의 강연과 8편의 Lightning Talk로 이틀간의 일정을 마쳤습니다. 함께해 주신 모든 분께 감사드립니다.',
       link: '2026.html#gallery',
     },
     {
       date: '2025-01-18',
       year: 2025,
       title: 'MCUS 2025 성료',
-      body: '첫 번째 MCUS가 10개의 강연과 6개의 Lightning Talk로 마무리되었습니다.',
+      body: '첫 MCUS가 10편의 강연과 6편의 Lightning Talk로 막을 내렸습니다.',
       link: '2025.html#gallery',
     },
   ],

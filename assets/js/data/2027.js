@@ -1,7 +1,8 @@
 /*
  * MCUS 2027 — 2026과 같은 구조로 만든 초안입니다.
  * - 빈 문자열('')로 둔 항목은 사이트에 '추후 공개'로 표시됩니다.
- * - 연사가 정해지면 talks 의 ko / en / title / tags / abstract 를 채우세요.
+ * - 연사가 정해지면 talks 의 ko / en / affil(소속) / kind / title / tags / abstract 를 채우세요.
+ *   kind: 'plenary' = 기조강연, 'invited' = 초청강연 → '연사' 섹션에 자동으로 분류됩니다.
  * - 참가 신청을 열 때: registration.open 을 true 로, formUrl 에 구글 폼 주소를 넣으세요.
  */
 MCUS.addYear({
@@ -77,13 +78,13 @@ MCUS.addYear({
         { time: '18:00 –', label: 'Banquet', kind: 'social' },
       ],
       talks: [
-        { ko: '', en: '', title: '', tags: [], abstract: '' },
-        { ko: '', en: '', title: '', tags: [], abstract: '' },
-        { ko: '', en: '', title: '', tags: [], abstract: '' },
-        { ko: '', en: '', title: '', tags: [], abstract: '' },
-        { ko: '', en: '', title: '', tags: [], abstract: '' },
-        { ko: '', en: '', title: '', tags: [], abstract: '' },
-        { ko: '', en: '', title: '', tags: [], abstract: '' },
+        { ko: '', en: '', affil: '', kind: '', title: '', tags: [], abstract: '' },
+        { ko: '', en: '', affil: '', kind: '', title: '', tags: [], abstract: '' },
+        { ko: '', en: '', affil: '', kind: '', title: '', tags: [], abstract: '' },
+        { ko: '', en: '', affil: '', kind: '', title: '', tags: [], abstract: '' },
+        { ko: '', en: '', affil: '', kind: '', title: '', tags: [], abstract: '' },
+        { ko: '', en: '', affil: '', kind: '', title: '', tags: [], abstract: '' },
+        { ko: '', en: '', affil: '', kind: '', title: '', tags: [], abstract: '' },
       ],
       lightning: [],
     },
@@ -104,13 +105,13 @@ MCUS.addYear({
         { time: '17:20 – 18:00', label: 'Lightning Talk', kind: 'lightning' },
       ],
       talks: [
-        { ko: '', en: '', title: '', tags: [], abstract: '' },
-        { ko: '', en: '', title: '', tags: [], abstract: '' },
-        { ko: '', en: '', title: '', tags: [], abstract: '' },
-        { ko: '', en: '', title: '', tags: [], abstract: '' },
-        { ko: '', en: '', title: '', tags: [], abstract: '' },
-        { ko: '', en: '', title: '', tags: [], abstract: '' },
-        { ko: '', en: '', title: '', tags: [], abstract: '' },
+        { ko: '', en: '', affil: '', kind: '', title: '', tags: [], abstract: '' },
+        { ko: '', en: '', affil: '', kind: '', title: '', tags: [], abstract: '' },
+        { ko: '', en: '', affil: '', kind: '', title: '', tags: [], abstract: '' },
+        { ko: '', en: '', affil: '', kind: '', title: '', tags: [], abstract: '' },
+        { ko: '', en: '', affil: '', kind: '', title: '', tags: [], abstract: '' },
+        { ko: '', en: '', affil: '', kind: '', title: '', tags: [], abstract: '' },
+        { ko: '', en: '', affil: '', kind: '', title: '', tags: [], abstract: '' },
       ],
       lightning: [],
     },
@@ -131,13 +132,13 @@ MCUS.addYear({
         { time: '17:20 – 18:00', label: 'Lightning Talk', kind: 'lightning' },
       ],
       talks: [
-        { ko: '', en: '', title: '', tags: [], abstract: '' },
-        { ko: '', en: '', title: '', tags: [], abstract: '' },
-        { ko: '', en: '', title: '', tags: [], abstract: '' },
-        { ko: '', en: '', title: '', tags: [], abstract: '' },
-        { ko: '', en: '', title: '', tags: [], abstract: '' },
-        { ko: '', en: '', title: '', tags: [], abstract: '' },
-        { ko: '', en: '', title: '', tags: [], abstract: '' },
+        { ko: '', en: '', affil: '', kind: '', title: '', tags: [], abstract: '' },
+        { ko: '', en: '', affil: '', kind: '', title: '', tags: [], abstract: '' },
+        { ko: '', en: '', affil: '', kind: '', title: '', tags: [], abstract: '' },
+        { ko: '', en: '', affil: '', kind: '', title: '', tags: [], abstract: '' },
+        { ko: '', en: '', affil: '', kind: '', title: '', tags: [], abstract: '' },
+        { ko: '', en: '', affil: '', kind: '', title: '', tags: [], abstract: '' },
+        { ko: '', en: '', affil: '', kind: '', title: '', tags: [], abstract: '' },
       ],
       lightning: [],
     },
