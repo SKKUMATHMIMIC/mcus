@@ -57,7 +57,7 @@
       ? `<text x="249" y="36" text-anchor="end" fill="currentColor" stroke="none" font-family="Pretendard Variable, Pretendard, sans-serif" font-weight="800" font-size="20" letter-spacing="-0.5">${year}</text>`
       : '';
     return `<svg class="${cls}" viewBox="0 0 258 88" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" role="img" aria-label="MCUS${year ? ' ' + year : ''}">
-      <path d="M8 80V8H108"/><path d="M37 8V58"/><path d="M68 8V80H213V44H176V8H252"/><path d="M124 8V80"/><path d="M161 8V80"/>
+      <path pathLength="1" d="M8 80V8H108"/><path pathLength="1" d="M37 8V58"/><path pathLength="1" d="M68 8V80H213V44H176V8H252"/><path pathLength="1" d="M124 8V80"/><path pathLength="1" d="M161 8V80"/>
       ${yr}
     </svg>`;
   }
@@ -74,49 +74,47 @@
 
   /* ---------- header & footer ---------- */
 
-  const yearLinks = (current) =>
-    yearsDesc
-      .map((yr) => {
-        const dot = phase(M.years[yr]).key !== 'done' ? '<span class="nav-new" aria-hidden="true"></span>' : '';
-        return `<a href="${yr}.html"${current === yr ? ' aria-current="page"' : ''}><span class="nav-long">MCUS </span>${yr}${dot}</a>`;
-      })
-      .join('');
+  // 열린 드롭다운은 바깥을 누르면 닫힘
+  function closeOnOutside(dd) {
+    document.addEventListener('click', (e) => { if (!dd.contains(e.target)) dd.open = false; });
+  }
 
+  // 소개 페이지 상단: 소개 · 학술회 ▾ (2027 · 2026 · 2025)
   function renderMainHeader() {
     const el = document.getElementById('site-header');
     el.innerHTML = `
       <div class="wrap bar">
-        <a class="brand" href="index.html" aria-label="MCUS 홈">${wordmark()}<span>학부생을 위한<br>수학 학술회</span></a>
+        <a class="brand" href="index.html" aria-label="MCUS 소개">${wordmark()}<span>학부생을 위한<br>수학 학술회</span></a>
         <nav class="site-nav" aria-label="주요 메뉴">
           <a href="index.html" aria-current="page">소개</a>
-          ${yearLinks()}
+          <details class="drop">
+            <summary>학술회 ${icon.down}</summary>
+            <div class="menu">
+              ${yearsDesc
+                .map((yr) => {
+                  const y = M.years[yr];
+                  const up = phase(y).key !== 'done';
+                  return `<a href="${yr}.html"><b>MCUS ${yr}</b>${up ? '<span class="tag">개최 예정</span>' : ''}<small>${esc(y.dateLabel)}</small></a>`;
+                })
+                .join('')}
+            </div>
+          </details>
         </nav>
       </div>`;
+    closeOnOutside(el.querySelector('.drop'));
   }
 
-  // 연도 페이지: 로고 · 연도 선택 · 그 해의 메뉴 (기존 사이트 구성)
+  // 연도 페이지: 그 해만의 독립된 상단 (로고 · MCUS 연도 · 그 해의 메뉴)
   function renderYearHeader(y, routes) {
     const el = document.getElementById('site-header');
     el.classList.add('has-year');
     el.innerHTML = `
       <div class="wrap bar">
-        <div class="brand-group">
-          <a class="brand" href="index.html" aria-label="MCUS 소개로">${wordmark()}</a>
-          <details class="yr-switch">
-            <summary>MCUS ${y.year} ${icon.down}</summary>
-            <div class="menu">
-              ${yearsDesc.map((yr) => `<a href="${yr}.html"${yr === y.year ? ' aria-current="page"' : ''}>MCUS ${yr}${phase(M.years[yr]).key !== 'done' ? ' · 개최 예정' : ''}</a>`).join('')}
-              <hr>
-              <a href="index.html">MCUS 소개</a>
-            </div>
-          </details>
-        </div>
+        <a class="brand year-brand" href="#home" aria-label="MCUS ${y.year} 홈">${wordmark()}<b>MCUS ${y.year}</b></a>
         <nav class="site-nav" aria-label="MCUS ${y.year} 메뉴">
           ${routes.map(([key, label]) => `<a href="#${key}" data-route="${key}">${label}</a>`).join('')}
         </nav>
       </div>`;
-    const sw = el.querySelector('.yr-switch');
-    document.addEventListener('click', (e) => { if (!sw.contains(e.target)) sw.open = false; });
   }
 
   function renderFooter() {
@@ -177,14 +175,52 @@
 
   /* ---------- main page (index) ---------- */
 
-  // 상단에 가장 최근 학술회로 가는 링크 한 줄
+  // 맨 위 '다가오는 학술회' — 가장 최근 연도 데이터로 자동 구성
   function renderHome() {
-    const el = document.getElementById('next-link');
+    const el = document.getElementById('upcoming');
     if (!el) return;
-    const p = phase(latest);
-    el.href = `${latest.year}.html`;
-    el.innerHTML = `<span class="tag">${p.key === 'done' ? '최근 학술회' : '다가오는 학술회'}</span><b>MCUS ${latest.year}</b><span>${esc(latest.dateLabel)}</span>${p.key !== 'done' ? `<span class="dday">${ddayText(p)}</span>` : ''}<span class="arrow">→</span>`;
-    el.hidden = false;
+    const y = latest;
+    const p = phase(y);
+    const label = p.key === 'done' ? 'Latest Event' : 'Upcoming Event';
+    const desc = (y.overview.find((r) => r.label === 'MCUS란?') || {}).value || '';
+    const facts = [
+      ['일시', y.dateLabel],
+      ['장소', y.venueShort],
+      ...y.overview.filter((r) => /대상/.test(r.label) && r.value).map((r) => [r.label.replace('주요 ', ''), r.value]),
+      ['주최', y.host],
+    ];
+    let i = 0;
+    const rise = () => `class="rise" style="--i:${i++}"`;
+    el.innerHTML = `
+      <div class="wrap up-grid">
+        <div>
+          <span class="up-label rise" style="--i:${i++}">${label}</span>
+          ${wordmark(y.year, 'up-mark draw')}
+          <h1 ${rise()}>${esc(y.titleKo)}</h1>
+          <p class="en rise" style="--i:${i++}">${esc(y.titleEn)}</p>
+          ${desc ? `<p class="desc rise" style="--i:${i++}">${esc(desc)}</p>` : ''}
+          <dl class="up-facts">${facts.map(([k, v]) => `<div ${rise()}><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
+          <div class="up-actions rise" style="--i:${i++}">
+            <a class="btn btn-royal" href="${y.year}.html">MCUS ${y.year} 페이지로 <span class="arrow">→</span></a>
+            ${y.registration.open && y.registration.formUrl ? `<a class="btn btn-ghost" href="${esc(y.registration.formUrl)}" target="_blank" rel="noopener">참가 신청하기</a>` : ''}
+          </div>
+        </div>
+        ${p.key !== 'done' ? `<div class="up-dday rise" style="--i:3"><b data-count="${p.days}">${ddayText(p)}</b><span>${esc(y.start.replace(/-/g, '. '))} 개막</span></div>` : ''}
+      </div>`;
+
+    // D-day 숫자가 0부터 올라가는 효과 (움직임 줄이기 설정이면 생략)
+    const num = el.querySelector('[data-count]');
+    const target = num ? Number(num.dataset.count) : 0;
+    if (num && target > 0 && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const t0 = performance.now() + 500;
+      const dur = 1400;
+      const tick = (now) => {
+        const k = Math.min(1, Math.max(0, (now - t0) / dur));
+        num.textContent = `D-${Math.round(target * (1 - Math.pow(1 - k, 3)))}`;
+        if (k < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick); // 애니메이션이 돌지 않으면 원래 숫자가 그대로 남음
+    }
   }
 
   /* ==========================================================
@@ -225,7 +261,7 @@
       document.title = rk === 'home' ? `MCUS ${yr} · ${y.titleKo}` : `${label} · MCUS ${yr}`;
 
       const head = rk === 'home' ? '' : `<header class="subhero"><div class="wrap"><p>${en}</p><h1>${label}</h1></div></header>`;
-      app.innerHTML = head + views[rk](y) + pager(y, rk);
+      app.innerHTML = head + views[rk](y);
       setupView(y, rk, arg);
       setupReveal();
     }
@@ -234,34 +270,9 @@
     route();
   }
 
-  function pager(y, rk) {
-    if (rk !== 'home') return '';
-    const idx = yearsDesc.indexOf(y.year);
-    const newer = yearsDesc[idx - 1];
-    const older = yearsDesc[idx + 1];
-    return `
-      <section class="section tight"><div class="wrap year-pager">
-        ${older ? `<a class="card" href="${older}.html"><small>← 이전 학술회</small><b>MCUS ${older}</b></a>` : ''}
-        ${newer ? `<a class="card next" href="${newer}.html"><small>다음 학술회 →</small><b>MCUS ${newer}</b></a>` : ''}
-      </div></section>`;
-  }
-
-  function regAction(y) {
-    const reg = y.registration;
-    return reg.open && reg.formUrl ? { href: reg.formUrl, ext: true } : { href: '#registration', ext: false };
-  }
-
   /* 홈 */
   function viewHome(y) {
     const p = phase(y);
-    const ra = regAction(y);
-    const quick = [
-      ['참가 신청', ra.href, ra.ext],
-      ...(y.kakao ? [['MCUS 오픈채팅', y.kakao, true]] : []),
-      ['일정', '#schedule', false],
-      ['초록', '#abstract', false],
-      ['장소 안내', '#venue', false],
-    ];
     const plenary = talkEntries(y).filter((e) => isFilled(e.t) && e.t.kind === 'plenary');
 
     const slides = plenary
@@ -287,12 +298,6 @@
           <p class="en">${esc(y.titleEn)}</p>
           <h1>${esc(y.titleKo)}</h1>
           <p class="when">${esc(y.dateLabel)}<span class="sep">|</span>${esc(y.venueShort)}</p>
-        </div>
-      </section>
-      <section class="quick" aria-label="Quick Menus">
-        <div class="wrap">
-          <h2>Quick Menus</h2>
-          <nav>${quick.map(([label, href, ext]) => `<a href="${esc(href)}"${ext ? ' target="_blank" rel="noopener"' : ''}>${label}</a>`).join('')}</nav>
         </div>
       </section>
       <section class="section"><div class="wrap home-cols">
