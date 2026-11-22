@@ -8,11 +8,18 @@ Mathematics Conference for Undergraduate Students (MCUS) 통합 웹사이트입�
 | 파일 | 내용 |
 | --- | --- |
 | `index.html` | 메인 — 최신 정보(가장 최근 연도 자동 표시), MCUS의 의의, 역대 학술회, 주최 소개 |
-| `2027.html` | MCUS 2027 (개최 예정) |
-| `2026.html` | MCUS 2026 |
-| `2025.html` | MCUS 2025 |
+| `2027.html` · `2027-talks.html` · `2027-info.html` | MCUS 2027 (개최 예정) |
+| `2026.html` · `2026-talks.html` · `2026-info.html` | MCUS 2026 |
+| `2025.html` · `2025-talks.html` · `2025-info.html` | MCUS 2025 |
 
-각 연도 페이지는 개요 · 일정 · 초록 · 참가 신청 · 장소 안내 · 갤러리 · 조직위원회 섹션으로 구성됩니다.
+각 연도는 세 페이지로 나뉩니다.
+
+- `{연도}.html` **개요** — 연사(기조강연 카드 · 강연 목록 · Lightning Talk), 일정표, 개요, 갤러리, 조직위원회
+  (지난 행사는 연사가 맨 위, 예정된 행사는 개요가 맨 위)
+- `{연도}-talks.html` **연사 · 초록** — 왼쪽 강연 목록에서 고르면 오른쪽에 연사 소개와 초록이 표시됩니다.
+  '전체 펼쳐보기'로 모든 초록을 한 번에 볼 수 있고, 분야별로 거를 수 있습니다.
+  `2025-talks.html#d1-t2` 처럼 링크하면 해당 강연(Day 1, Talk 2)이 바로 열립니다.
+- `{연도}-info.html` **참가 · 장소 안내** — 참가 신청, 장소, 오시는 길
 
 ## 내용 수정하기
 
@@ -27,6 +34,7 @@ assets/js/data/
 ```
 
 - **연사 추가**: `days[].talks[]` 의 `ko`(한글 이름), `en`(영문 이름), `title`, `abstract`, `tags` 를 채웁니다.
+  선택 항목: `affil`(소속), `kind`(`'plenary'` 기조강연 / `'invited'` 초청강연), `field`(연구 분야), `photo`(사진 경로, `assets/img/speakers/`)
   초록 문단을 나누려면 `\n\n` 을 넣으세요.
 - **분야 태그**: `tags: ['topology', 'combinatorics']` 처럼 `site.js` 의 `fields` 키를 사용합니다.
 - **일정표**: `schedule` 의 `{ time, talk: n }` 은 같은 날 `talks` 의 n번째 강연을 가리킵니다.
@@ -40,7 +48,7 @@ assets/js/data/
 ## 새 연도 추가 (예: 2028)
 
 1. `assets/js/data/2027.js` 를 복사해 `2028.js` 로 만들고 내용을 수정
-2. `2027.html` 을 복사해 `2028.html` 로 만들고, `data-year="2028"` 및 제목 수정
+2. `2027.html`, `2027-talks.html`, `2027-info.html` 을 복사해 `2028…` 로 만들고, `data-year="2028"` 및 제목 수정
 3. 모든 HTML 파일 하단에 `<script src="assets/js/data/2028.js"></script>` 추가
 
 메뉴, 메인 페이지의 '다가오는 학술회' 카드, 역대 학술회 목록은 자동으로 갱신됩니다.

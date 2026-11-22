@@ -68,6 +68,9 @@ MCUS.addYear({
         },
         {
           ko: '이은정', en: 'Eunjeong Lee',
+          affil: 'Chungbuk National University', kind: 'plenary', // kind: 'plenary'(기조강연) | 'invited'(초청강연)
+          field: 'Equivariant algebraic topology and related topics',
+          photo: 'assets/img/speakers/2025-eunjeong-lee.jpg',
           title: 'An informal introduction to toric manifolds',
           tags: ['topology', 'combinatorics'],
           abstract: 'Toric manifolds are nice topological spaces having lots of symmetries offering connections between topology, geometry, representation theory, and combinatorics. In this talk, we will explore an example of this interplay, focusing particularly on the relationship between the topology of toric manifolds and combinatorics.',
@@ -119,6 +122,9 @@ MCUS.addYear({
         },
         {
           ko: '장진우', en: 'Jinwoo Jang',
+          affil: 'POSTECH', kind: 'plenary',
+          field: 'PDE / Applied Analysis',
+          photo: 'assets/img/speakers/2025-jinwoo-jang.jpg',
           title: '입자와 빛의 세계: 운동학적 이론을 통한 복사전달의 이해',
           tags: ['analysis', 'physics'],
           abstract: '운동학적 이론은 기체 분자들의 행동을 미시적 수준에서 설명하며, 그 중심에는 볼츠만 방정식이 있습니다. 이 방정식은 고온, 저압 환경에서 기체의 역학을 설명할 뿐만 아니라, 다양한 물리적 현상을 모델링하는 데 널리 활용됩니다. 본 강연에서는 운동학적 이론의 기본 개념과 볼츠만 방정식의 유도 과정을 소개하며, 이를 통해 기체의 거동을 설명하는 방법을 탐구합니다.\n\n더 나아가, 복사전달의 세계로 확장하여 빛과 물질의 상호작용을 분석합니다. 특히, 볼츠만 방정식이 빛의 전달 과정에서 어떻게 사용되는지를 설명하며, 열역학적 평형 상태와 비평형 상태에서의 특성을 비교합니다. 이를 통해, 기체와 빛이라는 서로 다른 대상이 수학적으로 어떻게 연결되는지를 이해하고, 수학이 자연의 복잡한 현상을 설명하고 예측하는 데 기여하는 방식을 탐구합니다.',

@@ -79,8 +79,6 @@
     return `<svg class="plexus" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMaxYMin slice" aria-hidden="true">${lines}${dots}</svg>`;
   }
 
-  const kindLabel = { plenary: '기조강연', invited: '초청강연' };
-
   const icon = {
     pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
     subway: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="14" rx="3"/><path d="M5 11h14M9 21l-2-4M15 21l2-4"/><circle cx="9" cy="14" r=".5"/><circle cx="15" cy="14" r=".5"/></svg>',
@@ -264,40 +262,60 @@
     }
   }
 
-  /* ---------- year page ---------- */
+  /* ---------- year pages ---------- */
+  // 연도마다 세 페이지: {yr}.html(개요) · {yr}-talks.html(연사 · 초록) · {yr}-info.html(참가 · 장소)
 
-  function renderYear(yr) {
-    const y = M.years[yr];
-    if (!y) return;
-    const p = phase(y);
-    const app = document.getElementById('app');
-    document.title = `MCUS ${yr} · ${y.titleKo}`;
+  const yearViews = [
+    ['overview', '개요', (yr) => `${yr}.html`],
+    ['talks', '연사 · 초록', (yr) => `${yr}-talks.html`],
+    ['info', '참가 · 장소 안내', (yr) => `${yr}-info.html`],
+  ];
+  const talksUrl = (yr, id) => `${yr}-talks.html${id ? '#' + id : ''}`;
 
+  // 각 강연에 day/순서/시간 정보를 붙인 목록
+  function talkEntries(y) {
+    const out = [];
+    y.days.forEach((d, di) => {
+      d.talks.forEach((t, ti) => {
+        const slot = d.schedule.find((s) => s.talk === ti + 1);
+        out.push({ t, d, di, ti, id: `d${di + 1}-t${ti + 1}`, time: slot ? slot.time : '', filled: Boolean(t.title || t.ko) });
+      });
+    });
+    return out;
+  }
+
+  const initials = (t) => esc((t.en || t.ko || '?').split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase());
+
+  function avatar(t, cls = 'avatar') {
+    return t.photo
+      ? `<img class="${cls}" src="${esc(t.photo)}" alt="${esc(t.ko)}" loading="lazy">`
+      : `<span class="${cls} mono" aria-hidden="true">${initials(t)}</span>`;
+  }
+
+  const kindBadge = (t) =>
+    t.kind === 'plenary' ? '<span class="badge-plenary">기조강연</span>' : t.kind === 'invited' ? '<span class="badge-invited">초청강연</span>' : '';
+
+  function yearHero(y, p, compactTitle) {
+    const yr = y.year;
+    if (compactTitle) {
+      return `
+      <header class="hero-dark year-hero compact">
+        ${plexus(yr)}
+        <div class="wrap">
+          <div>
+            <div class="top"><a class="eyebrow" href="${yr}.html">MCUS ${yr}</a>${phasePill(y)}</div>
+            <h1>${esc(compactTitle)}</h1>
+            <p class="en-title">${esc(y.titleKo)} · ${esc(y.dateLabel)}</p>
+          </div>
+        </div>
+      </header>`;
+    }
     const reg = y.registration;
     const regBtn =
       reg.open && reg.formUrl
-        ? `<a class="btn btn-accent" href="${esc(reg.formUrl)}" target="_blank" rel="noopener">참가 신청하기 <span class="arrow">→</span></a>`
-        : `<span class="btn" aria-disabled="true">${esc(reg.closedLabel)}</span>`;
-
-    const featured = filledTalks(y).filter((t) => t.kind);
-    const showSpeakers = featured.length > 0 || filledTalks(y).length === 0;
-
-    const sections = [
-      ['overview', '개요'],
-      ...(showSpeakers ? [['speakers', '연사']] : []),
-      ['schedule', '일정'],
-      ['abstracts', '초록'],
-      ['registration', '참가 신청'],
-      ['venue', '장소 안내'],
-      ...(y.gallery && y.gallery.length ? [['gallery', '갤러리']] : []),
-      ['organizers', '조직위원회'],
-    ];
-
-    const nTalks = filledTalks(y).length;
-    const nLightning = allLightning(y).length;
-
-    /* hero */
-    let html = `
+        ? `<a class="btn btn-primary" href="${esc(reg.formUrl)}" target="_blank" rel="noopener">참가 신청하기 <span class="arrow">→</span></a>`
+        : p.key === 'done' ? '' : `<span class="btn" aria-disabled="true">${esc(reg.closedLabel)}</span>`;
+    return `
       <header class="hero-dark year-hero">
         ${plexus(yr)}
         <div class="wrap">
@@ -312,20 +330,64 @@
               <div><dt>주최</dt><dd>${esc(y.host)}</dd></div>
             </dl>
             <div class="hero-actions">
-              ${p.key === 'done' ? '' : regBtn.replace('btn-accent', 'btn-primary')}
+              ${regBtn}
+              <a class="btn ${regBtn ? 'btn-ghost' : 'btn-primary'}" href="${talksUrl(yr)}">연사 · 초록 보기 <span class="arrow">→</span></a>
               <a class="btn btn-ghost" href="#schedule">일정 보기</a>
-              <a class="btn btn-ghost" href="#abstracts">초록 보기</a>
             </div>
           </div>
           ${p.key !== 'done' ? `<div class="side"><div class="dday-big">${ddayText(p)}</div><small>${esc(y.start.replace(/-/g, '.'))} 개막</small></div>` : ''}
         </div>
-      </header>
-      <nav class="subnav" aria-label="페이지 내 이동"><div class="wrap">
-        ${sections.map(([id, label]) => `<a href="#${id}">${label}</a>`).join('')}
-      </div></nav>`;
+      </header>`;
+  }
 
-    /* overview */
-    html += `
+  function yearTabs(yr, view) {
+    return `
+      <nav class="subnav year-tabs" aria-label="MCUS ${yr} 메뉴"><div class="wrap">
+        ${yearViews.map(([key, label, url]) => `<a href="${url(yr)}"${key === view ? ' class="active" aria-current="page"' : ''}>${label}</a>`).join('')}
+      </div></nav>`;
+  }
+
+  function yearPager(yr, view) {
+    const idx = yearsDesc.indexOf(yr);
+    const newer = yearsDesc[idx - 1];
+    const older = yearsDesc[idx + 1];
+    const url = (y2) => (yearViews.find((v) => v[0] === view) || yearViews[0])[2](y2);
+    return `
+      <section class="section"><div class="wrap year-pager">
+        ${older ? `<a class="card" href="${url(older)}"><small>← 이전 학술회</small><b>MCUS ${older}</b></a>` : ''}
+        ${newer ? `<a class="card next" href="${url(newer)}"><small>다음 학술회 →</small><b>MCUS ${newer}</b></a>` : ''}
+      </div></section>`;
+  }
+
+  function renderYear(yr, view) {
+    const y = M.years[yr];
+    if (!y) return;
+    const p = phase(y);
+    const app = document.getElementById('app');
+    const viewLabel = (yearViews.find((v) => v[0] === view) || yearViews[0])[1];
+    document.title = view === 'overview' ? `MCUS ${yr} · ${y.titleKo}` : `${viewLabel} · MCUS ${yr}`;
+
+    let html = yearHero(y, p, view === 'overview' ? '' : viewLabel) + yearTabs(yr, view);
+    if (view === 'talks') html += renderTalksView(y);
+    else if (view === 'info') html += renderInfoView(y);
+    else html += renderOverviewView(y);
+    html += yearPager(yr, view);
+
+    app.innerHTML = html;
+    setupYearInteractions(y, view);
+  }
+
+  /* 개요 페이지 */
+  function renderOverviewView(y) {
+    const yr = y.year;
+    const entries = talkEntries(y).filter((e) => e.filled);
+    const nTalks = entries.length;
+    const nLightning = allLightning(y).length;
+    const plenary = entries.filter((e) => e.t.kind === 'plenary');
+    const others = entries.filter((e) => e.t.kind !== 'plenary');
+    const nInvited = entries.filter((e) => e.t.kind === 'invited').length;
+
+    let html = `
       <section class="section" id="overview"><div class="wrap">
         <div class="section-head"><span class="eyebrow">Overview</span><h2>개요</h2></div>
         <div class="overview">
@@ -336,47 +398,81 @@
           </dl>
           <div class="card at-a-glance reveal">
             <div><div class="n">${y.days.length}<small>일</small></div><div class="k">${esc(y.dateLabel)}</div></div>
-            <div><div class="n">${nTalks || '<span class="tba">TBA</span>'}<small>${nTalks ? '강연' : ''}</small></div><div class="k">${featured.length ? `기조강연 ${featured.filter((t) => t.kind === 'plenary').length} · 초청강연 ${featured.filter((t) => t.kind === 'invited').length}` : nTalks ? '학생 · 연구자 강연' : '강연 라인업 추후 공개'}</div></div>
+            <div><div class="n">${nTalks || '<span class="tba">TBA</span>'}<small>${nTalks ? '강연' : ''}</small></div><div class="k">${nTalks ? [plenary.length && `기조강연 ${plenary.length}`, nInvited && `초청강연 ${nInvited}`].filter(Boolean).join(' · ') || '학생 · 연구자 강연' : '강연 라인업 추후 공개'}</div></div>
             <div><div class="n">${nLightning || '<span class="tba">TBA</span>'}<small>${nLightning ? 'Lightning Talks' : ''}</small></div><div class="k">${nLightning ? '짧고 가볍게 나누는 학부생 발표' : 'Lightning Talk 연사 모집 예정'}</div></div>
           </div>
         </div>
       </div></section>`;
 
-    /* speakers */
-    if (showSpeakers) {
-      const anchorOf = (t) => {
-        for (let di = 0; di < y.days.length; di++) {
-          const ti = y.days[di].talks.indexOf(t);
-          if (ti >= 0) return `#d${di + 1}-t${ti + 1}`;
-        }
-        return '#abstracts';
-      };
-      const group = (kind, en) => {
-        const list = featured.filter((t) => t.kind === kind).sort((a, b) => a.ko.localeCompare(b.ko, 'ko'));
-        if (!list.length) return '';
-        return `
-          <div class="card speaker-group ${kind} reveal">
-            <h3>${kindLabel[kind]}<small>${en}</small></h3>
-            <ul>${list
-              .map((t) => `<li><a href="${anchorOf(t)}"><b>${esc(t.ko)}${t.en ? `<span>${esc(t.en)}</span>` : ''}</b>${t.affil ? `<span class="aff">${esc(t.affil)}</span>` : ''}</a></li>`)
-              .join('')}</ul>
-          </div>`;
-      };
-      html += `
-      <section class="section soft" id="speakers"><div class="wrap">
-        <div class="section-head"><span class="eyebrow">Speakers</span><h2>연사</h2></div>
-        ${
-          featured.length
-            ? `<div class="speakers">${group('plenary', 'Plenary')}${group('invited', 'Invited')}</div>`
-            : '<div class="notice">기조강연 · 초청강연 연사는 추후 공개됩니다.</div>'
-        }
-      </div></section>`;
-    }
+    const overviewHtml = html;
 
-    /* schedule */
-    html += `
+    /* 연사 */
+    html = `
+      <section class="section soft" id="speakers"><div class="wrap">
+        <div class="section-head head-row">
+          <div><span class="eyebrow">Speakers</span><h2>연사</h2></div>
+          ${nTalks ? `<a class="btn btn-ghost" href="${talksUrl(yr)}">전체 초록 보기 <span class="arrow">→</span></a>` : ''}
+        </div>`;
+    if (!nTalks) {
+      html += '<div class="notice">기조강연 · 초청강연 연사는 추후 공개됩니다.</div>';
+    } else {
+      if (plenary.length) {
+        html += `
+        <h3 class="sub-head">기조강연 <small>Plenary</small></h3>
+        <div class="plenary-cards">
+          ${plenary
+            .map(
+              (e) => `
+            <a class="card sp-feature reveal" href="${talksUrl(yr, e.id)}">
+              ${avatar(e.t, 'portrait')}
+              <div class="body">
+                <span class="badge-plenary">기조강연</span>
+                <b class="name">${esc(e.t.ko)}<span>${esc(e.t.en)}</span></b>
+                ${e.t.affil ? `<span class="aff">${esc(e.t.affil)}</span>` : ''}
+                ${e.t.field ? `<span class="field">Research field · ${esc(e.t.field)}</span>` : ''}
+                <span class="talk-title">${esc(e.t.title)}</span>
+                <span class="go">초록 보기 →</span>
+              </div>
+            </a>`
+            )
+            .join('')}
+        </div>`;
+      }
+      if (others.length) {
+        html += `
+        <h3 class="sub-head">${nInvited === others.length ? '초청강연 <small>Invited</small>' : '강연 <small>Talks</small>'}</h3>
+        <div class="sp-grid">
+          ${others
+            .map(
+              (e) => `
+            <a class="card sp-item reveal" href="${talksUrl(yr, e.id)}">
+              <span class="when">DAY ${e.di + 1} · ${esc(e.time)}</span>
+              <b class="name">${esc(e.t.ko)}<span>${esc(e.t.en)}</span></b>
+              ${e.t.affil ? `<span class="aff">${esc(e.t.affil)}</span>` : ''}
+              <span class="talk-title">${esc(e.t.title)}</span>
+            </a>`
+            )
+            .join('')}
+        </div>`;
+      }
+      if (nLightning) {
+        html += `
+        <h3 class="sub-head">Lightning Talk <small>학부생 발표</small></h3>
+        <div class="lt-grid">
+          ${y.days
+            .flatMap((d, di) => (d.lightning || []).map((l, li) => `<a class="lt-item" href="${talksUrl(yr, `d${di + 1}-l${li + 1}`)}"><b>${esc(l.name)}</b><span>${esc(l.title)}</span></a>`))
+            .join('')}
+        </div>`;
+      }
+    }
+    html += '</div></section>';
+
+    const speakersHtml = html;
+
+    /* 일정 */
+    html = `
       <section class="section" id="schedule"><div class="wrap">
-        <div class="section-head"><span class="eyebrow">Timetable</span><h2>일정</h2><p>강연을 누르면 해당 초록으로 이동합니다.</p></div>
+        <div class="section-head"><span class="eyebrow">Timetable</span><h2>일정</h2><p>강연을 누르면 연사 소개와 초록을 볼 수 있습니다.</p></div>
         <div class="days" style="--days:${Math.min(y.days.length, 3)}">
           ${y.days
             .map(
@@ -391,7 +487,10 @@
                   .map((s) => {
                     if (s.talk) {
                       const t = d.talks[s.talk - 1] || {};
-                      return `<li class="slot"><time>${esc(s.time)}</time><a href="#d${di + 1}-t${s.talk}"><span class="who"><em>Talk ${s.talk}</em>${t.ko ? esc(t.ko) : '<span class="tba">TBA</span>'}${t.kind === 'plenary' ? '<span class="badge-plenary">기조강연</span>' : ''}</span>${t.title ? `<span class="what">${esc(t.title)}</span>` : ''}</a></li>`;
+                      return `<li class="slot"><time>${esc(s.time)}</time><a href="${talksUrl(yr, `d${di + 1}-t${s.talk}`)}"><span class="who"><em>Talk ${s.talk}</em>${t.ko ? esc(t.ko) : '<span class="tba">TBA</span>'}${t.kind === 'plenary' ? '<span class="badge-plenary">기조강연</span>' : ''}</span>${t.title ? `<span class="what">${esc(t.title)}</span>` : ''}</a></li>`;
+                    }
+                    if (s.kind === 'lightning' && (d.lightning || []).length) {
+                      return `<li class="slot lightning"><time>${esc(s.time)}</time><a href="${talksUrl(yr, `d${di + 1}-l1`)}"><span>${esc(s.label)}</span><span class="what">${d.lightning.map((l) => esc(l.name)).join(' · ')}</span></a></li>`;
                     }
                     return `<li class="slot ${esc(s.kind || 'break')}"><time>${esc(s.time)}</time><span>${esc(s.label)}</span></li>`;
                   })
@@ -403,61 +502,158 @@
         </div>
       </div></section>`;
 
-    /* abstracts */
-    const tagsHere = [...new Set(filledTalks(y).flatMap((t) => t.tags || []))];
-    html += `
-      <section class="section" id="abstracts"><div class="wrap">
-        <div class="section-head"><span class="eyebrow">Abstracts</span><h2>초록</h2></div>
-        ${
-          tagsHere.length > 1
-            ? `<div class="filter-bar" role="group" aria-label="분야별 보기">
-                <button class="chip" type="button" data-tag="" aria-pressed="true">전체<span class="count">${nTalks}</span></button>
-                ${tagsHere
-                  .map((tag) => `<button class="chip" type="button" data-tag="${esc(tag)}" aria-pressed="false">${esc(M.fields[tag] || tag)}<span class="count">${filledTalks(y).filter((t) => (t.tags || []).includes(tag)).length}</span></button>`)
-                  .join('')}
-              </div>`
-            : ''
-        }
-        ${y.days
-          .map((d, di) => {
-            const filled = d.talks.filter((t) => t.title || t.ko);
-            const talksHtml = filled.length
-              ? d.talks
-                  .map((t, ti) => {
-                    const id = `d${di + 1}-t${ti + 1}`;
-                    if (!(t.title || t.ko)) {
-                      return `<article class="card talk placeholder" id="${id}"><div class="talk-top"><span class="no">TALK ${ti + 1}</span></div><h4>연사 및 발표 주제 추후 공개</h4></article>`;
-                    }
-                    return `
-                    <article class="card talk reveal${t.kind === 'plenary' ? ' is-plenary' : ''}" id="${id}" data-tags="${esc((t.tags || []).join(' '))}">
-                      <div class="talk-top">
-                        <div class="left"><span class="no">DAY ${di + 1} · TALK ${ti + 1}</span>${t.kind === 'plenary' ? '<span class="badge-plenary">기조강연</span>' : ''}</div>
-                        <div class="tags">${(t.tags || []).map((tag) => `<span class="chip">${esc(M.fields[tag] || tag)}</span>`).join('')}</div>
-                      </div>
-                      <h4>${or(t.title)}</h4>
-                      <div class="speaker">${or(t.ko, 'TBA')}${t.en ? `<span>${esc(t.en)}</span>` : ''}${t.affil ? `<span class="aff">· ${esc(t.affil)}</span>` : ''}</div>
-                      ${t.abstract ? `<div class="abstract clamped">${paras(t.abstract)}</div><button class="more" type="button" hidden>초록 전체 보기 ↓</button>` : '<div class="abstract"><p class="tba">초록 추후 공개</p></div>'}
-                    </article>`;
-                  })
-                  .join('')
-              : `<div class="notice">Day ${di + 1} 연사 및 초록은 추후 공개됩니다.</div>`;
-            const lt = d.lightning || [];
-            return `
-            <div class="abs-day">
-              <h3><span>DAY ${di + 1}</span>${esc(d.label)}</h3>
-              <div class="talks">${talksHtml}</div>
-              ${
-                lt.length
-                  ? `<div class="lightning-box reveal"><h4>Lightning Talk</h4><ul>${lt.map((l) => `<li><b>${esc(l.name)}</b><span>${esc(l.title)}</span></li>`).join('')}</ul></div>`
-                  : ''
-              }
-            </div>`;
-          })
-          .join('')}
-      </div></section>`;
+    const scheduleHtml = html;
+    html = '';
 
-    /* registration */
+    /* 갤러리 */
+    if (y.gallery && y.gallery.length) {
+      html += `
+      <section class="section soft" id="gallery"><div class="wrap">
+        <div class="section-head"><span class="eyebrow">Gallery</span><h2>갤러리</h2></div>
+        <div class="gallery">
+          ${y.gallery.map((g) => `<button type="button" data-src="${esc(g.src)}" data-alt="${esc(g.alt)}"><img src="${esc(g.src)}" alt="${esc(g.alt)}" loading="lazy"></button>`).join('')}
+        </div>
+        <dialog class="lightbox" id="lightbox"><form method="dialog"><button aria-label="닫기">×</button></form><img alt=""><p></p></dialog>
+      </div></section>`;
+    }
+
+    /* 조직위원회 */
     html += `
+      <section class="section" id="organizers"><div class="wrap">
+        <div class="section-head"><span class="eyebrow">Organizing Committee</span><h2>조직위원회</h2><p>${esc(y.host)}</p></div>
+        ${
+          y.organizers.length
+            ? `<div class="people">${y.organizers.map(([ko, en]) => `<div class="person reveal"><b>${esc(ko)}</b><span>${esc(en)}</span></div>`).join('')}</div>`
+            : '<div class="notice">조직위원 명단은 추후 공개됩니다.</div>'
+        }
+      </div></section>`;
+    // 지난 행사는 연사를 맨 앞에, 예정된 행사는 개요를 맨 앞에
+    return phase(y).key === 'done'
+      ? speakersHtml + scheduleHtml + overviewHtml + html
+      : overviewHtml + speakersHtml + scheduleHtml + html;
+  }
+
+  /* 연사 · 초록 페이지 */
+  function talkDetail(y, e) {
+    const t = e.t;
+    return `
+      <div class="detail-meta">
+        <span>DAY ${e.di + 1} · ${esc(e.d.label)}${e.time ? ` · ${esc(e.time)}` : ''}</span>
+        <span class="no">TALK ${e.ti + 1}</span>
+      </div>
+      <div class="detail-badges">${kindBadge(t)}${(t.tags || []).map((tag) => `<span class="chip">${esc(M.fields[tag] || tag)}</span>`).join('')}</div>
+      <h2>${or(t.title)}</h2>
+      <div class="speaker-block">
+        ${avatar(t)}
+        <div>
+          <b class="name">${or(t.ko, 'TBA')}${t.en ? `<span>${esc(t.en)}</span>` : ''}</b>
+          ${t.affil ? `<span class="aff">${esc(t.affil)}</span>` : ''}
+          ${t.field ? `<span class="field">Research field · ${esc(t.field)}</span>` : ''}
+        </div>
+      </div>
+      <h3 class="abs-label">Abstract</h3>
+      <div class="abstract">${t.abstract ? paras(t.abstract) : '<p class="tba">초록 추후 공개</p>'}</div>`;
+  }
+
+  function lightningDetail(d, di, li) {
+    const l = d.lightning[li];
+    const slot = d.schedule.find((s) => s.kind === 'lightning');
+    return `
+      <div class="detail-meta">
+        <span>DAY ${di + 1} · ${esc(d.label)}${slot ? ` · ${esc(slot.time)}` : ''}</span>
+        <span class="no">LIGHTNING ${li + 1}</span>
+      </div>
+      <div class="detail-badges"><span class="badge-lightning">⚡ Lightning Talk</span></div>
+      <h2>${esc(l.title)}</h2>
+      <div class="speaker-block">
+        <span class="avatar mono" aria-hidden="true">⚡</span>
+        <div><b class="name">${esc(l.name)}</b><span class="aff">학부생 Lightning Talk</span></div>
+      </div>
+      <p class="lt-note">Lightning Talk은 학부생이 관심 있는 주제를 짧게 소개하는 발표로, 별도의 초록이 없습니다.</p>`;
+  }
+
+  function renderTalksView(y) {
+    const entries = talkEntries(y);
+    const filled = entries.filter((e) => e.filled);
+    if (!filled.length) {
+      return `
+      <section class="section"><div class="wrap">
+        <div class="notice">연사와 초록은 확정되는 대로 이곳에 공개됩니다.</div>
+      </div></section>`;
+    }
+    const tagsHere = [...new Set(filled.flatMap((e) => e.t.tags || []))];
+    const filterBar =
+      tagsHere.length > 1
+        ? `<div class="filter-bar" role="group" aria-label="분야별 보기">
+            <button class="chip" type="button" data-tag="" aria-pressed="true">전체<span class="count">${filled.length}</span></button>
+            ${tagsHere
+              .map((tag) => `<button class="chip" type="button" data-tag="${esc(tag)}" aria-pressed="false">${esc(M.fields[tag] || tag)}<span class="count">${filled.filter((e) => (e.t.tags || []).includes(tag)).length}</span></button>`)
+              .join('')}
+          </div>`
+        : '';
+
+    const index = y.days
+      .map((d, di) => {
+        const items = entries
+          .filter((e) => e.di === di && e.filled)
+          .map(
+            (e) => `
+            <li><button type="button" class="ti" data-id="${e.id}" data-tags="${esc((e.t.tags || []).join(' '))}">
+              <span class="ti-top"><span class="ti-time">${esc(e.time.split('–')[0].trim())}</span>${e.t.kind === 'plenary' ? '<span class="badge-plenary">기조</span>' : ''}</span>
+              <b>${esc(e.t.ko)}</b>
+              <span class="ti-title">${esc(e.t.title)}</span>
+            </button></li>`
+          )
+          .join('');
+        const lts = (d.lightning || [])
+          .map((l, li) => `<li><button type="button" class="ti lt" data-id="d${di + 1}-l${li + 1}" data-tags=""><b>⚡ ${esc(l.name)}</b><span class="ti-title">${esc(l.title)}</span></button></li>`)
+          .join('');
+        return `<div class="ti-day"><h3><span>DAY ${di + 1}</span>${esc(d.label)}</h3><ul>${items}${lts}</ul></div>`;
+      })
+      .join('');
+
+    return `
+      <section class="section talks-section"><div class="wrap">
+        <div class="reader-bar">
+          ${filterBar}
+          <div class="seg" role="group" aria-label="보기 방식">
+            <button type="button" data-mode="one" aria-pressed="true">한 편씩 보기</button>
+            <button type="button" data-mode="all" aria-pressed="false">전체 펼쳐보기</button>
+          </div>
+        </div>
+        <div class="reader" data-mode="one">
+          <aside class="talk-index" aria-label="강연 목록">${index}</aside>
+          <article class="card talk-detail" id="talk-detail" aria-live="polite"></article>
+          <div class="all-talks">
+            ${y.days
+              .map(
+                (d, di) => `
+              <div class="abs-day">
+                <h3><span>DAY ${di + 1}</span>${esc(d.label)}</h3>
+                <div class="talks">
+                  ${entries
+                    .filter((e) => e.di === di && e.filled)
+                    .map((e) => `<article class="card talk-detail full${e.t.kind === 'plenary' ? ' is-plenary' : ''}" id="full-${e.id}" data-tags="${esc((e.t.tags || []).join(' '))}">${talkDetail(y, e)}</article>`)
+                    .join('')}
+                  ${(d.lightning || []).length ? `<div class="lightning-box"><h4>Lightning Talk</h4><ul>${d.lightning.map((l) => `<li><b>${esc(l.name)}</b><span>${esc(l.title)}</span></li>`).join('')}</ul></div>` : ''}
+                </div>
+              </div>`
+              )
+              .join('')}
+          </div>
+        </div>
+      </div></section>`;
+  }
+
+  /* 참가 · 장소 페이지 */
+  function renderInfoView(y) {
+    const reg = y.registration;
+    const regBtn =
+      reg.open && reg.formUrl
+        ? `<a class="btn btn-accent" href="${esc(reg.formUrl)}" target="_blank" rel="noopener">참가 신청하기 <span class="arrow">→</span></a>`
+        : `<span class="btn" aria-disabled="true">${esc(reg.closedLabel)}</span>`;
+    const v = y.venue;
+    return `
       <section class="section" id="registration"><div class="wrap">
         <div class="section-head"><span class="eyebrow">Registration</span><h2>참가 신청</h2></div>
         <div class="card reg-status reveal">
@@ -473,18 +669,14 @@
               (b) => `
             <div class="card reg-block reveal">
               <h3>${esc(b.title)}</h3>
-              <dl>${b.rows.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${or(v, '추후 안내')}</dd></div>`).join('')}</dl>
+              <dl>${b.rows.map(([k, val]) => `<div><dt>${esc(k)}</dt><dd>${or(val, '추후 안내')}</dd></div>`).join('')}</dl>
               ${b.note ? `<p class="note">${esc(b.note)}</p>` : ''}
             </div>`
             )
             .join('')}
         </div>
-      </div></section>`;
-
-    /* venue */
-    const v = y.venue;
-    html += `
-      <section class="section" id="venue"><div class="wrap">
+      </div></section>
+      <section class="section soft" id="venue"><div class="wrap">
         <div class="section-head"><span class="eyebrow">Venue</span><h2>장소 안내</h2></div>
         <div class="venue">
           <div class="card reveal">
@@ -505,87 +697,9 @@
           </div>
         </div>
       </div></section>`;
-
-    /* gallery */
-    if (y.gallery && y.gallery.length) {
-      html += `
-      <section class="section" id="gallery"><div class="wrap">
-        <div class="section-head"><span class="eyebrow">Gallery</span><h2>갤러리</h2></div>
-        <div class="gallery">
-          ${y.gallery.map((g) => `<button type="button" data-src="${esc(g.src)}" data-alt="${esc(g.alt)}"><img src="${esc(g.src)}" alt="${esc(g.alt)}" loading="lazy"></button>`).join('')}
-        </div>
-        <dialog class="lightbox" id="lightbox"><form method="dialog"><button aria-label="닫기">×</button></form><img alt=""><p></p></dialog>
-      </div></section>`;
-    }
-
-    /* organizers + pager */
-    const idx = yearsDesc.indexOf(yr);
-    const newer = yearsDesc[idx - 1];
-    const older = yearsDesc[idx + 1];
-    html += `
-      <section class="section" id="organizers"><div class="wrap">
-        <div class="section-head"><span class="eyebrow">Organizing Committee</span><h2>조직위원회</h2><p>${esc(y.host)}</p></div>
-        ${
-          y.organizers.length
-            ? `<div class="people">${y.organizers.map(([ko, en]) => `<div class="person reveal"><b>${esc(ko)}</b><span>${esc(en)}</span></div>`).join('')}</div>`
-            : '<div class="notice">조직위원 명단은 추후 공개됩니다.</div>'
-        }
-      </div></section>
-      <section class="section"><div class="wrap year-pager">
-        ${older ? `<a class="card" href="${older}.html"><small>← 이전 학술회</small><b>MCUS ${older}</b></a>` : ''}
-        ${newer ? `<a class="card next" href="${newer}.html"><small>다음 학술회 →</small><b>MCUS ${newer}</b></a>` : ''}
-      </div></section>`;
-
-    app.innerHTML = html;
-    setupYearInteractions();
   }
 
-  function setupYearInteractions() {
-    // abstract clamp toggles
-    document.querySelectorAll('.talk').forEach((card) => {
-      const abs = card.querySelector('.abstract.clamped');
-      const btn = card.querySelector('.more');
-      if (!abs || !btn) return;
-      if (abs.scrollHeight - abs.clientHeight > 4) btn.hidden = false;
-      else abs.classList.remove('clamped');
-      btn.addEventListener('click', () => {
-        const open = abs.classList.toggle('clamped');
-        btn.textContent = open ? '초록 전체 보기 ↓' : '접기 ↑';
-      });
-    });
-
-    // open abstract when jumped to from the timetable
-    const openTarget = () => {
-      const el = location.hash && document.getElementById(location.hash.slice(1));
-      if (el && el.classList.contains('talk')) {
-        const abs = el.querySelector('.abstract.clamped');
-        const btn = el.querySelector('.more');
-        if (abs) { abs.classList.remove('clamped'); if (btn) btn.textContent = '접기 ↑'; }
-        el.classList.add('in');
-      }
-    };
-    window.addEventListener('hashchange', openTarget);
-    openTarget();
-
-    // field filter
-    const filterBtns = document.querySelectorAll('.filter-bar .chip');
-    filterBtns.forEach((b) =>
-      b.addEventListener('click', () => {
-        const tag = b.dataset.tag;
-        filterBtns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-        document.querySelectorAll('.talk[data-tags]').forEach((t) => {
-          t.hidden = tag ? !t.dataset.tags.split(' ').includes(tag) : false;
-          t.classList.add('in');
-        });
-        document.querySelectorAll('.abs-day').forEach((day) => {
-          const any = day.querySelector('.talk[data-tags]:not([hidden])');
-          day.hidden = Boolean(tag) && !any;
-          const lt = day.querySelector('.lightning-box');
-          if (lt) lt.hidden = Boolean(tag);
-        });
-      })
-    );
-
+  function setupYearInteractions(y, view) {
     // lightbox
     const dlg = document.getElementById('lightbox');
     if (dlg && typeof dlg.showModal === 'function') {
@@ -600,26 +714,89 @@
       dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
     }
 
-    // active section in subnav
-    const links = [...document.querySelectorAll('.subnav a')];
-    const byId = Object.fromEntries(links.map((a) => [a.getAttribute('href').slice(1), a]));
-    if ('IntersectionObserver' in window) {
-      const io = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((e) => {
-            if (!e.isIntersecting) return;
-            links.forEach((a) => a.classList.remove('active'));
-            const a = byId[e.target.id];
-            if (a) {
-              a.classList.add('active');
-              a.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-            }
-          });
-        },
-        { rootMargin: '-45% 0px -50% 0px' }
-      );
-      Object.keys(byId).forEach((id) => { const s = document.getElementById(id); if (s) io.observe(s); });
+    // 탭이 화면 밖에 있으면 현재 탭이 보이도록
+    const activeTab = document.querySelector('.year-tabs a.active');
+    if (activeTab) activeTab.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+
+    if (view === 'talks') setupReader(y);
+  }
+
+  function setupReader(y) {
+    const reader = document.querySelector('.reader');
+    if (!reader) return;
+    const detail = document.getElementById('talk-detail');
+    const items = [...document.querySelectorAll('.talk-index .ti')];
+    const entries = Object.fromEntries(talkEntries(y).filter((e) => e.filled).map((e) => [e.id, e]));
+    const narrow = window.matchMedia('(max-width: 900px)');
+
+    const visibleItems = () => items.filter((b) => !b.closest('li').hidden);
+
+    function show(id, { scroll = false } = {}) {
+      let html = '';
+      if (entries[id]) html = talkDetail(y, entries[id]);
+      else {
+        const m = /^d(\d+)-l(\d+)$/.exec(id || '');
+        const d = m && y.days[m[1] - 1];
+        if (d && d.lightning && d.lightning[m[2] - 1]) html = lightningDetail(d, m[1] - 1, m[2] - 1);
+      }
+      if (!html) return false;
+      const vis = visibleItems();
+      const pos = vis.findIndex((b) => b.dataset.id === id);
+      const prev = vis[pos - 1];
+      const next = vis[pos + 1];
+      const label = (b) => b.querySelector('b').textContent;
+      detail.innerHTML =
+        html +
+        `<nav class="detail-pager">
+          ${prev ? `<button type="button" data-go="${prev.dataset.id}"><small>← 이전</small>${esc(label(prev))}</button>` : '<span></span>'}
+          ${next ? `<button type="button" class="next" data-go="${next.dataset.id}"><small>다음 →</small>${esc(label(next))}</button>` : '<span></span>'}
+        </nav>`;
+      detail.classList.toggle('is-plenary', Boolean(entries[id] && entries[id].t.kind === 'plenary'));
+      items.forEach((b) => b.setAttribute('aria-current', String(b.dataset.id === id)));
+      const cur = items.find((b) => b.dataset.id === id);
+      if (cur) cur.scrollIntoView({ block: 'nearest' });
+      if (history.replaceState) history.replaceState(null, '', '#' + id);
+      if (scroll) detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return true;
     }
+
+    detail.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-go]');
+      if (b) show(b.dataset.go, { scroll: true });
+    });
+    items.forEach((b) => b.addEventListener('click', () => show(b.dataset.id, { scroll: narrow.matches })));
+
+    // 보기 방식
+    const segBtns = document.querySelectorAll('.seg button');
+    const setMode = (mode) => {
+      reader.dataset.mode = mode;
+      segBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mode === mode)));
+    };
+    segBtns.forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode)));
+
+    // 분야 필터
+    const filterBtns = document.querySelectorAll('.filter-bar .chip');
+    filterBtns.forEach((b) =>
+      b.addEventListener('click', () => {
+        const tag = b.dataset.tag;
+        filterBtns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+        const match = (el) => !tag || el.dataset.tags.split(' ').includes(tag);
+        items.forEach((it) => { it.closest('li').hidden = !match(it); });
+        document.querySelectorAll('.talk-index .ti-day').forEach((dd) => { dd.hidden = !dd.querySelector('li:not([hidden])'); });
+        document.querySelectorAll('.all-talks .talk-detail').forEach((c) => { c.hidden = !match(c); });
+        document.querySelectorAll('.all-talks .lightning-box').forEach((c) => { c.hidden = Boolean(tag); });
+        document.querySelectorAll('.all-talks .abs-day').forEach((dd) => { dd.hidden = !dd.querySelector('.talk-detail:not([hidden]), .lightning-box:not([hidden])'); });
+        const cur = items.find((it) => it.getAttribute('aria-current') === 'true');
+        const first = visibleItems()[0];
+        if (cur && cur.closest('li').hidden && first) show(first.dataset.id);
+        else if (cur) show(cur.dataset.id);
+      })
+    );
+
+    const fromHash = location.hash.slice(1);
+    if (!show(fromHash)) show(items[0].dataset.id);
+    else if (fromHash && narrow.matches) setTimeout(() => detail.scrollIntoView({ block: 'start' }), 0);
+    window.addEventListener('hashchange', () => show(location.hash.slice(1), { scroll: true }));
   }
 
   /* ---------- reveal ---------- */
@@ -640,7 +817,7 @@
   const yr = Number(body.dataset.year);
   renderHeader(page === 'home' ? 'home' : yr);
   if (page === 'home') renderHome();
-  else renderYear(yr);
+  else renderYear(yr, body.dataset.view || 'overview');
   renderFooter();
   setupReveal();
 })();
