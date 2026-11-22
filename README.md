@@ -7,7 +7,7 @@ Mathematics Conference for Undergraduate Students (MCUS) 통합 웹사이트입�
 
 | 파일 | 내용 |
 | --- | --- |
-| `index.html` | 메인 — 최신 정보(가장 최근 연도 자동 표시), MCUS의 의의, 역대 학술회, 주최 소개 |
+| `index.html` | 소개 — MCUS의 의미, MCUS가 추구하는 바, MIMIC 소개 (상단에 가장 최근 학술회 바로가기 자동 표시) |
 | `2027.html` | MCUS 2027 (개최 예정) |
 | `2026.html` | MCUS 2026 |
 | `2025.html` | MCUS 2025 |
@@ -26,7 +26,7 @@ Mathematics Conference for Undergraduate Students (MCUS) 통합 웹사이트입�
 
 ```
 assets/js/data/
-├── site.js    # 공통: 연락처, 메인 '최신 소식', 오시는 길, 분야 태그 이름
+├── site.js    # 공통: 연락처, 오시는 길, 분야 태그 이름
 ├── 2025.js
 ├── 2026.js
 └── 2027.js    # 2026과 같은 구조의 초안 — 빈 값('')은 '추후 공개'로 표시
@@ -39,8 +39,7 @@ assets/js/data/
 - **일정표**: `schedule` 의 `{ time, talk: n }` 은 같은 날 `talks` 의 n번째 강연을 가리킵니다.
   휴식·식사는 `{ time, label, kind: 'break' }`, Lightning Talk은 `kind: 'lightning'`, 만찬은 `kind: 'social'`.
 - **참가 신청 열기**: `registration.open` 을 `true` 로, `formUrl` 에 구글 폼 주소를 넣으면 신청 버튼이 활성화됩니다.
-- **메인 페이지 주요 일정**: `2027.js` 의 `milestones` 를 채우세요.
-- **최신 소식**: `site.js` 의 `news` 맨 위에 항목을 추가합니다.
+- **소개 페이지 문구**: `index.html` 에서 직접 수정합니다.
 - **갤러리**: 사진을 `assets/img/` 에 넣고 `gallery` 배열에 `{ src, alt }` 로 추가합니다.
 - **개최 예정 / 행사 종료** 표시와 D-day는 `start`, `end` 날짜로 자동 계산됩니다.
 
@@ -50,7 +49,7 @@ assets/js/data/
 2. `2027.html` 을 복사해 `2028.html` 로 만들고, `data-year="2028"` 및 제목 수정
 3. 모든 HTML 파일 하단에 `<script src="assets/js/data/2028.js"></script>` 추가
 
-메뉴, 메인 페이지의 '다가오는 학술회' 카드, 역대 학술회 목록은 자동으로 갱신됩니다.
+메뉴와 소개 페이지 상단의 '다가오는 학술회' 링크는 자동으로 갱신됩니다.
 
 ## 디자인
 

@@ -16,7 +16,6 @@
   <div class="site-header" id="site-header"></div>
 
   <main>
-    <!-- Hero -->
     <section class="lhero">
       <div class="wrap">
         <svg class="lhero-mark" viewBox="0 0 258 88" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="square" role="img" aria-label="MCUS">
@@ -24,7 +23,7 @@
         </svg>
         <p class="en">Mathematics Conference for Undergraduate Students</p>
         <h1>학부생을 위한 수학 학술회</h1>
-        <p class="lede">학부생이 직접 발표하고, 연구자의 강연을 듣고, 함께 질문합니다. MCUS는 수학을 탐구하는 학부생들이 서로의 관심 주제를 나누고 더 넓은 수학을 만나는 자리입니다.</p>
+        <a class="next-link" id="next-link" hidden></a>
       </div>
     </section>
 
@@ -35,105 +34,55 @@
           <a href="2027.html">MCUS 2027</a>
           <a href="2026.html">MCUS 2026</a>
           <a href="2025.html">MCUS 2025</a>
-          <a href="#hosts">MIMIC 소개</a>
+          <a href="#mimic">MIMIC 소개</a>
         </nav>
       </div>
     </section>
 
-    <!-- Latest -->
-    <section class="section" id="latest">
+    <!-- MCUS의 의미 -->
+    <section class="section meaning" id="about">
       <div class="wrap">
-        <div class="section-head">
-          <span class="eyebrow">Latest</span>
-          <h2>최신 정보</h2>
-          <p>다가오는 MCUS의 주요 일정과 소식을 확인하세요.</p>
-        </div>
-        <div class="latest-grid">
-          <aside class="next-card reveal" id="next-card" aria-label="다가오는 학술회"></aside>
-          <div class="card milestones reveal" id="milestones"></div>
-          <div class="card news reveal" id="news"></div>
-        </div>
+        <span class="eyebrow">MCUS의 의미</span>
+        <p class="statement">학부생이 <em>발표</em>하고, 연구자가 <em>강연</em>하고,<br>모두가 함께 <em>질문</em>하는 수학 학술회</p>
+        <p class="statement-sub">MCUS는 수학을 탐구하는 학부생들이 서로의 관심 주제를 나누고 다양한 수학적 관점을 접할 수 있도록 마련한 학술회입니다. 수학에 관심 있는 학부생이라면 누구나 함께할 수 있습니다.</p>
       </div>
     </section>
 
-    <!-- About -->
-    <section class="section soft" id="about">
+    <!-- MCUS가 추구하는 바 -->
+    <section class="section soft aims">
       <div class="wrap">
-        <div class="section-head">
-          <span class="eyebrow">About MCUS</span>
-          <h2>MCUS의 의의</h2>
-          <p>수학 공부는 대부분 강의실과 교과서 안에서 이루어집니다. MCUS는 그 바깥에서, 배운 수학을 직접 설명해 보고 지금 연구되는 수학을 가까이에서 들을 수 있는 자리를 만듭니다.</p>
-        </div>
-        <div class="pillars">
-          <div class="card pillar reveal">
-            <span class="num">1</span>
-            <h3>발표하며 배우는 수학</h3>
-            <p>학부생이 직접 주제를 정해 발표합니다. 정규 강연과 짧은 Lightning Talk을 통해 공부한 내용을 다른 사람에게 설명하는 경험을 쌓습니다.</p>
-          </div>
-          <div class="card pillar reveal">
-            <span class="num">2</span>
-            <h3>연구를 가까이에서</h3>
-            <p>기조강연과 초청강연에서 연구자와 대학원생이 지금의 연구 주제를 학부생 눈높이로 소개합니다. 교과서 다음에 무엇이 있는지 직접 들어볼 수 있습니다.</p>
-          </div>
-          <div class="card pillar reveal">
-            <span class="num">3</span>
-            <h3>분야를 넘나드는 교류</h3>
-            <p>위상수학과 조합론부터 해석학, 수리물리, 인공지능까지. 서로 다른 관심사가 한자리에서 만나 질문과 토론으로 이어집니다.</p>
-          </div>
-          <div class="card pillar reveal">
-            <span class="num">4</span>
-            <h3>누구에게나 열린 자리</h3>
-            <p>수학에 관심 있는 학부생이라면 누구나 참여할 수 있습니다. 지금까지 모든 회차를 참가비 없이 운영했습니다.</p>
-          </div>
-        </div>
-
-        <div class="stats" id="stats"></div>
-
-        <div class="fields">
-          <h3>지금까지 MCUS에서 다룬 분야</h3>
-          <div class="chips" id="fields"></div>
-        </div>
+        <span class="eyebrow">MCUS가 추구하는 바</span>
+        <h2 class="aims-title">강의실 밖에서, 수학을 말하고 듣고 나누는 경험</h2>
+        <ol class="aims-list">
+          <li class="reveal">
+            <span class="n">01</span>
+            <div><h3>발표하며 배우는 수학</h3><p>학부생이 직접 주제를 정해 발표합니다. 공부한 수학을 다른 사람에게 설명하며 더 깊이 이해합니다.</p></div>
+          </li>
+          <li class="reveal">
+            <span class="n">02</span>
+            <div><h3>연구를 가까이에서</h3><p>연구자와 대학원생의 강연을 통해 교과서 다음에 이어지는 수학을 학부생의 눈높이에서 만납니다.</p></div>
+          </li>
+          <li class="reveal">
+            <span class="n">03</span>
+            <div><h3>분야를 넘나드는 교류</h3><p>위상수학과 조합론, 해석학부터 수리물리와 인공지능까지. 서로 다른 관심사가 질문과 토론으로 이어집니다.</p></div>
+          </li>
+        </ol>
       </div>
     </section>
 
-    <!-- Editions -->
-    <section class="section" id="editions-section">
-      <div class="wrap">
-        <div class="section-head">
-          <span class="eyebrow">Conferences</span>
-          <h2>역대 학술회</h2>
-          <p>연도별 일정과 연사, 초록, 현장 사진을 볼 수 있습니다.</p>
-        </div>
-        <div class="editions" id="editions"></div>
-      </div>
-    </section>
-
-    <!-- Hosts -->
-    <section class="section soft" id="hosts">
-      <div class="wrap">
-        <div class="section-head">
+    <!-- MIMIC -->
+    <section class="section" id="mimic">
+      <div class="wrap mimic-row reveal">
+        <img src="assets/img/mimic-logo.png" alt="MIMIC">
+        <div>
           <span class="eyebrow">Hosted by</span>
-          <h2>주최</h2>
-        </div>
-        <div class="hosts">
-          <article class="card host reveal">
-            <div class="logo"><img src="assets/img/mimic-logo.png" alt="MIMIC"></div>
-            <h3>MIMIC<small>MIMIC Is Math Interchange Club · 성균관대학교 수학과 학술동아리</small></h3>
-            <p>2018년 성균관대학교 수학과 학생들이 함께 수학을 공부하기 위해 만든 학술 동아리입니다. 세미나와 튜터링, 스터디를 꾸준히 운영해 왔으며, 2025년부터 매년 MCUS를 기획하고 주최하고 있습니다.</p>
-            <div class="links">
-              <a class="chip" href="https://skkumathmimic.github.io/" target="_blank" rel="noopener">동아리 홈페이지 ↗</a>
-              <a class="chip" href="https://instagram.com/skku_math_mimic" target="_blank" rel="noopener">Instagram ↗</a>
-              <a class="chip" href="https://www.youtube.com/channel/UCF4w8Niu8UBYFX97l0r4mLQ" target="_blank" rel="noopener">YouTube ↗</a>
-            </div>
-          </article>
-          <article class="card host reveal">
-            <div class="logo"><img src="assets/img/skku-math-logo.png" alt="성균관대학교 수학과"></div>
-            <h3>성균관대학교 수학과<small>Department of Mathematics, Sungkyunkwan University</small></h3>
-            <p>MCUS 2027부터 MIMIC과 함께 학술회를 공동 주최합니다. 학생들이 기획해 온 학술회에 학과가 함께하며, 학부생 학술 교류의 장이 한층 넓어집니다.</p>
-            <div class="links">
-              <a class="chip" href="https://math.skku.edu/math/index.do" target="_blank" rel="noopener">학과 홈페이지 ↗</a>
-            </div>
-          </article>
+          <h2>MIMIC <small>MIMIC Is Math Interchange Club</small></h2>
+          <p>성균관대학교 수학과 학생들이 함께 수학을 공부하기 위해 2018년에 만든 학술 동아리입니다. 세미나와 튜터링, 스터디를 꾸준히 운영해 왔으며, 2025년부터 매년 MCUS를 기획하고 주최하고 있습니다.</p>
+          <div class="links">
+            <a class="chip" href="https://skkumathmimic.github.io/" target="_blank" rel="noopener">동아리 홈페이지 ↗</a>
+            <a class="chip" href="https://instagram.com/skku_math_mimic" target="_blank" rel="noopener">Instagram ↗</a>
+            <a class="chip" href="https://www.youtube.com/channel/UCF4w8Niu8UBYFX97l0r4mLQ" target="_blank" rel="noopener">YouTube ↗</a>
+          </div>
         </div>
       </div>
     </section>

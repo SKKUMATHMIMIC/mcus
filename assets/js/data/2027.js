@@ -25,14 +25,6 @@ MCUS.addYear({
     { label: '주최', value: '성균관대학교 수학과 학술동아리 MIMIC, 성균관대학교 수학과' },
   ],
 
-  // 메인 페이지 '최신 정보'에 표시되는 주요 일정
-  milestones: [
-    { label: '참가 신청 시작', date: '' },
-    { label: 'Lightning Talk 연사 모집 마감', date: '' },
-    { label: '참가 신청 마감', date: '' },
-    { label: 'MCUS 2027 개최', date: '2027. 01. 14. – 01. 16.' },
-  ],
-
   registration: {
     open: false,
     closedLabel: '참가 신청 오픈 예정',

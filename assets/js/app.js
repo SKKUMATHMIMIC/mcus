@@ -31,13 +31,6 @@
     return { key: 'done', days: 0 };
   }
 
-  function phasePill(y) {
-    const p = phase(y);
-    if (p.key === 'upcoming') return `<span class="pill live">개최 예정</span>`;
-    if (p.key === 'live') return `<span class="pill live">진행 중</span>`;
-    return `<span class="pill muted">행사 종료</span>`;
-  }
-
   const ddayText = (p) => (p.key === 'upcoming' ? (p.days === 0 ? 'D-DAY' : `D-${p.days}`) : p.key === 'live' ? 'NOW' : '');
 
   const isFilled = (t) => Boolean(t.title || t.ko);
@@ -184,101 +177,14 @@
 
   /* ---------- main page (index) ---------- */
 
+  // 상단에 가장 최근 학술회로 가는 링크 한 줄
   function renderHome() {
+    const el = document.getElementById('next-link');
+    if (!el) return;
     const p = phase(latest);
-
-    const nextEl = document.getElementById('next-card');
-    if (nextEl) {
-      nextEl.innerHTML = `
-        <div class="row">
-          <span class="pill">${p.key === 'done' ? '가장 최근 학술회' : '다가오는 학술회'}</span>
-          <span class="dday">${ddayText(p)}</span>
-        </div>
-        <h3>${esc(latest.titleKo)}</h3>
-        <div class="big">MCUS ${latest.year}</div>
-        <dl>
-          <div><dt>일시</dt><dd>${esc(latest.dateLabel)}</dd></div>
-          <div><dt>장소</dt><dd>${esc(latest.venueShort)}</dd></div>
-          <div><dt>주최</dt><dd>${esc(latest.host)}</dd></div>
-        </dl>
-        <div><a class="btn" href="${latest.year}.html">MCUS ${latest.year} 바로가기 <span class="arrow">→</span></a></div>`;
-    }
-
-    const msEl = document.getElementById('milestones');
-    if (msEl) {
-      const ms = latest.milestones || [];
-      const reg = latest.registration;
-      const regLine = reg.open && reg.formUrl
-        ? `<a class="btn btn-royal" href="${esc(reg.formUrl)}" target="_blank" rel="noopener">참가 신청하기 <span class="arrow">→</span></a>`
-        : `<span class="btn" aria-disabled="true">${esc(reg.closedLabel)}</span>`;
-      msEl.innerHTML = `
-        <h3>MCUS ${latest.year} 주요 일정</h3>
-        <ol>${ms
-          .map((m, i) => `<li class="${i === ms.length - 1 ? 'final' : ''}"><span>${esc(m.label)}</span><span class="when${m.date ? '' : ' tba'}">${m.date ? esc(m.date) : '추후 안내'}</span></li>`)
-          .join('')}</ol>
-        <div style="margin-top:18px">${regLine}</div>`;
-      if (!ms.length) msEl.hidden = true;
-    }
-
-    const newsEl = document.getElementById('news');
-    if (newsEl) {
-      newsEl.innerHTML = `
-        <h3>최신 소식</h3>
-        <ul>${M.news
-          .slice(0, 4)
-          .map((n) => `<li><a href="${esc(n.link)}"><time datetime="${esc(n.date)}">${esc(n.date.replace(/-/g, '.'))}</time><span><strong>${esc(n.title)}</strong><p>${esc(n.body)}</p></span></a></li>`)
-          .join('')}</ul>`;
-    }
-
-    const held = yearsDesc.filter((yr) => phase(M.years[yr]).key === 'done').map((yr) => M.years[yr]);
-    const statsEl = document.getElementById('stats');
-    if (statsEl) {
-      const talks = held.reduce((n, y) => n + filledTalks(y).length, 0);
-      const lightning = held.reduce((n, y) => n + allLightning(y).length, 0);
-      const organizers = new Set(held.flatMap((y) => y.organizers.map((o) => o[0]))).size;
-      statsEl.innerHTML = [
-        [held.length, '회 개최', '지금까지 열린 MCUS'],
-        [talks, '편', '기조 · 초청 · 학생 강연'],
-        [lightning, '편', '학부생 Lightning Talk'],
-        [organizers, '명', '운영에 함께한 학생'],
-      ]
-        .map(([v, u, k]) => `<div class="stat reveal"><div class="v">${v}<small>${u}</small></div><div class="k">${k}</div></div>`)
-        .join('');
-    }
-
-    const fieldsEl = document.getElementById('fields');
-    if (fieldsEl) {
-      const counts = {};
-      held.forEach((y) => filledTalks(y).forEach((t) => (t.tags || []).forEach((tag) => (counts[tag] = (counts[tag] || 0) + 1))));
-      fieldsEl.innerHTML = Object.entries(counts)
-        .sort((a, b) => b[1] - a[1])
-        .map(([k, n]) => `<span class="chip">${esc(M.fields[k] || k)}<span class="count">${n}</span></span>`)
-        .join('');
-    }
-
-    const edEl = document.getElementById('editions');
-    if (edEl) {
-      edEl.innerHTML = yearsDesc
-        .map((yr) => {
-          const y = M.years[yr];
-          const img = y.gallery && y.gallery[0];
-          const nTalks = filledTalks(y).length;
-          return `
-          <a class="card edition reveal" href="${yr}.html">
-            <div class="thumb">${img ? `<img src="${esc(img.src)}" alt="${esc(img.alt)}" loading="lazy">` : wordmark(yr)}</div>
-            <div class="body">
-              <div class="yr"><b>MCUS ${yr}</b>${phasePill(y)}</div>
-              <div class="meta">${esc(y.dateLabel)}</div>
-              <div class="meta">${esc(y.venueShort)}</div>
-              <div class="facts">
-                <span><b>${y.days.length}</b>일</span>
-                ${nTalks ? `<span><b>${nTalks}</b> 강연</span><span><b>${allLightning(y).length}</b> Lightning</span>` : '<span>연사 추후 공개</span>'}
-              </div>
-            </div>
-          </a>`;
-        })
-        .join('');
-    }
+    el.href = `${latest.year}.html`;
+    el.innerHTML = `<span class="tag">${p.key === 'done' ? '최근 학술회' : '다가오는 학술회'}</span><b>MCUS ${latest.year}</b><span>${esc(latest.dateLabel)}</span>${p.key !== 'done' ? `<span class="dday">${ddayText(p)}</span>` : ''}<span class="arrow">→</span>`;
+    el.hidden = false;
   }
 
   /* ==========================================================
