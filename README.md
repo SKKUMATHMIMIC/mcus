@@ -8,18 +8,17 @@ Mathematics Conference for Undergraduate Students (MCUS) 통합 웹사이트입�
 | 파일 | 내용 |
 | --- | --- |
 | `index.html` | 메인 — 최신 정보(가장 최근 연도 자동 표시), MCUS의 의의, 역대 학술회, 주최 소개 |
-| `2027.html` · `2027-talks.html` · `2027-info.html` | MCUS 2027 (개최 예정) |
-| `2026.html` · `2026-talks.html` · `2026-info.html` | MCUS 2026 |
-| `2025.html` · `2025-talks.html` · `2025-info.html` | MCUS 2025 |
+| `2027.html` | MCUS 2027 (개최 예정) |
+| `2026.html` | MCUS 2026 |
+| `2025.html` | MCUS 2025 |
 
-각 연도는 세 페이지로 나뉩니다.
+연도 페이지는 기존 MCUS 사이트와 같은 메뉴로 구성됩니다: **홈 · 개요 · 일정 · 초록 · 참가 신청 · 장소 안내 · 갤러리**
+(한 파일 안에서 `2026.html#schedule`, `2026.html#abstract` 처럼 이동합니다.)
 
-- `{연도}.html` **개요** — 연사(기조강연 카드 · 강연 목록 · Lightning Talk), 일정표, 개요, 갤러리, 조직위원회
-  (지난 행사는 연사가 맨 위, 예정된 행사는 개요가 맨 위)
-- `{연도}-talks.html` **연사 · 초록** — 왼쪽 강연 목록에서 고르면 오른쪽에 연사 소개와 초록이 표시됩니다.
-  '전체 펼쳐보기'로 모든 초록을 한 번에 볼 수 있고, 분야별로 거를 수 있습니다.
-  `2025-talks.html#d1-t2` 처럼 링크하면 해당 강연(Day 1, Talk 2)이 바로 열립니다.
-- `{연도}-info.html` **참가 · 장소 안내** — 참가 신청, 장소, 오시는 길
+- **홈** — 상단 제목, Quick Menus, 개요 카드 + 기조 강연자(넘겨 보기), Organizers
+- **일정** — 날짜별 타임테이블. 강연을 누르면 초록 페이지의 해당 강연이 펼쳐집니다.
+- **초록** — 시간 순서대로 강연이 나열되고, 누르면 연사 소개와 초록이 펼쳐집니다. '모두 펼치기' 지원.
+  `2025.html#abstract/d1-t2` 처럼 링크하면 Day 1의 Talk 2가 펼쳐진 채로 열립니다.
 
 ## 내용 수정하기
 
@@ -48,16 +47,16 @@ assets/js/data/
 ## 새 연도 추가 (예: 2028)
 
 1. `assets/js/data/2027.js` 를 복사해 `2028.js` 로 만들고 내용을 수정
-2. `2027.html`, `2027-talks.html`, `2027-info.html` 을 복사해 `2028…` 로 만들고, `data-year="2028"` 및 제목 수정
+2. `2027.html` 을 복사해 `2028.html` 로 만들고, `data-year="2028"` 및 제목 수정
 3. 모든 HTML 파일 하단에 `<script src="assets/js/data/2028.js"></script>` 추가
 
 메뉴, 메인 페이지의 '다가오는 학술회' 카드, 역대 학술회 목록은 자동으로 갱신됩니다.
 
 ## 디자인
 
-- 색: MCUS 포스터의 navy · blue · gold (`assets/css/style.css` 맨 위 `:root` 변수)
+- 색 · 구성: 기존 MCUS 사이트(2025·2026)의 상단 배경, Quick Menus 띠, 개요(하늘색) · 기조 강연자(살구색) 카드를 그대로 이어받음 (`assets/css/style.css` 맨 위 `:root` 변수)
 - 글꼴: Pretendard — MIMIC 동아리 사이트(skkumathmimic.github.io)와 동일
-- 연사의 `kind` 를 `'plenary'` / `'invited'` 로 지정하면 포스터처럼 기조강연 · 초청강연으로 나뉘어 '연사' 섹션에 표시됩니다.
+- 연사의 `kind: 'plenary'` 는 홈의 '기조 강연자'에 사진(`photo`) · 소속 · 연구 분야(`field`)와 함께 표시됩니다.
 
 ## 미리보기 & 배포
 

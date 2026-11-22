@@ -73,6 +73,8 @@ MCUS.addYear({
         {
           ko: '신동욱', en: 'Dongwook Shin',
           affil: 'Ajou University', kind: 'plenary',
+          field: 'Numerical Methods for PDEs, Machine Learning',
+          photo: 'assets/img/speakers/2026-dongwook-shin.jpg',
           title: 'New approaches to physics informed deep neural operator networks',
           tags: ['analysis', 'applied'],
           abstract: 'Partial differential equations (PDEs) play a central role in modeling natural and social phenomena. Although classical numerical methods based on the finite difference method (FDM) and the finite element method (FEM) provide reliable solutions, they suffer from high computational costs in real-time analysis and large-scale experiments. In this talk, we introduce two deep neural operator–based approaches for efficiently solving second-order elliptic PDEs with mixed boundary conditions. The first approach is a convolutional operator learning model based on a U-Net architecture, which takes FDM/FEM-discretized representations as inputs. The second approach adopts a sparse neural operator framework, in which structural sparsity is imposed on the network architecture or learned representations to reduce model complexity while preserving predictive accuracy. Numerical experiments demonstrate that the proposed two approaches achieve both high accuracy and fast inference compared to conventional DeepONet-based methods, and remain stable and effective even for significantly larger computational scales.',
@@ -107,7 +109,9 @@ MCUS.addYear({
         },
         {
           ko: '정홍택', en: 'Hongtaek Jung',
-          affil: 'Seoul National University', kind: 'plenary',
+          affil: 'KIAS (Korea Institute for Advanced Study)', kind: 'plenary',
+          field: 'Geometric topology; geometric structures on manifolds, higher Teichmüller spaces, and Anosov representations',
+          photo: 'assets/img/speakers/2026-hongtaek-jung.jpg',
           title: '원 위의 군 작용과 그 응용',
           tags: ['topology', 'geometry'],
           abstract: '원 (circle)은 가장 쉬운 다양체인 동시에 저차원 위상수학의 여러 문제에서 자연스럽게 등장하는 근본적인 공간이기도 하다. 본 강연에서는 우선 원 위의 group action이 유도되는 두 가지 대표적인 상황인 곡면의 hyperbolic geometry와 3차원 다양체의 pseudo-Anosov 흐름에 대해서 설명할 것이다. 곡면의 hyperbolic geometry나 pseudo-Anosov flow를 통해 얻어진 원 위의 작용들은 특별한 성질들을 가지게 되는데 이에 대해서도 알아볼 것이다. 최종적으로 이들의 inverse problem, 즉, 원에 특별한 방식으로 작용하는 군에 대해서 우리가 어떤 이야기를 할 수 있는지에 대해서 다뤄 볼 것이다.',
@@ -147,6 +151,8 @@ MCUS.addYear({
         {
           ko: '오재성', en: 'Jaeseong Oh',
           affil: 'Sungkyunkwan University', kind: 'plenary',
+          field: 'Algebraic Combinatorics',
+          photo: 'assets/img/speakers/2026-jaeseong-oh.jpg',
           title: 'The Many Faces of n! : An Invitation to Algebraic Combinatorics',
           tags: ['combinatorics', 'algebra'],
           abstract: 'We all know that there are n! ways to order n distinct objects. In Algebraic Combinatorics, however, this is not the end of the story—it is only the beginning. In this talk, we will explore the surprising appearances of n! across the mathematical landscape. We will see how n! arises naturally in Algebra (finite fields), Geometry (flag varieties), Probability (random matrices), and Representation Theory (coinvariant rings), revealing deep structural connections between these seemingly disparate areas.',
