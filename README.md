@@ -60,5 +60,8 @@ assets/js/data/
 ## 미리보기 & 배포
 
 - 미리보기: `index.html` 을 브라우저로 열면 됩니다. (빌드 과정 없음)
+- **CSS · JS를 고친 뒤 배포할 때**: HTML 파일들의 `?v=20261123` 숫자를 새 날짜로 바꿔 주세요.
+  바꾸지 않으면 방문자 브라우저가 예전 `style.css` 를 계속 써서 화면이 깨져 보일 수 있습니다.
+  (한 번에 바꾸기: `sed -i '' 's/?v=[0-9]*/?v=새날짜/g' *.html`)
 - 배포: GitHub 저장소 Settings → Pages → Branch `main` / `root` 선택 시
   `https://ssuyeoncho.github.io/MCUS/` 에서 공개됩니다.
