@@ -62,6 +62,42 @@
     </svg>`;
   }
 
+  // 첫 화면 배경: 오른쪽 위 · 왼쪽 아래 모서리에서 퍼져 나가며 그려지는 네트워크 (기존 사이트의 모티프)
+  function network(seed = 7, withLeft = true) {
+    let r = seed;
+    const rand = () => ((r = (r * 16807) % 2147483647) / 2147483647);
+    const W = 1600;
+    const H = 720;
+    const cluster = (ax, ay, n, reach, dirX, dirY) => {
+      const pts = Array.from({ length: n }, () => {
+        const a = (Math.PI / 2) * rand();
+        const d = reach * Math.sqrt(rand());
+        return { x: ax + dirX * Math.cos(a) * d, y: ay + dirY * Math.sin(a) * d, big: rand() < 0.14 };
+      });
+      pts.forEach((pt) => { pt.t = Math.hypot(pt.x - ax, pt.y - ay) / reach; });
+      const edges = new Set();
+      pts.forEach((pt, i) => {
+        pts
+          .map((q, j) => [j, Math.hypot(q.x - pt.x, q.y - pt.y)])
+          .filter(([j]) => j !== i)
+          .sort((a, b) => a[1] - b[1])
+          .slice(0, 3)
+          .forEach(([j, dist]) => { if (dist < reach * 0.42) edges.add(i < j ? `${i}-${j}` : `${j}-${i}`); });
+      });
+      const delay = (t) => (0.2 + t * 1.6).toFixed(2);
+      const lines = [...edges].map((k) => {
+        const [i, j] = k.split('-').map(Number);
+        const a = pts[i];
+        const b = pts[j];
+        const [p0, p1] = a.t <= b.t ? [a, b] : [b, a];
+        return `<line pathLength="1" x1="${p0.x.toFixed(1)}" y1="${p0.y.toFixed(1)}" x2="${p1.x.toFixed(1)}" y2="${p1.y.toFixed(1)}" style="--d:${delay(p0.t)}s"/>`;
+      });
+      const dots = pts.map((pt) => `<circle class="${pt.big ? 'big' : ''}" cx="${pt.x.toFixed(1)}" cy="${pt.y.toFixed(1)}" r="${pt.big ? 9 : (2 + rand() * 3).toFixed(1)}" style="--d:${(Number(delay(pt.t)) + 0.35).toFixed(2)}s"/>`);
+      return `<g>${lines.join('')}${dots.join('')}</g>`;
+    };
+    return `<svg class="net" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${cluster(W + 20, -20, 30, 760, -1, 1)}${withLeft ? cluster(-20, H + 20, 18, 520, 1, -1) : ''}</svg>`;
+  }
+
   const svg = (d, w = 2) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
   const icon = {
     pin: svg('<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>'),
@@ -104,13 +140,25 @@
     closeOnOutside(el.querySelector('.drop'));
   }
 
-  // 연도 페이지: 그 해만의 독립된 상단 (로고 · MCUS 연도 · 그 해의 메뉴)
+  // 연도 페이지: 맨 위 얇은 띠(소개로 · 다른 연도) + 그 해만의 상단 메뉴
   function renderYearHeader(y, routes) {
     const el = document.getElementById('site-header');
+    el.insertAdjacentHTML('beforebegin', `
+      <div class="topstrip">
+        <div class="wrap">
+          <a class="back" href="index.html">${icon.left}<span>MCUS 소개</span></a>
+          <nav aria-label="연도별 학술회">
+            ${yearsDesc.map((yr) => `<a href="${yr}.html"${yr === y.year ? ' aria-current="page"' : ''}>MCUS ${yr}</a>`).join('')}
+          </nav>
+        </div>
+      </div>`);
     el.classList.add('has-year');
     el.innerHTML = `
       <div class="wrap bar">
-        <a class="brand year-brand" href="#home" aria-label="MCUS ${y.year} 홈">${wordmark()}<b>MCUS ${y.year}</b></a>
+        <div class="year-brand">
+          <a href="index.html" aria-label="MCUS 소개">${wordmark()}</a>
+          <a href="#home"><b>MCUS ${y.year}</b></a>
+        </div>
         <nav class="site-nav" aria-label="MCUS ${y.year} 메뉴">
           ${routes.map(([key, label]) => `<a href="#${key}" data-route="${key}">${label}</a>`).join('')}
         </nav>
@@ -191,7 +239,7 @@
     ];
     let i = 0;
     const rise = () => `class="rise" style="--i:${i++}"`;
-    el.innerHTML = `
+    el.innerHTML = network(11, false) + `
       <div class="wrap up-grid">
         <div>
           <span class="up-label rise" style="--i:${i++}">${label}</span>
@@ -230,7 +278,6 @@
   function yearRoutes(y) {
     return [
       ['home', '홈', 'Home'],
-      ['overview', '개요', 'Overview'],
       ['schedule', '일정', 'Timetable'],
       ['abstract', '초록', 'Abstract'],
       ['registration', '참가 신청', 'Registration'],
@@ -246,7 +293,7 @@
     const app = document.getElementById('app');
     renderYearHeader(y, routes);
 
-    const views = { home: viewHome, overview: viewOverview, schedule: viewSchedule, abstract: viewAbstract, registration: viewRegistration, venue: viewVenue, gallery: viewGallery };
+    const views = { home: viewHome, schedule: viewSchedule, abstract: viewAbstract, registration: viewRegistration, venue: viewVenue, gallery: viewGallery };
 
     function route() {
       let [key, arg] = decodeURIComponent(location.hash.slice(1)).split('/');
@@ -270,69 +317,104 @@
     route();
   }
 
-  /* 홈 */
+  /* 홈 — 첫 화면 · 한눈에 보기 · 기조 강연자 · 개요와 프로그램 · 갤러리 · Organizers */
   function viewHome(y) {
     const p = phase(y);
-    const plenary = talkEntries(y).filter((e) => isFilled(e.t) && e.t.kind === 'plenary');
+    const entries = talkEntries(y).filter((e) => isFilled(e.t));
+    const plenary = entries.filter((e) => e.t.kind === 'plenary');
+    const nL = allLightning(y).length;
+    const reg = y.registration;
+    const regOpen = reg.open && reg.formUrl;
 
-    const slides = plenary
-      .map(
-        (e) => `
-        <a class="pslide" href="#abstract/${e.id}">
-          ${e.t.photo ? `<img src="${esc(e.t.photo)}" alt="${esc(e.t.ko)}">` : `<span class="ph" aria-hidden="true">${esc(e.t.ko.slice(0, 1))}</span>`}
-          <div>
-            <b>${esc(e.t.ko)} <span>(${esc(e.t.en)})</span></b>
-            ${e.t.affil ? `<span class="aff">${esc(e.t.affil)}</span>` : ''}
-            ${e.t.field ? `<dl class="rf"><dt>Research field</dt><dd>${esc(e.t.field)}</dd></dl>` : ''}
-            <span class="ptalk">${esc(e.t.title)}</span>
-            <span class="go">초록 보기 →</span>
-          </div>
-        </a>`
-      )
-      .join('');
+    const glance = [
+      ['기간', `${y.days.length}일`, y.dateLabel.replace(/^\d{4}\. /, '')],
+      ['강연', entries.length ? `${entries.length}편` : 'TBA', plenary.length ? `기조강연 ${plenary.length}편 포함` : entries.length ? '학생 · 연구자 강연' : '연사 추후 공개'],
+      ['Lightning Talk', nL ? `${nL}편` : 'TBA', nL ? '학부생 짧은 발표' : '연사 모집 예정'],
+      ['장소', y.venue.building || '추후 안내', y.venue.campus.replace(' (수원)', '')],
+    ];
 
-    return `
-      <section class="lhero">
+    const hero = `
+      <section class="yhero net-hero">
+        ${network(y.year)}
         <div class="wrap">
           ${p.key !== 'done' ? `<span class="pill live">개최 예정 · ${ddayText(p)}</span>` : ''}
-          <p class="en">${esc(y.titleEn)}</p>
+          ${wordmark(y.year, 'yhero-mark draw')}
           <h1>${esc(y.titleKo)}</h1>
+          <p class="en">${esc(y.titleEn)}</p>
           <p class="when">${esc(y.dateLabel)}<span class="sep">|</span>${esc(y.venueShort)}</p>
+          <div class="yhero-actions">
+            ${regOpen ? `<a class="btn btn-royal" href="${esc(reg.formUrl)}" target="_blank" rel="noopener">참가 신청하기 <span class="arrow">→</span></a>` : ''}
+            <a class="btn ${regOpen ? 'btn-ghost' : 'btn-royal'}" href="#schedule">일정 보기</a>
+            <a class="btn btn-ghost" href="#abstract">초록 보기</a>
+          </div>
         </div>
       </section>
-      <section class="section"><div class="wrap home-cols">
-        <div class="reveal">
-          <h2 class="col-title">개요 <span>Overview</span></h2>
-          ${overviewCard(y)}
+      <div class="wrap"><div class="glance-bar reveal">
+        ${glance.map(([k, v, sub]) => `<div><span class="k">${k}</span><b>${esc(v)}</b><small>${esc(sub)}</small></div>`).join('')}
+      </div></div>`;
+
+    const speakers = `
+      <div class="sec-title"><h2>기조 강연자</h2><span>Plenary Speakers</span></div>
+      ${
+        plenary.length
+          ? `<div class="pcards">${plenary
+              .map(
+                (e) => `
+            <a class="pcard reveal" href="#abstract/${e.id}">
+              <div class="pc-photo">${e.t.photo ? `<img src="${esc(e.t.photo)}" alt="${esc(e.t.ko)}" loading="lazy">` : `<span>${esc(e.t.ko.slice(0, 1))}</span>`}</div>
+              <div class="pc-body">
+                <b>${esc(e.t.ko)}</b><span class="en">${esc(e.t.en)}</span>
+                ${e.t.affil ? `<span class="aff">${esc(e.t.affil)}</span>` : ''}
+                ${e.t.field ? `<p class="rf"><strong>Research field</strong>${esc(e.t.field)}</p>` : ''}
+                <span class="ptalk">${esc(e.t.title)}</span>
+                <span class="go">초록 보기 →</span>
+              </div>
+            </a>`
+              )
+              .join('')}</div>`
+          : '<div class="pempty">기조 강연자는 추후 공개됩니다.</div>'
+      }`;
+
+    const program = `
+      <div class="sec-title"><h2>개요</h2><span>Overview</span></div>
+      <div class="ov-grid">
+        <div class="reveal">${overviewCard(y)}</div>
+        <div class="prog card reveal">
+          <h3>프로그램</h3>
+          ${y.days
+            .map((d, di) => {
+              const n = d.talks.length;
+              const filled = d.talks.filter(isFilled).length;
+              const lt = (d.lightning || []).length;
+              const first = d.schedule[0].time.split('–')[0].trim();
+              const ends = d.schedule.map((x) => (x.time.split('–')[1] || '').trim()).filter(Boolean);
+              const last = ends[ends.length - 1] || '';
+              const parts = [`강연 ${n}편${filled ? '' : ' (연사 추후 공개)'}`, lt ? `Lightning Talk ${lt}편` : '', d.schedule.some((x) => x.kind === 'social') ? 'Banquet' : ''].filter(Boolean);
+              return `<a class="prog-day" href="#schedule"><span class="d">DAY ${di + 1}</span><span class="m"><b>${esc(d.label)}</b><small>${esc(first)}${last ? ` – ${esc(last)}` : ''} · ${parts.join(' · ')}</small></span>${icon.right}</a>`;
+            })
+            .join('')}
+          <div class="prog-links">
+            <a class="btn btn-royal" href="#schedule">전체 일정</a>
+            <a class="btn btn-ghost" href="#abstract">초록 보기</a>
+          </div>
         </div>
-        <div class="reveal">
-          <h2 class="col-title">기조 강연자 <span>Plenary Speakers</span></h2>
-          ${
-            plenary.length
-              ? `<div class="pslider">
-                  <div class="ptrack">${slides}</div>
-                  ${
-                    plenary.length > 1
-                      ? `<div class="pnav">
-                          <button class="arrow-btn" type="button" data-dir="-1" aria-label="이전 연사">${icon.left}</button>
-                          <div class="pdots">${plenary.map((e, i) => `<button type="button" data-i="${i}" aria-label="${esc(e.t.ko)}"${i === 0 ? ' aria-current="true"' : ''}></button>`).join('')}</div>
-                          <button class="arrow-btn" type="button" data-dir="1" aria-label="다음 연사">${icon.right}</button>
-                        </div>`
-                      : ''
-                  }
-                </div>`
-              : '<div class="pempty">기조 강연자는 추후 공개됩니다.</div>'
-          }
-        </div>
-      </div></section>
-      <section class="section soft"><div class="wrap">${organizersRow(y)}</div></section>`;
+      </div>`;
+
+    const gallery = y.gallery && y.gallery.length
+      ? `
+      <div class="sec-title row"><div><h2>갤러리</h2><span>Gallery</span></div><a class="more" href="#gallery">전체 보기 →</a></div>
+      <div class="gal-strip">${y.gallery.slice(0, 3).map((g) => `<a class="reveal" href="#gallery"><img src="${esc(g.src)}" alt="${esc(g.alt)}" loading="lazy"></a>`).join('')}</div>`
+      : '';
+
+    // 지난 행사는 연사를 먼저, 예정된 행사는 개요를 먼저
+    const blocks = (p.key === 'done' ? [speakers, program, gallery] : [program, speakers, gallery]).filter(Boolean);
+    blocks.push(organizersRow(y));
+    return hero + blocks.map((b, i) => `<section class="section${i % 2 ? ' soft' : ''}"><div class="wrap">${b}</div></section>`).join('');
   }
 
   function overviewCard(y) {
     return `
       <div class="ov-card">
-        ${wordmark(y.year, 'ov-mark')}
-        <p class="ov-sub">Mathematics Conference for Undergraduate Students</p>
         <dl>
           ${y.overview.map((r) => `<div><dt>${esc(r.label)}</dt><dd>${or(r.value, '추후 안내')}${r.note ? `<span class="note">* ${esc(r.note)}</span>` : ''}</dd></div>`).join('')}
         </dl>
@@ -349,24 +431,6 @@
             : '<p class="tba">조직위원 명단은 추후 공개됩니다.</p>'
         }
       </div>`;
-  }
-
-  /* 개요 */
-  function viewOverview(y) {
-    const entries = talkEntries(y).filter((e) => isFilled(e.t));
-    const nP = entries.filter((e) => e.t.kind === 'plenary').length;
-    const nI = entries.filter((e) => e.t.kind === 'invited').length;
-    const nL = allLightning(y).length;
-    return `
-      <section class="section"><div class="wrap ov-wide">
-        <div class="reveal">${overviewCard(y)}</div>
-        <div class="card glance reveal">
-          <div><div class="n">${y.days.length}<small>일</small></div><div class="k">${esc(y.dateLabel)}</div></div>
-          <div><div class="n">${entries.length || '<span class="tba">TBA</span>'}<small>${entries.length ? '강연' : ''}</small></div><div class="k">${entries.length ? [nP && `기조강연 ${nP}`, nI && `초청강연 ${nI}`].filter(Boolean).join(' · ') || '학생 · 연구자 강연' : '강연 라인업 추후 공개'}</div></div>
-          <div><div class="n">${nL || '<span class="tba">TBA</span>'}<small>${nL ? 'Lightning Talks' : ''}</small></div><div class="k">${nL ? '짧고 가볍게 나누는 학부생 발표' : 'Lightning Talk 연사 모집 예정'}</div></div>
-        </div>
-      </div></section>
-      <section class="section soft"><div class="wrap">${organizersRow(y)}</div></section>`;
   }
 
   /* 일정 — 기존 사이트의 표 형식, 강연을 누르면 초록으로 */
@@ -537,25 +601,6 @@
 
   /* 화면별 동작 */
   function setupView(y, rk, arg) {
-    // 기조 강연자 슬라이더
-    const track = document.querySelector('.ptrack');
-    if (track) {
-      const dots = [...document.querySelectorAll('.pdots button')];
-      const go = (i) => track.scrollTo({ left: i * track.clientWidth, behavior: 'smooth' });
-      const curIdx = () => Math.round(track.scrollLeft / track.clientWidth);
-      dots.forEach((b) => b.addEventListener('click', () => go(Number(b.dataset.i))));
-      document.querySelectorAll('.pnav .arrow-btn').forEach((b) =>
-        b.addEventListener('click', () => {
-          const n = dots.length;
-          go((curIdx() + Number(b.dataset.dir) + n) % n);
-        })
-      );
-      track.addEventListener('scroll', () => {
-        const i = curIdx();
-        dots.forEach((d, k) => d.setAttribute('aria-current', String(k === i)));
-      }, { passive: true });
-    }
-
     // 초록: 모두 펼치기 / 접기
     const toggleAll = document.querySelector('[data-toggle-all]');
     if (toggleAll) {
