@@ -708,7 +708,9 @@
     const n = b.until ? daysLeft(b.until) : null;
     const open = n == null || n >= 0;
     const status = n == null ? '' : open ? `<span class="pill live">모집 중 ${dLabel(n)}</span>` : '<span class="pill muted">모집 마감</span>';
-    const dl = `<dl>${b.rows.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${or(v, '추후 안내').replace(/\n/g, '<br>')}</dd></div>`).join('')}</dl>`;
+    // 이메일 주소는 눈에 잘 띄도록 굵게
+    const dd = (v) => or(v, '추후 안내').replace(/\n/g, '<br>').replace(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g, '<b class="email">$&</b>');
+    const dl = `<dl>${b.rows.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${dd(v)}</dd></div>`).join('')}</dl>`;
     const note = b.note ? `<p class="note">${esc(b.note)}</p>` : '';
     const action = b.action && open ? `<a class="btn btn-royal" href="${esc(b.action.href)}">${esc(b.action.label)} <span class="arrow">→</span></a>` : '';
     if (!b.lead) {
