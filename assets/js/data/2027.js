@@ -73,8 +73,20 @@ MCUS.addYear({
       ],
       talks: [
         { ko: '김민국', en: '', affil: '', kind: 'invited', title: '', tags: [], abstract: '' },
-        { ko: '민현기', en: '', affil: '', kind: 'plenary', title: '', tags: [], abstract: '' },
-        { ko: '지홍창', en: '', affil: '', kind: 'plenary', title: '', tags: [], abstract: '' },
+        {
+          ko: '민현기', en: 'Hyunki Min',
+          affil: 'KAIST', kind: 'plenary',
+          field: 'Contact topology (Low-dimensional topology)',
+          photo: 'assets/img/speakers/2027-hyunki-min.jpg',
+          title: '', tags: [], abstract: '',
+        },
+        {
+          ko: '지홍창', en: 'Hong Chang Ji',
+          affil: 'Sungkyunkwan University', kind: 'plenary',
+          field: 'Probability theory (Random matrices, Free probability)',
+          photo: 'assets/img/speakers/2027-hongchang-ji.jpg',
+          title: '', tags: [], abstract: '',
+        },
         { ko: '신준우', en: '', affil: '', kind: 'invited', title: '', tags: [], abstract: '' },
         { ko: '김경만', en: '', affil: '', kind: 'invited', title: '', tags: [], abstract: '' },
         { ko: '고호진', en: '', affil: '', kind: 'invited', title: '', tags: [], abstract: '' },
@@ -101,8 +113,19 @@ MCUS.addYear({
       ],
       talks: [
         { ko: '황다현', en: '', affil: '', kind: 'invited', title: '', tags: [], abstract: '' },
-        { ko: '이석형', en: '', affil: '', kind: 'plenary', title: '', tags: [], abstract: '' },
-        { ko: '배상현', en: '', affil: '', kind: 'plenary', title: '', tags: [], abstract: '' },
+        {
+          ko: '이석형', en: 'Seok Hyeong Lee',
+          affil: '', kind: 'plenary', // 현재 소속 확인 필요 (Ph.D. Princeton University, 2022)
+          field: 'Number theory',
+          title: '', tags: [], abstract: '',
+        },
+        {
+          ko: '배상현', en: 'Sanghyeon Bae',
+          affil: 'Ajou University', kind: 'plenary', // 경영학과 (Department of Business Administration)
+          photo: 'assets/img/speakers/2027-sanghyeon-bae.jpg',
+          field: 'Financial Planning, Large-scale Optimization, Machine Learning, Multistage Stochastic Programming',
+          title: '', tags: [], abstract: '',
+        },
         { ko: '이민서', en: '', affil: '', kind: 'invited', title: '', tags: [], abstract: '' },
         { ko: '최푸른하늘', en: '', affil: '', kind: 'invited', title: '', tags: [], abstract: '' },
         { ko: '이은성', en: '', affil: '', kind: 'invited', title: '', tags: [], abstract: '' },
@@ -127,8 +150,18 @@ MCUS.addYear({
       ],
       talks: [
         { ko: '안희성', en: '', affil: '', kind: 'invited', title: '', tags: [], abstract: '' },
-        { ko: '김민수', en: '', affil: '', kind: 'plenary', title: '', tags: [], abstract: '' },
-        { ko: '이호빈', en: '', affil: '', kind: 'plenary', title: '', tags: [], abstract: '' },
+        {
+          ko: '김민수', en: 'Minsoo Kim',
+          affil: 'KIAS (Korea Institute for Advanced Study)', kind: 'plenary', // Research Fellow
+          photo: 'assets/img/speakers/2027-minsoo-kim.jpg',
+          title: '', tags: [], abstract: '',
+        },
+        {
+          ko: '이호빈', en: 'Hobin Lee',
+          affil: 'Seoul National University', kind: 'plenary',
+          field: 'Nonlinear Partial Differential Equations', // 비선형편미분방정식
+          title: '', tags: [], abstract: '',
+        },
         { ko: '양권우', en: '', affil: '', kind: 'invited', title: '', tags: [], abstract: '' },
         { ko: '송한림', en: '', affil: '', kind: 'invited', title: '', tags: [], abstract: '' },
         { ko: '이호준', en: '', affil: '', kind: 'invited', title: '', tags: [], abstract: '' },
