@@ -44,6 +44,26 @@
   };
   const dLabel = (n) => (n === 0 ? 'D-DAY' : `D-${n}`);
 
+  // 날짜 탭 — 초록과 (모바일) 일정에서 같이 씀. 고른 날짜는 다른 화면으로 옮겨도 유지
+  // 처음에는 학술회 당일이면 그날, 아니면 첫째 날
+  const daySel = {};
+  function dayIndex(y, arg) {
+    const m = /^d(\d+)-/.exec(arg || '');
+    if (m && y.days[m[1] - 1]) return (daySel[y.year] = m[1] - 1);
+    if (daySel[y.year] != null) return daySel[y.year];
+    const t = new Date();
+    const iso = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+    return Math.max(0, y.days.findIndex((d) => d.date === iso));
+  }
+  // extra: 탭 오른쪽에 둘 버튼 (초록의 '모두 펼치기')
+  const dayBar = (y, cur, extra = '') =>
+    y.days.length > 1
+      ? `<div class="day-anchor"></div><div class="day-bar"><div class="wrap"><div class="day-tabs" role="tablist" aria-label="날짜 선택">${y.days
+          .map((d, i) => `<button type="button" role="tab" data-day="${i}" aria-selected="${i === cur}"><span>DAY ${i + 1}</span><b>${esc(d.label)}</b></button>`)
+          .join('')}</div>${extra}</div></div>`
+      : '';
+  const dayHidden = (y, i, cur) => (y.days.length > 1 && i !== cur ? ' hidden' : '');
+
   // 마감 전인 신청 블록 중 홈에 알릴 것 (registration.blocks 의 notice)
   const activeNotices = (y) =>
     (y.registration.blocks || []).filter((b) => b.notice && b.until && daysLeft(b.until) >= 0);
@@ -362,7 +382,7 @@
       document.title = rk === 'home' ? `MCUS ${yr} · ${y.titleKo}` : `${label} · MCUS ${yr}`;
 
       const head = rk === 'home' ? '' : `<header class="subhero"><div class="wrap"><p>${en}</p><h1>${label}</h1></div></header>`;
-      app.innerHTML = head + views[rk](y);
+      app.innerHTML = head + views[rk](y, arg);
       typeset(app);
       startNet();
       setupView(y, rk, arg);
@@ -487,7 +507,7 @@
   }
 
   /* 일정 — 시간표. 날짜를 나란히 놓고, 각 일정은 시작부터 끝 시간까지 세로로 이어짐 */
-  function viewSchedule(y) {
+  function viewSchedule(y, arg) {
     const toMin = (hm) => { const [h, m] = hm.split(':').map(Number); return h * 60 + (m || 0); };
     const fmt = (m) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
     const n = y.days.length;
@@ -611,8 +631,31 @@
       ['rest', '휴식'],
     ].filter(Boolean);
 
+    // 모바일: 날짜를 골라 보는 세로 목록 (시간 · 일정). 강연은 누르면 초록으로
+    const cur = dayIndex(y, arg);
+    const agItem = (e, di) => {
+      const k = kindOf(e);
+      const end = e.open || e.soft ? '' : `<small>${fmt(e.to)}</small>`;
+      const time = `<span class="ag-time"><b>${fmt(e.from)}</b>${end}</span>`;
+      if (e.s.talk) {
+        const t = e.d.talks[e.s.talk - 1] || {};
+        if (!isFilled(t)) return `<li class="ag ${esc(k)}">${time}<div class="ag-card">${kindBadge(t)}<b class="ag-name tbd">연사 추후 공개</b></div></li>`;
+        return `<li class="ag ${esc(k)}">${time}<a class="ag-card" href="#abstract/d${di + 1}-t${e.s.talk}">${kindBadge(t)}<b class="ag-name">${esc(t.ko)}${t.affil ? `<small>${esc(t.affil)}</small>` : ''}</b>${t.title ? `<span class="ag-title">${esc(t.title)}</span>` : ''}</a></li>`;
+      }
+      const sub = cellTitle(e);
+      const inner = `<b class="ag-name">${esc(e.s.label)}</b>${sub ? `<span class="ag-title">${esc(sub)}</span>` : ''}`;
+      if (k === 'lightning' && (e.d.lightning || []).length) return `<li class="ag lightning">${time}<a class="ag-card" href="#abstract/d${di + 1}-lt">${inner}</a></li>`;
+      return `<li class="ag ${esc(k)}">${time}<div class="ag-card">${inner}</div></li>`;
+    };
+    const agenda = `
+        <div class="tt-mobile">
+          ${dayBar(y, cur)}
+          ${days.map((evs, di) => `<ol class="ag-list" data-daypanel="${di}"${dayHidden(y, di, cur)}>${evs.map((e) => agItem(e, di)).join('')}</ol>`).join('')}
+        </div>`;
+
     return `
       <section class="section tt"><div class="wrap">
+        ${agenda}
         <p class="tt-legend">${legend.map(([c, l]) => `<span><i class="sw ${c}"></i>${l}</span>`).join('')}</p>
         <div class="tt-scroll reveal">
           <table class="tt-table" style="--days:${n}">
@@ -625,8 +668,9 @@
   }
 
   /* 초록 — 시간 순서대로, 누르면 초록이 펼쳐지는 목록 */
-  function viewAbstract(y) {
+  function viewAbstract(y, arg) {
     const any = filledTalks(y).length > 0;
+    const cur = dayIndex(y, arg);
     const days = y.days
       .map((d, di) => {
         const rows = d.schedule
@@ -670,14 +714,15 @@
           })
           .join('');
         return `
-          <div class="abs-day">
+          <div class="abs-day" data-daypanel="${di}"${dayHidden(y, di, cur)}>
             <div class="dayband"><div class="wrap"><h2>${esc(d.label)}<small>Chair - ${d.chairs && d.chairs.length ? esc(d.chairs.join(', ')) : '추후 공개'}</small></h2></div></div>
             <div class="wrap"><div class="acc">${rows}</div></div>
           </div>`;
       })
       .join('');
+    const toggle = any ? '<button class="text-btn" type="button" data-toggle-all>모두 펼치기</button>' : '';
     return `
-      ${any ? '<div class="wrap abs-tools"><button class="text-btn" type="button" data-toggle-all>모두 펼치기</button></div>' : '<div class="wrap abs-tools"></div>'}
+      ${dayBar(y, cur, toggle) || `<div class="wrap abs-tools">${toggle}</div>`}
       ${days}
       <div class="section tight"></div>`;
   }
@@ -805,16 +850,39 @@
   /* 화면별 동작 */
   function setupView(y, rk, arg) {
     // 초록: 모두 펼치기 / 접기
+    // 초록: 모두 펼치기 / 접기 — 지금 보이는 날짜만
     const toggleAll = document.querySelector('[data-toggle-all]');
+    const visItems = () => [...document.querySelectorAll('.acc-item')].filter((d) => !d.closest('[hidden]'));
+    const sync = () => {
+      const items = visItems();
+      if (toggleAll) toggleAll.textContent = items.length && items.every((d) => d.open) ? '모두 접기' : '모두 펼치기';
+    };
     if (toggleAll) {
-      const items = [...document.querySelectorAll('.acc-item')];
-      const sync = () => { toggleAll.textContent = items.every((d) => d.open) ? '모두 접기' : '모두 펼치기'; };
       toggleAll.addEventListener('click', () => {
+        const items = visItems();
         const open = !items.every((d) => d.open);
         items.forEach((d) => { d.open = open; });
         sync();
       });
-      items.forEach((d) => d.addEventListener('toggle', sync));
+      document.querySelectorAll('.acc-item').forEach((d) => d.addEventListener('toggle', sync));
+    }
+
+    // 날짜 탭 (초록 · 모바일 일정)
+    const tabs = [...document.querySelectorAll('.day-tabs [data-day]')];
+    if (tabs.length) {
+      const panels = [...document.querySelectorAll('[data-daypanel]')];
+      const anchor = document.querySelector('.day-anchor');
+      tabs.forEach((b) =>
+        b.addEventListener('click', () => {
+          const i = Number(b.dataset.day);
+          daySel[y.year] = i;
+          tabs.forEach((t) => t.setAttribute('aria-selected', String(t === b)));
+          panels.forEach((p) => { p.hidden = Number(p.dataset.daypanel) !== i; });
+          sync();
+          // 목록 중간까지 내려와 있었다면 새 날짜의 처음으로
+          if (anchor && anchor.getBoundingClientRect().top < 0) anchor.scrollIntoView({ block: 'start' });
+        })
+      );
     }
 
     // 홈: 기조 강연자 넘겨 보기
