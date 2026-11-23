@@ -230,7 +230,6 @@
     const y = latest;
     const p = phase(y);
     const label = p.key === 'done' ? 'Latest Event' : 'Upcoming Event';
-    const desc = (y.overview.find((r) => r.label === 'MCUS란?') || {}).value || '';
     const facts = [
       ['일시', y.dateLabel],
       ['장소', y.venueShort],
@@ -246,7 +245,6 @@
           ${wordmark(y.year, 'up-mark draw')}
           <h1 ${rise()}>${esc(y.titleKo)}</h1>
           <p class="en rise" style="--i:${i++}">${esc(y.titleEn)}</p>
-          ${desc ? `<p class="desc rise" style="--i:${i++}">${esc(desc)}</p>` : ''}
           <dl class="up-facts">${facts.map(([k, v]) => `<div ${rise()}><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
           <div class="up-actions rise" style="--i:${i++}">
             <a class="btn btn-royal" href="${y.year}.html">MCUS ${y.year} 페이지로 <span class="arrow">→</span></a>
@@ -269,6 +267,32 @@
       };
       requestAnimationFrame(tick); // 애니메이션이 돌지 않으면 원래 숫자가 그대로 남음
     }
+  }
+
+  // 소개 페이지 '역대 학술회' — 연도 데이터로 자동 구성
+  function renderHistory() {
+    const el = document.getElementById('history');
+    if (!el) return;
+    const asc = [...yearsDesc].reverse();
+    const cards = yearsDesc.map((yr) => {
+      const y = M.years[yr];
+      const p = phase(y);
+      const talks = filledTalks(y).length;
+      const lt = allLightning(y).length;
+      const stats = talks ? `강연 ${talks}편${lt ? ` · Lightning Talk ${lt}편` : ''}` : '프로그램 추후 공개';
+      const tag = p.key === 'done' ? '' : `<span class="pill live">${p.key === 'live' ? '진행 중' : '개최 예정'}</span>`;
+      return `<a class="hist-card reveal" href="${yr}.html">
+        <span class="h-ord">제${asc.indexOf(yr) + 1}회</span>${tag}
+        ${wordmark(yr, 'h-mark')}
+        <span class="h-date">${esc(y.dateLabel)}</span>
+        <span class="h-stats">${esc(stats)}</span>
+        <span class="h-go">페이지 보기 <span class="arrow">→</span></span>
+      </a>`;
+    }).join('');
+    el.innerHTML = `<div class="wrap">
+      <div class="sec-title reveal"><h2>역대 학술회</h2><span>Conferences</span></div>
+      <div class="hist-grid">${cards}</div>
+    </div>`;
   }
 
   /* ==========================================================
@@ -655,6 +679,7 @@
   if (body.dataset.page === 'home') {
     renderMainHeader();
     renderHome();
+    renderHistory();
   } else {
     renderYear(Number(body.dataset.year));
   }

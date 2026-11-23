@@ -7,7 +7,7 @@ Mathematics Conference for Undergraduate Students (MCUS) 통합 웹사이트입�
 
 | 파일 | 내용 |
 | --- | --- |
-| `index.html` | 소개 — MCUS의 의미, MCUS가 추구하는 바, MIMIC 소개 (상단에 가장 최근 학술회 바로가기 자동 표시) |
+| `index.html` | 소개 — 다가오는 학술회(자동), MCUS 소개 + 개요 표, 프로그램 구성, 역대 학술회(자동), MIMIC 소개 |
 | `2027.html` | MCUS 2027 (개최 예정) |
 | `2026.html` | MCUS 2026 |
 | `2025.html` | MCUS 2025 |
