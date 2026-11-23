@@ -31,6 +31,50 @@
     return { key: 'done', days: 0 };
   }
 
+  // 마감일(until)까지 남은 날 — 지났으면 -1 이하
+  function daysLeft(s) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return Math.round((parseDate(s) - today) / 86400000);
+  }
+  // '2026-11-29' → '11. 29. (일)'
+  const mdLabel = (s) => {
+    const d = parseDate(s);
+    return `${d.getMonth() + 1}. ${d.getDate()}. (${'일월화수목금토'[d.getDay()]})`;
+  };
+  const dLabel = (n) => (n === 0 ? 'D-DAY' : `D-${n}`);
+
+  // 마감 전인 신청 블록 중 홈에 알릴 것 (registration.blocks 의 notice)
+  const activeNotices = (y) =>
+    (y.registration.blocks || []).filter((b) => b.notice && b.until && daysLeft(b.until) >= 0);
+
+  // 홈 알림 띠 — base: 다른 페이지에서 연결할 때 앞에 붙일 주소 (예: '2027.html')
+  const noticeBar = (y, base = '') =>
+    activeNotices(y)
+      .map((b) => {
+        const n = daysLeft(b.until);
+        return `<a class="notice" href="${base}#registration${b.id ? `/${esc(b.id)}` : ''}">
+          <span class="n-tag">모집 중</span>
+          <b>${esc(b.notice)}</b>
+          <span class="n-due">${esc(mdLabel(b.until))}까지 · ${dLabel(n)}</span>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>`;
+      })
+      .join('');
+
+  // 제목·초록 속 수식 — 데이터에 \( … \) (문장 속) 또는 \[ … \] (별도 줄) 로 쓰면 KaTeX 로 렌더링
+  // (JS 문자열 안에서는 역슬래시를 두 번: '\\(L\\)-function at \\(s=1\\)')
+  function typeset(el) {
+    if (!window.renderMathInElement) return; // KaTeX 를 불러오지 못하면 원문 그대로
+    window.renderMathInElement(el, {
+      delimiters: [
+        { left: '\\[', right: '\\]', display: true },
+        { left: '\\(', right: '\\)', display: false },
+      ],
+      throwOnError: false,
+    });
+  }
+
   const ddayText = (p) => (p.key === 'upcoming' ? (p.days === 0 ? 'D-DAY' : `D-${p.days}`) : p.key === 'live' ? 'NOW' : '');
 
   const isFilled = (t) => Boolean(t.title || t.ko);
@@ -227,6 +271,7 @@
     el.innerHTML = network(11, false) + `
       <div class="wrap up-grid">
         <div>
+          ${activeNotices(y).length ? `<div class="notices rise" style="--i:${i++}">${noticeBar(y, `${y.year}.html`)}</div>` : ''}
           <span class="up-label rise" style="--i:${i++}">${label}</span>
           ${wordmark(y.year, 'up-mark draw')}
           <h1 ${rise()}>${esc(y.titleKo)}</h1>
@@ -318,6 +363,7 @@
 
       const head = rk === 'home' ? '' : `<header class="subhero"><div class="wrap"><p>${en}</p><h1>${label}</h1></div></header>`;
       app.innerHTML = head + views[rk](y);
+      typeset(app);
       startNet();
       setupView(y, rk, arg);
       setupReveal();
@@ -351,6 +397,7 @@
       <section class="yhero net-hero">
         ${network(y.year)}
         <div class="wrap">
+          ${activeNotices(y).length ? `<div class="notices">${noticeBar(y)}</div>` : ''}
           ${p.key !== 'done' ? `<span class="pill live">개최 예정 ${ddayText(p)}</span>` : ''}
           ${wordmark(y.year, 'yhero-mark draw')}
           <h1>${esc(y.titleKo)}</h1>
@@ -618,18 +665,35 @@
           ${btn}
         </div>
         <div class="reg-blocks">
-          ${reg.blocks
-            .map(
-              (b) => `
-            <div class="card reg-block reveal">
-              <h3>${esc(b.title)}</h3>
-              <dl>${b.rows.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${or(v, '추후 안내')}</dd></div>`).join('')}</dl>
-              ${b.note ? `<p class="note">${esc(b.note)}</p>` : ''}
-            </div>`
-            )
-            .join('')}
+          ${reg.blocks.map(regBlock).join('')}
         </div>
       </div></section>`;
+  }
+
+  // 신청 블록 하나. 설명(lead)이 있는 블록은 한 줄 전체를 차지하고, 마감일(until)이 있으면 모집 상태를 표시
+  function regBlock(b) {
+    const n = b.until ? daysLeft(b.until) : null;
+    const open = n == null || n >= 0;
+    const status = n == null ? '' : open ? `<span class="pill live">모집 중 ${dLabel(n)}</span>` : '<span class="pill muted">모집 마감</span>';
+    const dl = `<dl>${b.rows.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${or(v, '추후 안내').replace(/\n/g, '<br>')}</dd></div>`).join('')}</dl>`;
+    const note = b.note ? `<p class="note">${esc(b.note)}</p>` : '';
+    const action = b.action && open ? `<a class="btn btn-royal" href="${esc(b.action.href)}">${esc(b.action.label)} <span class="arrow">→</span></a>` : '';
+    if (!b.lead) {
+      return `
+            <div class="card reg-block reveal"${b.id ? ` id="${esc(b.id)}"` : ''}>
+              <h3>${esc(b.title)}${status}</h3>
+              ${dl}${note}${action ? `<div class="rb-action">${action}</div>` : ''}
+            </div>`;
+    }
+    return `
+            <div class="card reg-block wide reveal"${b.id ? ` id="${esc(b.id)}"` : ''}>
+              <div class="rb-text">
+                <h3>${esc(b.title)}${status}</h3>
+                ${b.lead.map((p) => `<p>${esc(p)}</p>`).join('')}
+                ${action ? `<div class="rb-action">${action}</div>` : ''}
+              </div>
+              <div>${dl}${note}</div>
+            </div>`;
   }
 
   /* 장소 안내 */

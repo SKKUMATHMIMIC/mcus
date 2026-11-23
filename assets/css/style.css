@@ -653,6 +653,33 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
 .reg-block dd { margin: 0; color: var(--ink-2); }
 .reg-block .note { margin-top: 12px; font-size: 13.5px; color: var(--ink-3); }
 .reg-block .note::before { content: '※ '; }
+.reg-block h3 { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.reg-block h3 .pill { font-size: 12.5px; padding: 3px 10px; }
+.reg-block .rb-action { margin-top: 18px; }
+/* 설명이 있는 신청 블록 (포스터 모집 등) — 한 줄 전체, 왼쪽 설명 · 오른쪽 요약 */
+.reg-block.wide { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 20px 40px; }
+.reg-block.wide .rb-text > p { font-size: 15.5px; color: var(--ink-2); line-height: 1.8; }
+.reg-block.wide .rb-text > p + p { margin-top: 10px; }
+.reg-block.wide h3 { margin-bottom: 12px; }
+
+/* 홈 알림 띠 (모집 중인 신청 안내) */
+.notices { display: grid; gap: 8px; justify-items: start; margin-bottom: 22px; }
+.yhero .notices { justify-items: center; }
+.notice {
+  display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 12px;
+  max-width: 100%; padding: 8px 16px 8px 8px;
+  border: 1px solid rgba(16, 42, 140, 0.22); border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85); color: var(--ink); text-decoration: none;
+  font-size: 15px; line-height: 1.4;
+  box-shadow: 0 6px 18px -12px rgba(12, 22, 85, 0.4);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.notice:hover { border-color: var(--royal); box-shadow: 0 8px 22px -12px rgba(12, 22, 85, 0.55); }
+.notice .n-tag { font-size: 12.5px; font-weight: 800; color: #fff; background: var(--royal); padding: 3px 10px; border-radius: 999px; }
+.notice b { font-weight: 800; letter-spacing: -0.01em; }
+.notice .n-due { font-size: 13.5px; font-weight: 600; color: var(--blue); }
+.notice .arrow { color: var(--royal); transition: transform 0.15s; }
+.notice:hover .arrow { transform: translateX(3px); }
 
 .venue { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 20px; }
 .venue .card { padding: 26px 28px; }
@@ -779,7 +806,8 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
   .about .statement br { display: none; }
   .kinds { grid-template-columns: 1fr; }
   .kinds .span3, .kinds .span2, .kinds .span2:last-child { grid-column: auto; }
-  .reg-blocks, .venue { grid-template-columns: 1fr; }
+  .reg-blocks, .venue, .reg-block.wide { grid-template-columns: 1fr; }
+  .notice { border-radius: 18px; }
   .gal-one { aspect-ratio: 4 / 3; }
   .up-grid { grid-template-columns: 1fr; }
   .up-dday { text-align: left; }
