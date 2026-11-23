@@ -576,6 +576,18 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
 .tt-empty { background: none; }
 .tt-gap { height: 8px; }
 .tt-gap .tt-time { padding: 0; }
+/* 시간 비례 칸 — 높이는 app.js 가 시간(분)으로 정함. 글자 줄 높이는 app.js 의 LH 값과 맞출 것 */
+.tt-c .tt-at { line-height: 1.4; }
+.tt-c .tt-name { line-height: 1.35; }
+.tt-c .tt-title { line-height: 1.5; }
+.tt-in { overflow: hidden; }
+.tt-in .tt-title { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: var(--lines, 99); overflow: hidden; }
+.tt-c.notitle .tt-title { display: none; }
+.tt-c.tight .tt-at { display: inline; margin: 0 8px 0 0; }
+.tt-c.tight .tt-name { display: inline; }
+/* 왼쪽 시각 표시는 행 높이에 영향을 주지 않도록 (짧은 구간도 비례 유지) */
+.tt-time { padding: 0 2px 0 0; }
+.tt-time b { position: relative; top: 11px; height: 0; line-height: 1.2; }
 .tt-note { margin-top: 14px; font-size: 13.5px; color: var(--ink-3); text-align: right; }
 
 /* 초록 목록에서 쓰는 연사 줄, 번호, 배지 */
@@ -824,7 +836,8 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
 
 @media (max-width: 520px) {
   .who .aff { flex-basis: 100%; padding-left: 0; border-left: 0; }
-  .tt-table { border-spacing: 4px; min-width: calc(56px + var(--days, 2) * 150px); }
+  .tt-c.tight .tt-at { display: none; } /* 좁은 칸엔 이름만 — 시작 시각은 왼쪽에 표시됨 */
+  .tt-table { border-spacing: 4px 6px; min-width: calc(56px + var(--days, 2) * 150px); }
   .tt-time { width: 48px; }
   .tt-table thead .tt-corner { width: 48px; }
   .tt-time b { font-size: 14px; }

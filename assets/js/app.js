@@ -509,6 +509,35 @@
     const bounds = [...new Set(all.flatMap((e) => [e.from, e.to]))].sort((p, q) => p - q);
     const rowOf = (m) => bounds.indexOf(m);
 
+    // 시간 비례 — 1분 = PPM px. 강연·포스터 등이 있는 구간은 길이에 비례하고,
+    // 휴식(점심·티타임·등록)만 있거나 아무 일정도 없는 구간은 작게 둠
+    const PPM = 3;
+    const GAP = 6; // 칸 사이 세로 간격 — CSS 의 .tt-table border-spacing 세로값과 같게
+    const isBreak = (e) => !e.s.talk && (e.s.kind || 'break') === 'break';
+    const fixed = bounds.slice(0, -1).map((b, r) => all.some((e) => !isBreak(e) && e.from <= b && e.to >= bounds[r + 1]));
+    // 행 높이에서 간격을 빼 두면, 여러 행에 걸친 칸도 (분 × PPM − GAP) 로 정확히 비례
+    const rowStyle = (r) => (fixed[r] ? ` style="height:${(bounds[r + 1] - bounds[r]) * PPM - GAP}px"` : '');
+
+    // 칸 높이에 맞춘 내용 배치 — 글자 높이(px)는 CSS 의 .tt-at / .tt-name / .tt-title 과 맞춤
+    const LH = { pad: 26, at: 20, name: 22, title: 19.5 };
+    function fit(e, r, span, hasTitle) {
+      for (let k = r; k < r + span; k++) if (!fixed[k]) return null; // 비례 구간이 아니면 내용대로
+      const avail = (e.to - e.from) * PPM - GAP - LH.pad;
+      // 시간을 이름 위 한 줄로 둘 자리가 없거나, 그러면 제목이 한 줄도 안 들어가면 → 시간을 이름 앞에 나란히
+      let tight = avail < LH.at + LH.name;
+      let lines = Math.floor((avail - (tight ? 0 : LH.at) - LH.name - 3) / LH.title);
+      if (hasTitle && lines < 1 && !tight) {
+        tight = true;
+        lines = Math.floor((avail - LH.name - 3) / LH.title);
+      }
+      return { avail: Math.floor(avail), tight, lines: Math.max(0, lines) };
+    }
+    const cellTitle = (e) => {
+      if (e.s.talk) { const t = e.d.talks[e.s.talk - 1] || {}; return t.title || ''; }
+      if (e.s.kind === 'lightning') return (e.d.lightning || []).map((l) => l.name).join(', ');
+      return e.s.note || '';
+    };
+
     const kindOf = (e) => (e.s.talk ? (e.d.talks[e.s.talk - 1] || {}).kind || 'talk' : e.s.kind || 'break');
     const timeText = (e) => `${fmt(e.from)}${e.open ? ' –' : e.soft ? ' –' : ` – ${fmt(e.to)}`}`;
 
@@ -540,7 +569,7 @@
       if (shared) {
         const span = rowOf(first.to) - r;
         days.forEach((_, di) => { for (let k = r; k < r + span; k++) covered[di].add(k); });
-        rows.push(`<tr>${th}<td class="tt-c sep band" colspan="${n}" rowspan="${span}"><span class="tt-name">${esc(first.s.label)}</span><span class="tt-at">${timeText(first)}</span></td></tr>`);
+        rows.push(`<tr${rowStyle(r)}>${th}<td class="tt-c sep band" colspan="${n}" rowspan="${span}"><span class="tt-name">${esc(first.s.label)}</span><span class="tt-at">${timeText(first)}</span></td></tr>`);
         continue;
       }
       const tds = days.map((evs, di) => {
@@ -551,7 +580,11 @@
           for (let k = r; k < r + span; k++) covered[di].add(k);
           const k = kindOf(e);
           const cls = e.s.talk ? k : k === 'break' ? 'sep' : `sep ${k}`;
-          return `<td class="tt-c ${esc(cls)}" rowspan="${span}">${cellBody(e)}</td>`;
+          const full = cellTitle(e);
+          const f = fit(e, r, span, Boolean(full));
+          if (!f) return `<td class="tt-c ${esc(cls)}" rowspan="${span}">${cellBody(e)}</td>`;
+          const more = `${f.tight ? ' tight' : ''}${f.lines ? '' : ' notitle'}`;
+          return `<td class="tt-c ${esc(cls)}${more}" rowspan="${span}" style="--lines:${f.lines}"${full ? ` title="${esc(full)}"` : ''}><div class="tt-in" style="max-height:${f.avail}px">${cellBody(e)}</div></td>`;
         }
         // 빈 시간: 다음 일정이 시작될 때까지 하나로 묶음
         let k = r;
@@ -560,7 +593,7 @@
         for (let q = r; q < r + span; q++) covered[di].add(q);
         return `<td class="tt-empty" rowspan="${span}"></td>`;
       });
-      rows.push(`<tr class="${anyStart ? '' : 'tt-gap'}">${th}${tds.join('')}</tr>`);
+      rows.push(`<tr class="${anyStart ? '' : 'tt-gap'}"${rowStyle(r)}>${th}${tds.join('')}</tr>`);
     }
 
     const head = y.days
