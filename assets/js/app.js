@@ -318,6 +318,7 @@
 
       const head = rk === 'home' ? '' : `<header class="subhero"><div class="wrap"><p>${en}</p><h1>${label}</h1></div></header>`;
       app.innerHTML = head + views[rk](y);
+      startNet();
       setupView(y, rk, arg);
       setupReveal();
     }
@@ -341,7 +342,7 @@
     const fee = ovRow(y, /참가비/);
     const facts = [
       ['일시', y.dateLabel.replace(/^\d{4}\. /, ''), `${y.days.length}일간`],
-      ['장소', placeHTML(y), esc(y.venue.campus), true],
+      ['장소', placeText(y), ''],
       ['참가 대상', target.value || '추후 안내', target.note || ''],
       ['참가비', fee.value || '추후 안내', fee.note || ''],
     ];
@@ -363,7 +364,7 @@
         </div>
       </section>
       <div class="wrap"><dl class="glance-bar reveal">
-        ${facts.map(([k, v, sub, html]) => `<div><dt>${k}</dt><dd><b>${html ? v : esc(v)}</b>${sub ? `<small>${html ? sub : esc(sub)}</small>` : ''}</dd></div>`).join('')}
+        ${facts.map(([k, v, sub]) => `<div><dt>${k}</dt><dd><b>${esc(v)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</dd></div>`).join('')}
       </dl></div>`;
 
     const speakers = `
@@ -408,8 +409,7 @@
       <div class="v-home reveal">
         <div class="v-card">
           <div>
-            <span class="v-campus">${esc(y.venue.campus)}</span>
-            <b class="v-place">${placeHTML(y)}</b>
+            <b class="v-place">${esc(placeText(y))}</b>
             ${sub ? `<p class="v-way">${icon.subway}${esc(sub.text.replace(' 하차 후', ','))}</p>` : ''}
           </div>
           <div class="v-links">${mapLinks(y)}</div>
@@ -466,19 +466,21 @@
     const kindOf = (e) => (e.s.talk ? (e.d.talks[e.s.talk - 1] || {}).kind || 'talk' : e.s.kind || 'break');
     const timeText = (e) => `${fmt(e.from)}${e.open ? ' –' : e.soft ? ' –' : ` – ${fmt(e.to)}`}`;
 
+    // 칸 내용: 윗줄(종류 표시 + 시간), 이름(크게), 제목/설명(작게)
     const cellBody = (e) => {
       const at = `<span class="tt-at">${timeText(e)}</span>`;
+      const top = (label) => `<span class="tt-top">${label || '<span></span>'}${at}</span>`;
       if (e.s.talk) {
         const t = e.d.talks[e.s.talk - 1] || {};
-        if (!isFilled(t)) return `${at}<span class="tt-name tbd">연사 추후 공개</span>`;
-        const tag = t.kind === 'plenary' ? `<span class="tt-tag">${KIND.plenary}</span>` : '';
-        return `${tag}${at}<span class="tt-name">${esc(t.ko)}</span>${t.title ? `<span class="tt-title">${esc(t.title)}</span>` : ''}`;
+        if (!isFilled(t)) return `${top('')}<span class="tt-name tbd">연사 추후 공개</span>`;
+        const pill = KIND[t.kind] ? `<span class="tt-pill">${KIND[t.kind]}</span>` : '';
+        return `${top(pill)}<span class="tt-name">${esc(t.ko)}</span>${t.title ? `<span class="tt-title">${esc(t.title)}</span>` : ''}`;
       }
       if (e.s.kind === 'lightning') {
         const lt = e.d.lightning || [];
-        return `<span class="tt-name">${esc(e.s.label)}</span>${at}${lt.length ? `<span class="tt-title">${lt.map((l) => esc(l.name)).join(', ')}</span>` : ''}`;
+        return `${top('')}<span class="tt-name">${esc(e.s.label)}</span>${lt.length ? `<span class="tt-title">${lt.map((l) => esc(l.name)).join(', ')}</span>` : ''}`;
       }
-      return `<span class="tt-name">${esc(e.s.label)}</span>${at}${e.s.note ? `<span class="tt-title">${esc(e.s.note)}</span>` : ''}`;
+      return `${top('')}<span class="tt-name">${esc(e.s.label)}</span>${e.s.note ? `<span class="tt-title">${esc(e.s.note)}</span>` : ''}`;
     };
 
     // 표 만들기: 각 칸은 rowspan 으로 시작~끝 시간만큼 이어짐
@@ -494,7 +496,7 @@
       if (shared) {
         const span = rowOf(first.to) - r;
         days.forEach((_, di) => { for (let k = r; k < r + span; k++) covered[di].add(k); });
-        rows.push(`<tr>${th}<td class="tt-c sep band" colspan="${n}" rowspan="${span}">${cellBody(first)}</td></tr>`);
+        rows.push(`<tr>${th}<td class="tt-c sep band" colspan="${n}" rowspan="${span}"><span class="tt-name">${esc(first.s.label)}</span><span class="tt-at">${timeText(first)}</span></td></tr>`);
         continue;
       }
       const tds = days.map((evs, di) => {
@@ -541,7 +543,7 @@
             <tbody>${rows.join('')}</tbody>
           </table>
         </div>
-        <p class="tt-note">※ 진행 상황에 따라 시간은 조금 조정될 수 있습니다.</p>
+        <p class="tt-note">※ 세부 일정은 행사 진행 상황에 따라 일부 변경될 수 있습니다.</p>
       </div></section>`;
   }
 
@@ -643,8 +645,7 @@
       <section class="section"><div class="wrap">
         <div class="venue">
         <div class="card reveal">
-          <span class="v-campus">${esc(v.campus)}</span>
-          <h3>${placeHTML(y)}</h3>
+          <h3>${esc(placeText(y))}</h3>
           <p class="addr">${esc(v.address.replace(/\s*성균관대학교 자연과학캠퍼스\s*$/, ''))}</p>
           ${others.length ? `<dl class="rooms">${others.map(([k, val]) => `<div><dt>${esc(k)}</dt><dd>${or(val, '추후 안내')}</dd></div>`).join('')}</dl>` : ''}
           <div class="map-links">${mapLinks(y)}</div>
@@ -660,12 +661,14 @@
       </div></section>`;
   }
 
-  // 장소 한 줄: 건물 + 강의실 번호(칩으로 강조). 건물이 정해지지 않았으면 안내 문구
-  function placeHTML(y) {
+  // 장소 한 줄: 캠퍼스 건물 강의실 (예: 성균관대학교 자연과학캠퍼스 (수원) 반도체관 1층 400126)
+  function placeText(y) {
     const v = y.venue;
     const room = (v.rooms || []).find((r) => r[1]);
-    if (!v.building) return '세부 장소 추후 안내';
-    return `${esc(v.building)}${room ? ` <span class="room">${esc(room[1])}</span>` : ''}`;
+    if (!v.building) return `${v.campus.replace(' (', '\u00a0(')} (세부 장소 추후 안내)`;
+    // 건물과 강의실은 줄바꿈 없이 한 덩어리로 (줄이 바뀌면 캠퍼스 이름 뒤에서)
+    const spot = [v.building, room && room[1]].filter(Boolean).join(' ').replace(/ /g, '\u00a0');
+    return `${v.campus.replace(' (', '\u00a0(')} ${spot}`;
   }
 
   // 지도 바로가기 — 건물이 정해졌으면 건물로, 아니면 캠퍼스로
@@ -764,6 +767,18 @@
     }
   }
 
+  /* ---------- 첫 화면 배경 시작 ---------- */
+
+  // 웹 글꼴이 로드되어 첫 화면 높이가 정해진 뒤에 배경을 그리기 시작 (최대 0.8초 대기)
+  function startNet() {
+    const heroes = document.querySelectorAll('.net-hero:not(.go)');
+    if (!heroes.length) return;
+    const ready = document.fonts && document.fonts.ready
+      ? Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 800))])
+      : Promise.resolve();
+    ready.then(() => requestAnimationFrame(() => heroes.forEach((h) => h.classList.add('go'))));
+  }
+
   /* ---------- reveal ---------- */
 
   function setupReveal() {
@@ -781,6 +796,7 @@
   if (body.dataset.page === 'home') {
     renderMainHeader();
     renderHome();
+    startNet();
     renderHistory();
   } else {
     renderYear(Number(body.dataset.year));

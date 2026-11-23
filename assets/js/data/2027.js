@@ -12,14 +12,14 @@ MCUS.addYear({
   start: '2027-01-14',
   end: '2027-01-16',
   dateLabel: '2027. 01. 14. (목) – 01. 16. (토)',
-  venueShort: '성균관대학교 자연과학캠퍼스 (세부 장소 추후 안내)',
+  venueShort: '성균관대학교 자연과학캠퍼스 반도체관 1층 400126',
   host: '성균관대학교 수학과 학술동아리 MIMIC',
   support: '성균관대학교 수학과', // 후원 (재정 지원: 팜플렛, 다과 등)
   kakao: '',
 
   overview: [
     { label: '개최 일자', value: '2027. 01. 14. (목) – 01. 16. (토)' },
-    { label: '개최 장소', value: '성균관대학교 자연과학캠퍼스 (수원)', note: '세부 장소 추후 안내' },
+    { label: '개최 장소', value: '성균관대학교 자연과학캠퍼스 (수원) 반도체관 1층 400126' },
     { label: '참가 대상', value: '수학에 관심이 있는 누구나' },
     { label: '참가비', value: '', note: '' },
     { label: '주최', value: '성균관대학교 수학과 학술동아리 MIMIC' },
@@ -93,8 +93,8 @@ MCUS.addYear({
         { time: '13:00 – 13:50', talk: 3 },
         { time: '14:00 – 14:40', talk: 4 },
         { time: '14:50 – 15:30', talk: 5 },
-        { time: '15:40 – 16:20', label: 'Poster Session', kind: 'poster' },
-        { time: '16:30 – 17:10', label: 'Poster Session', kind: 'poster' },
+        { time: '15:40 – 16:20', label: 'Poster Session', kind: 'poster', note: '반도체관, 화학관 사이 공터' },
+        { time: '16:30 – 17:10', label: 'Poster Session', kind: 'poster', note: '반도체관, 화학관 사이 공터' },
         { time: '17:20 – 18:00', talk: 6 },
         { time: '18:10 – 18:30', label: 'Lightning Talk', kind: 'lightning' },
         { time: '18:30 –', label: 'Banquet', kind: 'social', note: '종료 시간 미정' },
@@ -141,12 +141,12 @@ MCUS.addYear({
   venue: {
     campus: '성균관대학교 자연과학캠퍼스 (수원)',
     address: '(16419) 경기도 수원시 장안구 서부로 2066 성균관대학교 자연과학캠퍼스',
-    building: '',
-    mapQuery: '', // 장소가 정해지면 예: '성균관대학교 반도체관' (비우면 캠퍼스 전체)
-    buildNo: '', // 성균관대 캠퍼스 맵 건물 번호 (예: 반도체관 '240', 제1공학관 23동 '223')
+    building: '반도체관',
+    mapQuery: '성균관대학교 반도체관', // 지도 검색어 (구글 지도, 네이버 지도, 카카오맵)
+    buildNo: '240', // 성균관대 캠퍼스 맵 건물 번호 (반도체관)
     rooms: [
-      ['행사 진행 장소', ''],
-      ['휴게 공간', ''],
+      ['행사 진행 장소', '1층 400126'],
+      ['포스터 세션', '반도체관, 화학관 사이 공터'],
     ],
   },
 
