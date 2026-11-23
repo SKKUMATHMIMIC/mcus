@@ -12,7 +12,7 @@ Mathematics Conference for Undergraduate Students (MCUS) 통합 웹사이트입�
 | `2026.html` | MCUS 2026 |
 | `2025.html` | MCUS 2025 |
 
-연도 페이지 메뉴: **홈 · 일정 · 초록 · 참가 신청 · 장소 안내 · 갤러리**
+연도 페이지 메뉴: **홈, 일정, 초록, 참가 신청, 장소 안내, 갤러리** (참가 신청은 개최 전인 해에만, 갤러리는 사진이 있을 때만 표시)
 (한 파일 안에서 `2026.html#schedule`, `2026.html#abstract` 처럼 이동합니다.)
 
 - **홈** — 첫 화면 아래 개요 정보(일시 · 장소 · 대상 · 참가비, `overview` 와 `venue` 에서 자동), 학술회 소개(`site.js` 의 `about`), 기조 강연자(넘겨 보기), 장소 안내(요약), 갤러리, Organizers

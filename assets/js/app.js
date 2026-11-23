@@ -202,29 +202,8 @@
         </div>
         <div class="f-bottom">
           <span>© ${new Date().getFullYear()} MIMIC, Sungkyunkwan University</span>
-          <button class="theme-toggle" type="button" id="theme-toggle"></button>
         </div>
       </div>`;
-    setupTheme();
-  }
-
-  function setupTheme() {
-    const btn = document.getElementById('theme-toggle');
-    const order = ['auto', 'light', 'dark'];
-    const label = { auto: '테마: 자동', light: '테마: 라이트', dark: '테마: 다크' };
-    let mode = 'auto';
-    try { mode = localStorage.getItem('mcus-theme') || 'auto'; } catch (e) { /* storage unavailable */ }
-    const apply = () => {
-      if (mode === 'auto') document.documentElement.removeAttribute('data-theme');
-      else document.documentElement.setAttribute('data-theme', mode);
-      btn.textContent = label[mode];
-    };
-    apply();
-    btn.addEventListener('click', () => {
-      mode = order[(order.indexOf(mode) + 1) % order.length];
-      try { localStorage.setItem('mcus-theme', mode); } catch (e) { /* storage unavailable */ }
-      apply();
-    });
   }
 
   /* ---------- main page (index) ---------- */
@@ -239,7 +218,7 @@
     const facts = [
       ['일시', y.dateLabel],
       ['장소', y.venueShort],
-      ...y.overview.filter((r) => /대상/.test(r.label) && r.value).map((r) => [r.label.replace('주요 ', ''), r.value]),
+      ...y.overview.filter((r) => /대상/.test(r.label) && r.value).map((r) => [r.label, r.value]),
       ['주최', y.host],
       ...(y.support ? [['후원', y.support]] : []),
     ];
@@ -309,7 +288,8 @@
       ['home', '홈', 'Home'],
       ['schedule', '일정', 'Timetable'],
       ['abstract', '초록', 'Abstract'],
-      ['registration', '참가 신청', 'Registration'],
+      // 참가 신청은 아직 열리지 않았거나 진행 전인 해에만
+      ...(phase(y).key === 'done' ? [] : [['registration', '참가 신청', 'Registration']]),
       ['venue', '장소 안내', 'Venue'],
       ...(y.gallery && y.gallery.length ? [['gallery', '갤러리', 'Gallery']] : []),
     ];
@@ -362,7 +342,7 @@
     const facts = [
       ['일시', y.dateLabel.replace(/^\d{4}\. /, ''), `${y.days.length}일간`],
       ['장소', placeHTML(y), esc(y.venue.campus), true],
-      ['대상', target.value || '추후 안내', target.note || ''],
+      ['참가 대상', target.value || '추후 안내', target.note || ''],
       ['참가비', fee.value || '추후 안내', fee.note || ''],
     ];
 
@@ -401,7 +381,7 @@
                 <b>${esc(e.t.ko)}</b><span class="en">${esc(e.t.en)}</span>
                 ${e.t.affil ? `<span class="aff">${esc(e.t.affil)}</span>` : ''}
                 ${e.t.field ? `<p class="rf"><strong>Research field</strong>${esc(e.t.field)}</p>` : ''}
-                <p class="ptalk"><span class="when">${esc(e.d.label)} ${esc(e.time)}</span>${esc(e.t.title)}</p>
+                <p class="ptalk"><span class="when">${esc(e.d.label)} ${esc(e.time)}</span>${e.t.title ? esc(e.t.title) : '<em class="tba">강연 제목 추후 공개</em>'}</p>
               </div>
             </article>`
               )
@@ -426,13 +406,15 @@
     const venue = `
       <div class="sec-title row"><div><h2>장소 안내</h2><span>Venue</span></div><a class="more" href="#venue">자세히 보기 →</a></div>
       <div class="v-home reveal">
-        ${mapEmbed(y)}
         <div class="v-card">
-          <span class="v-campus">${esc(y.venue.campus)}</span>
-          <b class="v-place">${placeHTML(y)}</b>
-          ${sub ? `<p class="v-way">${icon.subway}${esc(sub.text.replace(' 하차 후', ','))}</p>` : ''}
+          <div>
+            <span class="v-campus">${esc(y.venue.campus)}</span>
+            <b class="v-place">${placeHTML(y)}</b>
+            ${sub ? `<p class="v-way">${icon.subway}${esc(sub.text.replace(' 하차 후', ','))}</p>` : ''}
+          </div>
           <div class="v-links">${mapLinks(y)}</div>
         </div>
+        ${mapEmbed(y)}
       </div>`;
 
     const gallery = y.gallery && y.gallery.length
@@ -458,54 +440,108 @@
       </div>`;
   }
 
-  /* 일정 — 시간표. 날짜를 나란히 놓고, 같은 시간대는 같은 줄에. 연사 이름과 주제만 */
+  /* 일정 — 시간표. 날짜를 나란히 놓고, 각 일정은 시작부터 끝 시간까지 세로로 이어짐 */
   function viewSchedule(y) {
-    const startOf = (t) => t.split('–')[0].trim();
     const toMin = (hm) => { const [h, m] = hm.split(':').map(Number); return h * 60 + (m || 0); };
-    const starts = [...new Set(y.days.flatMap((d) => d.schedule.map((s) => startOf(s.time))))].sort((a, b) => toMin(a) - toMin(b));
+    const fmt = (m) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
     const n = y.days.length;
 
-    const cell = (c, d, ref) => {
-      if (!c) return '<td class="tt-empty"></td>';
-      const at = c.time !== ref.time ? `<span class="tt-at">${esc(c.time)}</span>` : '';
-      if (c.talk) {
-        const t = d.talks[c.talk - 1] || {};
-        if (!isFilled(t)) return `<td class="tt-c tbd">${at}<span class="tt-name">연사 추후 공개</span></td>`;
-        // 색으로 구분하고, 글자 표시는 기조강연만
+    // 날짜별 일정: 시작, 끝(분). 끝이 없으면 같은 날 다음 일정 시작까지
+    const days = y.days.map((d) => {
+      const evs = d.schedule
+        .map((s) => {
+          const [a, b] = s.time.split('–').map((x) => (x || '').trim());
+          return { s, d, from: toMin(a), to: b ? toMin(b) : null };
+        })
+        .sort((p, q) => p.from - q.from);
+      evs.forEach((e, i) => { if (e.to == null && evs[i + 1]) { e.to = evs[i + 1].from; e.soft = true; } });
+      return evs;
+    });
+    const all = days.flat();
+    const tail = Math.max(...all.map((e) => e.to ?? e.from)) + 30; // 끝 시간 미정(만찬 등)인 마지막 칸
+    all.forEach((e) => { if (e.to == null) { e.to = tail; e.open = true; } });
+    const bounds = [...new Set(all.flatMap((e) => [e.from, e.to]))].sort((p, q) => p - q);
+    const rowOf = (m) => bounds.indexOf(m);
+
+    const kindOf = (e) => (e.s.talk ? (e.d.talks[e.s.talk - 1] || {}).kind || 'talk' : e.s.kind || 'break');
+    const timeText = (e) => `${fmt(e.from)}${e.open ? ' –' : e.soft ? ' –' : ` – ${fmt(e.to)}`}`;
+
+    const cellBody = (e) => {
+      const at = `<span class="tt-at">${timeText(e)}</span>`;
+      if (e.s.talk) {
+        const t = e.d.talks[e.s.talk - 1] || {};
+        if (!isFilled(t)) return `${at}<span class="tt-name tbd">연사 추후 공개</span>`;
         const tag = t.kind === 'plenary' ? `<span class="tt-tag">${KIND.plenary}</span>` : '';
-        return `<td class="tt-c ${esc(t.kind || '')}">${at}${tag}<span class="tt-name">${esc(t.ko)}</span>${t.title ? `<span class="tt-title">${esc(t.title)}</span>` : ''}</td>`;
+        return `${tag}${at}<span class="tt-name">${esc(t.ko)}</span>${t.title ? `<span class="tt-title">${esc(t.title)}</span>` : ''}`;
       }
-      if (c.kind === 'lightning') {
-        const lt = d.lightning || [];
-        return `<td class="tt-c lt">${at}<span class="tt-tag">Lightning Talk</span><span class="tt-title">${lt.length ? lt.map((l) => esc(l.name)).join(', ') : '연사 모집 예정'}</span></td>`;
+      if (e.s.kind === 'lightning') {
+        const lt = e.d.lightning || [];
+        return `<span class="tt-name">${esc(e.s.label)}</span>${at}${lt.length ? `<span class="tt-title">${lt.map((l) => esc(l.name)).join(', ')}</span>` : ''}`;
       }
-      return `<td class="tt-c sep ${esc(c.kind || '')}">${at}<span class="tt-name">${esc(c.label)}</span></td>`;
+      return `<span class="tt-name">${esc(e.s.label)}</span>${at}${e.s.note ? `<span class="tt-title">${esc(e.s.note)}</span>` : ''}`;
     };
 
-    const rows = starts.map((st) => {
-      const cells = y.days.map((d) => d.schedule.find((s) => startOf(s.time) === st) || null);
-      const ref = cells.find(Boolean);
-      const [from, to] = ref.time.split('–').map((x) => (x || '').trim());
-      const th = `<th class="tt-time" scope="row"><b>${esc(from)}</b>${to ? `<span>${esc(to)}</span>` : ''}</th>`;
-      // 모든 날짜에 같은 휴식이 있으면 한 줄로 합침
-      const shared = n > 1 && cells.every((c) => c && !c.talk && c.kind === 'break' && c.label === ref.label && c.time === ref.time);
-      if (shared) return `<tr class="tt-band">${th}<td colspan="${n}">${esc(ref.label)}</td></tr>`;
-      return `<tr>${th}${cells.map((c, di) => cell(c, y.days[di], ref)).join('')}</tr>`;
-    });
+    // 표 만들기: 각 칸은 rowspan 으로 시작~끝 시간만큼 이어짐
+    const covered = days.map(() => new Set());
+    const rows = [];
+    for (let r = 0; r < bounds.length - 1; r++) {
+      const starts = days.map((evs) => evs.find((e) => rowOf(e.from) === r) || null);
+      const anyStart = starts.some(Boolean);
+      const th = `<th class="tt-time" scope="row">${anyStart ? `<b>${fmt(bounds[r])}</b>` : ''}</th>`;
+      const first = starts.find(Boolean);
+      // 모든 날짜에 똑같은 휴식이 같은 시간에 있으면 한 칸으로 합침
+      const shared = n > 1 && starts.every((e) => e && !e.s.talk && e.s.kind === 'break' && e.s.label === first.s.label && e.from === first.from && e.to === first.to);
+      if (shared) {
+        const span = rowOf(first.to) - r;
+        days.forEach((_, di) => { for (let k = r; k < r + span; k++) covered[di].add(k); });
+        rows.push(`<tr>${th}<td class="tt-c sep band" colspan="${n}" rowspan="${span}">${cellBody(first)}</td></tr>`);
+        continue;
+      }
+      const tds = days.map((evs, di) => {
+        if (covered[di].has(r)) return '';
+        const e = starts[di];
+        if (e) {
+          const span = rowOf(e.to) - r;
+          for (let k = r; k < r + span; k++) covered[di].add(k);
+          const k = kindOf(e);
+          const cls = e.s.talk ? k : k === 'break' ? 'sep' : `sep ${k}`;
+          return `<td class="tt-c ${esc(cls)}" rowspan="${span}">${cellBody(e)}</td>`;
+        }
+        // 빈 시간: 다음 일정이 시작될 때까지 하나로 묶음
+        let k = r;
+        while (k < bounds.length - 1 && !covered[di].has(k) && !evs.some((x) => rowOf(x.from) === k && k !== r)) k++;
+        const span = Math.max(1, k - r);
+        for (let q = r; q < r + span; q++) covered[di].add(q);
+        return `<td class="tt-empty" rowspan="${span}"></td>`;
+      });
+      rows.push(`<tr class="${anyStart ? '' : 'tt-gap'}">${th}${tds.join('')}</tr>`);
+    }
 
     const head = y.days
       .map((d, di) => `<th scope="col"><span>DAY ${di + 1}</span><b>${esc(d.label)}</b>${d.chairs && d.chairs.length ? `<small>Chair: ${esc(d.chairs.join(', '))}</small>` : ''}</th>`)
       .join('');
 
+    // 범례: 이 해에 실제로 있는 종류만
+    const has = (fn) => all.some(fn);
+    const legend = [
+      has((e) => kindOf(e) === 'plenary') && ['plenary', '기조강연'],
+      has((e) => kindOf(e) === 'invited') && ['invited', '초청강연'],
+      has((e) => e.s.kind === 'poster') && ['poster', 'Poster Session'],
+      has((e) => e.s.kind === 'lightning') && ['lt', 'Lightning Talk'],
+      has((e) => e.s.kind === 'social') && ['social', '만찬'],
+      ['rest', '휴식'],
+    ].filter(Boolean);
+
     return `
       <section class="section tt"><div class="wrap">
-        <p class="tt-legend"><span class="sw plenary"></span>기조강연<span class="sw invited"></span>초청강연</p>
+        <p class="tt-legend">${legend.map(([c, l]) => `<span><i class="sw ${c}"></i>${l}</span>`).join('')}</p>
         <div class="tt-scroll reveal">
           <table class="tt-table" style="--days:${n}">
             <thead><tr><th class="tt-corner" aria-label="시간"></th>${head}</tr></thead>
             <tbody>${rows.join('')}</tbody>
           </table>
         </div>
+        <p class="tt-note">※ 진행 상황에 따라 시간은 조금 조정될 수 있습니다.</p>
       </div></section>`;
   }
 
@@ -600,15 +636,17 @@
   /* 장소 안내 */
   function viewVenue(y) {
     const v = y.venue;
+    // 제목에 이미 나오는 행사 진행 장소는 목록에서 빼고 나머지(휴게 공간 등)만
+    const main = (v.rooms || []).find((r) => r[1]);
+    const others = (v.rooms || []).filter((r) => (main ? r !== main : !/진행/.test(r[0])));
     return `
       <section class="section"><div class="wrap">
-        ${mapEmbed(y, 'wide reveal')}
         <div class="venue">
         <div class="card reveal">
           <span class="v-campus">${esc(v.campus)}</span>
           <h3>${placeHTML(y)}</h3>
-          <p class="addr">${esc(v.address)}</p>
-          <dl class="rooms">${v.rooms.map(([k, val]) => `<div><dt>${esc(k)}</dt><dd>${or(val, '추후 안내')}</dd></div>`).join('')}</dl>
+          <p class="addr">${esc(v.address.replace(/\s*성균관대학교 자연과학캠퍼스\s*$/, ''))}</p>
+          ${others.length ? `<dl class="rooms">${others.map(([k, val]) => `<div><dt>${esc(k)}</dt><dd>${or(val, '추후 안내')}</dd></div>`).join('')}</dl>` : ''}
           <div class="map-links">${mapLinks(y)}</div>
         </div>
         <div class="card reveal">
@@ -618,6 +656,7 @@
           </div>
         </div>
         </div>
+        ${mapEmbed(y, 'wide reveal')}
       </div></section>`;
   }
 
