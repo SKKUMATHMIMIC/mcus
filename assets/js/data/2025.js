@@ -53,12 +53,12 @@ MCUS.addYear({
       schedule: [
         { time: '10:00 – 10:40', talk: 1 },
         { time: '11:00 – 11:40', talk: 2 },
-        { time: '12:00 – 14:00', label: 'Lunch Break', kind: 'break' },
+        { time: '12:00 – 14:00', label: '점심 식사', kind: 'break' },
         { time: '14:00 – 14:40', talk: 3 },
         { time: '15:00 – 15:40', talk: 4 },
         { time: '16:00 – 16:40', talk: 5 },
-        { time: '17:00 – 18:00', label: 'Lightning Talk', kind: 'lightning' },
-        { time: '18:00 –', label: 'Banquet', kind: 'social' },
+        { time: '17:00 – 18:00', label: '라이트닝 토크', kind: 'lightning' },
+        { time: '18:00 –', label: '만찬', kind: 'social' },
       ],
       talks: [
         {
@@ -112,11 +112,11 @@ MCUS.addYear({
       schedule: [
         { time: '10:00 – 10:40', talk: 1 },
         { time: '11:00 – 11:40', talk: 2 },
-        { time: '12:00 – 14:00', label: 'Lunch Break', kind: 'break' },
+        { time: '12:00 – 14:00', label: '점심 식사', kind: 'break' },
         { time: '14:00 – 14:40', talk: 3 },
         { time: '15:00 – 15:40', talk: 4 },
         { time: '16:00 – 16:40', talk: 5 },
-        { time: '17:00 – 18:00', label: 'Lightning Talk', kind: 'lightning' },
+        { time: '17:00 – 18:00', label: '라이트닝 토크', kind: 'lightning' },
       ],
       talks: [
         {

@@ -525,8 +525,8 @@
     const legend = [
       has((e) => kindOf(e) === 'plenary') && ['plenary', '기조강연'],
       has((e) => kindOf(e) === 'invited') && ['invited', '초청강연'],
-      has((e) => e.s.kind === 'poster') && ['poster', 'Poster Session'],
-      has((e) => e.s.kind === 'lightning') && ['lt', 'Lightning Talk'],
+      has((e) => e.s.kind === 'poster') && ['poster', '포스터 세션'],
+      has((e) => e.s.kind === 'lightning') && ['lt', '라이트닝 토크'],
       has((e) => e.s.kind === 'social') && ['social', '만찬'],
       ['rest', '휴식'],
     ].filter(Boolean);
@@ -573,12 +573,12 @@
             }
             if (s.kind === 'lightning') {
               const lt = d.lightning || [];
-              if (!lt.length) return `<div class="acc-row tbd" id="d${di + 1}-lt"><span class="acc-time">${esc(s.time)}</span><span class="acc-head"><span class="no">Lightning Talk</span><b>연사 추후 공개</b></span><span></span></div>`;
+              if (!lt.length) return `<div class="acc-row tbd" id="d${di + 1}-lt"><span class="acc-time">${esc(s.time)}</span><span class="acc-head"><span class="no">라이트닝 토크</span><b>연사 추후 공개</b></span><span></span></div>`;
               return `
                 <details class="acc-item" id="d${di + 1}-lt">
                   <summary>
                     <span class="acc-time">${esc(s.time)}</span>
-                    <span class="acc-head"><span class="no">Lightning Talk</span><span class="t">${lt.map((l) => esc(l.name)).join(', ')}</span></span>
+                    <span class="acc-head"><span class="no">라이트닝 토크</span><span class="t">${lt.map((l) => esc(l.name)).join(', ')}</span></span>
                     <span class="acc-chev">${icon.down}</span>
                   </summary>
                   <div class="acc-body">

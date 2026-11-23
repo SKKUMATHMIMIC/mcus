@@ -53,15 +53,15 @@ MCUS.addYear({
       schedule: [
         { time: '10:00 – 10:30', talk: 1 },
         { time: '10:40 – 11:30', talk: 2 },
-        { time: '11:30 – 13:30', label: 'Lunch Break', kind: 'break' },
+        { time: '11:30 – 13:30', label: '점심 식사', kind: 'break' },
         { time: '13:30 – 14:00', talk: 3 },
         { time: '14:10 – 14:40', talk: 4 },
         { time: '14:50 – 15:20', talk: 5 },
-        { time: '15:20 – 16:00', label: 'Coffee Break', kind: 'break' },
+        { time: '15:20 – 16:00', label: '커피 브레이크', kind: 'break' },
         { time: '16:00 – 16:30', talk: 6 },
         { time: '16:40 – 17:20', talk: 7 },
-        { time: '17:20 – 18:00', label: 'Lightning Talk', kind: 'lightning' },
-        { time: '18:00 –', label: 'Banquet', kind: 'social' },
+        { time: '17:20 – 18:00', label: '라이트닝 토크', kind: 'lightning' },
+        { time: '18:00 –', label: '만찬', kind: 'social' },
       ],
       talks: [
         {
@@ -132,14 +132,14 @@ MCUS.addYear({
       schedule: [
         { time: '10:00 – 10:30', talk: 1 },
         { time: '10:40 – 11:30', talk: 2 },
-        { time: '11:30 – 13:30', label: 'Lunch Break', kind: 'break' },
+        { time: '11:30 – 13:30', label: '점심 식사', kind: 'break' },
         { time: '13:30 – 14:00', talk: 3 },
         { time: '14:10 – 14:40', talk: 4 },
         { time: '14:50 – 15:20', talk: 5 },
-        { time: '15:20 – 16:00', label: 'Coffee Break', kind: 'break' },
+        { time: '15:20 – 16:00', label: '커피 브레이크', kind: 'break' },
         { time: '16:00 – 16:30', talk: 6 },
         { time: '16:40 – 17:20', talk: 7 },
-        { time: '17:20 – 18:00', label: 'Lightning Talk', kind: 'lightning' },
+        { time: '17:20 – 18:00', label: '라이트닝 토크', kind: 'lightning' },
       ],
       talks: [
         {
