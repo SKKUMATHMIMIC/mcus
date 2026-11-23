@@ -13,7 +13,8 @@ MCUS.addYear({
   end: '2027-01-16',
   dateLabel: '2027. 01. 14. (목) – 01. 16. (토)',
   venueShort: '성균관대학교 자연과학캠퍼스 (세부 장소 추후 안내)',
-  host: '성균관대학교 수학과 학술동아리 MIMIC, 성균관대학교 수학과',
+  host: '성균관대학교 수학과 학술동아리 MIMIC',
+  support: '성균관대학교 수학과', // 후원
   kakao: '',
 
   overview: [
@@ -21,7 +22,8 @@ MCUS.addYear({
     { label: '개최 장소', value: '성균관대학교 자연과학캠퍼스 (수원)', note: '세부 장소 추후 안내' },
     { label: '주요 대상', value: '수학과 학부 3, 4학년' },
     { label: '참가비', value: '', note: '' },
-    { label: '주최', value: '성균관대학교 수학과 학술동아리 MIMIC, 성균관대학교 수학과' },
+    { label: '주최', value: '성균관대학교 수학과 학술동아리 MIMIC' },
+    { label: '후원', value: '성균관대학교 수학과' },
   ],
 
   registration: {

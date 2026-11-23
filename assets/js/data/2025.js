@@ -7,6 +7,7 @@ MCUS.addYear({
   dateLabel: '2025. 01. 17. (금) – 01. 18. (토)',
   venueShort: '성균관대학교 자연과학캠퍼스 제1공학관 23217, 23219',
   host: '성균관대학교 수학 학술동아리 MIMIC',
+  support: '성균관대학교 수학과', // 후원
   kakao: 'https://open.kakao.com/o/sXXiTWXg',
 
   overview: [
@@ -15,6 +16,7 @@ MCUS.addYear({
     { label: '대상', value: '수학에 관심이 있는 학부생 이상 누구나' },
     { label: '참가비', value: '무료', note: '중식 및 첫날 석식 제공' },
     { label: '주최', value: '성균관대학교 수학 학술동아리 MIMIC' },
+    { label: '후원', value: '성균관대학교 수학과' },
   ],
 
   registration: {

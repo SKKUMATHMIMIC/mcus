@@ -1,7 +1,7 @@
 # MCUS — 학부생을 위한 수학 학술회
 
 Mathematics Conference for Undergraduate Students (MCUS) 통합 웹사이트입니다.
-주최: 성균관대학교 수학과 학술동아리 MIMIC · 성균관대학교 수학과
+주최: 성균관대학교 수학과 학술동아리 MIMIC, 후원: 성균관대학교 수학과
 
 ## 페이지 구성
 
@@ -16,7 +16,7 @@ Mathematics Conference for Undergraduate Students (MCUS) 통합 웹사이트입�
 (한 파일 안에서 `2026.html#schedule`, `2026.html#abstract` 처럼 이동합니다.)
 
 - **홈** — 첫 화면 아래 개요 정보(일시 · 장소 · 대상 · 참가비, `overview` 와 `venue` 에서 자동), 학술회 소개(`site.js` 의 `about`), 기조 강연자(넘겨 보기), 장소 안내(요약), 갤러리, Organizers
-- **일정** — 날짜 탭 + 타임테이블. 강연마다 연사 · 소속 · 제목 · 분야와 기조강연/초청강연 표시. `2026.html#schedule/d2` 로 Day 2를 바로 열 수 있습니다.
+- **일정** — 날짜 탭 + 타임테이블. 강연마다 연사, 소속, 제목과 기조강연/초청강연 표시. `2026.html#schedule/d2` 로 Day 2를 바로 열 수 있습니다.
 - **초록** — 시간 순서대로 강연이 나열되고, 누르면 초록이 펼쳐집니다. '모두 펼치기' 지원.
   `2025.html#abstract/d1-t2` 처럼 링크하면 Day 1의 Talk 2가 펼쳐진 채로 열립니다.
 

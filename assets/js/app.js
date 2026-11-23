@@ -71,9 +71,8 @@
   function network(seed = 7, withLeft = true) {
     let r = seed;
     const rand = () => ((r = (r * 16807) % 2147483647) / 2147483647);
-    const W = 1600;
-    const H = 720;
-    const cluster = (ax, ay, n, reach, dirX, dirY) => {
+    // 모서리 한 곳에서 퍼져 나가는 점과 선 묶음 (S×S 크기의 SVG 하나)
+    const cluster = (cls, S, ax, ay, n, reach, dirX, dirY) => {
       const pts = Array.from({ length: n }, () => {
         const a = (Math.PI / 2) * rand();
         const d = reach * Math.sqrt(rand());
@@ -90,17 +89,18 @@
           .forEach(([j, dist]) => { if (dist < reach * 0.42) edges.add(i < j ? `${i}-${j}` : `${j}-${i}`); });
       });
       const delay = (t) => (0.2 + t * 1.6).toFixed(2);
+      // 선 길이를 직접 계산해 dasharray 로 사용 (pathLength 를 지원하지 않는 브라우저에서도 매끄럽게)
       const lines = [...edges].map((k) => {
         const [i, j] = k.split('-').map(Number);
-        const a = pts[i];
-        const b = pts[j];
-        const [p0, p1] = a.t <= b.t ? [a, b] : [b, a];
-        return `<line pathLength="1" x1="${p0.x.toFixed(1)}" y1="${p0.y.toFixed(1)}" x2="${p1.x.toFixed(1)}" y2="${p1.y.toFixed(1)}" style="--d:${delay(p0.t)}s"/>`;
+        const [p0, p1] = pts[i].t <= pts[j].t ? [pts[i], pts[j]] : [pts[j], pts[i]];
+        const len = Math.hypot(p1.x - p0.x, p1.y - p0.y).toFixed(1);
+        return `<line x1="${p0.x.toFixed(1)}" y1="${p0.y.toFixed(1)}" x2="${p1.x.toFixed(1)}" y2="${p1.y.toFixed(1)}" style="--l:${len};--d:${delay(p0.t)}s"/>`;
       });
-      const dots = pts.map((pt) => `<circle class="${pt.big ? 'big' : ''}" cx="${pt.x.toFixed(1)}" cy="${pt.y.toFixed(1)}" r="${pt.big ? 9 : (2 + rand() * 3).toFixed(1)}" style="--d:${(Number(delay(pt.t)) + 0.35).toFixed(2)}s"/>`);
-      return `<g>${lines.join('')}${dots.join('')}</g>`;
+      const dots = pts.map((pt) => `<circle class="${pt.big ? 'big' : ''}" cx="${pt.x.toFixed(1)}" cy="${pt.y.toFixed(1)}" r="${pt.big ? 9 : (2 + rand() * 3).toFixed(1)}" style="--d:${(Number(delay(pt.t)) + 0.45).toFixed(2)}s"/>`);
+      return `<svg class="net ${cls}" viewBox="0 0 ${S} ${S}" aria-hidden="true">${lines.join('')}${dots.join('')}</svg>`;
     };
-    return `<svg class="net" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${cluster(W + 20, -20, 30, 760, -1, 1)}${withLeft ? cluster(-20, H + 20, 18, 520, 1, -1) : ''}</svg>`;
+    // 크기는 화면 너비로만 정해져서, 글꼴이 늦게 로드돼 높이가 바뀌어도 그림이 움직이지 않음
+    return cluster('tr', 800, 820, -20, 30, 760, -1, 1) + (withLeft ? cluster('bl', 560, -20, 580, 18, 520, 1, -1) : '');
   }
 
   const svg = (d, w = 2) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
@@ -173,36 +173,38 @@
 
   function renderFooter() {
     const c = M.contact;
+    const ext = 'target="_blank" rel="noopener"';
     document.getElementById('site-footer').innerHTML = `
       <div class="wrap">
-        <div class="top">
-          <div class="brandline">
-            ${wordmark()}
-            <p>Mathematics Conference for Undergraduate Students<br>성균관대학교 수학과 학술동아리 MIMIC</p>
+        <div class="f-main">
+          <div class="f-brand">
+            <a class="f-mark" href="index.html" aria-label="MCUS 소개">${wordmark()}</a>
+            <p>학부생을 위한 수학 학술회<span>Mathematics Conference for Undergraduate Students</span></p>
+            <div class="f-orgs">
+              <a href="${esc(c.website)}" ${ext}><small>주최</small><img src="assets/img/mimic-logo-clear.png" alt="성균관대학교 수학과 학술동아리 MIMIC"></a>
+              ${latest.support ? `<div><small>후원</small><img src="assets/img/skku-math-logo-clear.png" alt="${esc(latest.support)}"></div>` : ''}
+            </div>
           </div>
-          <div>
-            <h4>Conferences</h4>
-            <ul>${yearsDesc.map((yr) => `<li><a href="${yr}.html">MCUS ${yr}</a></li>`).join('')}<li><a href="index.html">MCUS 소개</a></li></ul>
-          </div>
-          <div>
-            <h4>Contact</h4>
+          <nav class="f-col" aria-label="학술회">
+            <h4>학술회</h4>
             <ul>
-              <li><a href="mailto:${esc(c.email)}">E-mail : ${esc(c.email)}</a></li>
-              <li><a href="${esc(c.website)}" target="_blank" rel="noopener">MIMIC 홈페이지</a></li>
-              <li><a href="${esc(c.instagram)}" target="_blank" rel="noopener">Instagram ${esc(c.instagramHandle)}</a></li>
-              <li><a href="${esc(c.youtube)}" target="_blank" rel="noopener">YouTube</a></li>
+              <li><a href="index.html">MCUS 소개</a></li>
+              ${yearsDesc.map((yr) => `<li><a href="${yr}.html">MCUS ${yr}</a>${phase(M.years[yr]).key === 'done' ? '' : '<span class="f-tag">개최 예정</span>'}</li>`).join('')}
+            </ul>
+          </nav>
+          <div class="f-col">
+            <h4>문의</h4>
+            <ul>
+              <li><a href="mailto:${esc(c.email)}">${esc(c.email)}</a></li>
+              <li><a href="${esc(c.website)}" ${ext}>MIMIC 홈페이지 ↗</a></li>
+              <li><a href="${esc(c.instagram)}" ${ext}>Instagram ↗</a></li>
+              <li><a href="${esc(c.youtube)}" ${ext}>YouTube ↗</a></li>
             </ul>
           </div>
         </div>
-        <div class="bottom">
-          <div class="left">
-            <span>© ${new Date().getFullYear()} MIMIC, Sungkyunkwan University</span>
-            <button class="theme-toggle" type="button" id="theme-toggle"></button>
-          </div>
-          <div class="logos">
-            <img src="assets/img/mimic-logo.png" alt="MIMIC">
-            <img src="assets/img/skku-math-logo.png" alt="성균관대학교 수학과">
-          </div>
+        <div class="f-bottom">
+          <span>© ${new Date().getFullYear()} MIMIC, Sungkyunkwan University</span>
+          <button class="theme-toggle" type="button" id="theme-toggle"></button>
         </div>
       </div>`;
     setupTheme();
@@ -241,6 +243,7 @@
       ['장소', y.venueShort],
       ...y.overview.filter((r) => /대상/.test(r.label) && r.value).map((r) => [r.label.replace('주요 ', ''), r.value]),
       ['주최', y.host],
+      ...(y.support ? [['후원', y.support]] : []),
     ];
     let i = 0;
     const rise = () => `class="rise" style="--i:${i++}"`;
@@ -374,7 +377,7 @@
           ${wordmark(y.year, 'yhero-mark draw')}
           <h1>${esc(y.titleKo)}</h1>
           <p class="en">${esc(y.titleEn)}</p>
-          <p class="host-line">주최 <span class="sep">|</span> ${esc(y.host)}</p>
+          <p class="host-line"><span>주최 <span class="sep">|</span> ${esc(y.host)}</span>${y.support ? `<span>후원 <span class="sep">|</span> ${esc(y.support)}</span>` : ''}</p>
           <div class="yhero-actions">
             ${regOpen ? `<a class="btn btn-royal" href="${esc(reg.formUrl)}" target="_blank" rel="noopener">참가 신청하기 <span class="arrow">→</span></a>` : ''}
             <a class="btn ${regOpen ? 'btn-ghost' : 'btn-royal'}" href="#schedule">일정 보기</a>
@@ -453,7 +456,7 @@
   function organizersRow(y) {
     return `
       <div class="org-row">
-        <h2>Organizers<small>${esc(y.host)}</small></h2>
+        <h2>Organizers<small>주최 ${esc(y.host)}${y.support ? `<br>후원 ${esc(y.support)}` : ''}</small></h2>
         ${
           y.organizers.length
             ? `<ul>${y.organizers.map(([ko, en]) => `<li>${esc(ko)} <span>(${esc(en)})</span></li>`).join('')}</ul>`
@@ -462,7 +465,7 @@
       </div>`;
   }
 
-  /* 일정 — 날짜 탭 + 시간표. 각 강연에 연사 · 소속 · 분야 · 제목 · 강연 종류 */
+  /* 일정 — 날짜 탭 + 시간표. 각 강연에 연사, 소속, 제목, 강연 종류 */
   function viewSchedule(y) {
     const tabs = y.days.length > 1
       ? `<div class="tt-tabs" role="tablist">${y.days
@@ -480,14 +483,12 @@
               if (!isFilled(t)) {
                 return `<li class="tt-talk tbd"><div class="tt-cell">${time}<div class="tt-main"><span class="no">Talk ${s.talk}</span><p class="tba">연사 추후 공개</p></div></div></li>`;
               }
-              const f = fieldText(t);
               return `<li class="tt-talk${t.kind === 'plenary' ? ' is-plenary' : ''}"><a class="tt-cell" href="#abstract/d${di + 1}-t${s.talk}">
                 ${time}
                 <div class="tt-main">
                   <span class="no">Talk ${s.talk}${kindBadge(t)}</span>
                   ${whoLine(t)}
                   <span class="title">${or(t.title)}</span>
-                  ${f ? `<span class="field">${esc(f)}</span>` : ''}
                 </div>
                 <span class="chev">${icon.right}</span>
               </a></li>`;
