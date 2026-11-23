@@ -51,8 +51,6 @@
   // 강연 종류 배지 — 기조강연(채움) / 초청강연(테두리)
   const KIND = { plenary: '기조강연', invited: '초청강연' };
   const kindBadge = (t) => (KIND[t.kind] ? `<span class="badge ${t.kind}">${KIND[t.kind]}</span>` : '');
-  // 분야: field 가 있으면 그대로, 없으면 tags 를 분야 이름으로
-  const fieldText = (t) => t.field || (t.tags || []).map((k) => (M.fields || {})[k] || k).join(', ');
   // 연사 한 줄: 이름 (영문) · 소속
   const whoLine = (t) =>
     `<span class="who"><b>${esc(t.ko)}</b>${t.en ? ` <span class="en">${esc(t.en)}</span>` : ''}${t.affil ? `<span class="aff">${esc(t.affil)}</span>` : ''}</span>`;
@@ -361,10 +359,9 @@
 
     const target = ovRow(y, /대상/);
     const fee = ovRow(y, /참가비/);
-    const room = (y.venue.rooms || []).find((r) => r[1]);
     const facts = [
       ['일시', y.dateLabel.replace(/^\d{4}\. /, ''), `${y.days.length}일간`],
-      ['장소', y.venue.building || '세부 장소 추후 안내', [room && room[1], y.venue.campus.replace('성균관대학교 ', '성균관대 ').replace(' (수원)', '')].filter(Boolean).join(', ')],
+      ['장소', placeHTML(y), esc(y.venue.campus), true],
       ['대상', target.value || '추후 안내', target.note || ''],
       ['참가비', fee.value || '추후 안내', fee.note || ''],
     ];
@@ -386,7 +383,7 @@
         </div>
       </section>
       <div class="wrap"><dl class="glance-bar reveal">
-        ${facts.map(([k, v, sub]) => `<div><dt>${k}</dt><dd><b>${esc(v)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</dd></div>`).join('')}
+        ${facts.map(([k, v, sub, html]) => `<div><dt>${k}</dt><dd><b>${html ? v : esc(v)}</b>${sub ? `<small>${html ? sub : esc(sub)}</small>` : ''}</dd></div>`).join('')}
       </dl></div>`;
 
     const speakers = `
@@ -424,22 +421,18 @@
         </div>`
       : '';
 
-    // 장소 안내 (가볍게) — 자세한 내용은 #venue
-    const v = y.venue;
-    const q = encodeURIComponent('성균관대학교 자연과학캠퍼스');
+    // 장소 안내 (핵심만) — 자세한 내용은 #venue
     const sub = (M.directions || []).find((d) => d.kind === 'subway');
-    const mainRoom = (v.rooms || []).find((r) => r[1]);
     const venue = `
       <div class="sec-title row"><div><h2>장소 안내</h2><span>Venue</span></div><a class="more" href="#venue">자세히 보기 →</a></div>
-      <div class="v-lite reveal">
-        <div><span class="ico">${icon.pin}</span><span><small>장소</small><b>${v.building ? esc(v.building) : '세부 장소 추후 안내'}${mainRoom ? ` ${esc(mainRoom[1])}` : ''}</b><em>${esc(v.campus)}</em></span></div>
-        <div><span class="ico">${icon.building}</span><span><small>주소</small><b>${esc(v.address.replace(/^\(\d+\)\s*/, '').replace(' 성균관대학교 자연과학캠퍼스', ''))}</b><em>성균관대학교 자연과학캠퍼스</em></span></div>
-        ${sub ? `<div><span class="ico">${icon.subway}</span><span><small>오시는 길</small><b>${esc(sub.text.split(' 하차')[0])}</b><em>${esc(sub.text.replace(/^.*하차 후\s*/, ''))}</em></span></div>` : ''}
-      </div>
-      <div class="v-links">
-        <a class="chip" href="${esc(M.campusMap)}" target="_blank" rel="noopener">캠퍼스 맵 ↗</a>
-        <a class="chip" href="https://map.naver.com/p/search/${q}" target="_blank" rel="noopener">네이버 지도 ↗</a>
-        <a class="chip" href="https://map.kakao.com/?q=${q}" target="_blank" rel="noopener">카카오맵 ↗</a>
+      <div class="v-home reveal">
+        ${mapEmbed(y)}
+        <div class="v-card">
+          <span class="v-campus">${esc(y.venue.campus)}</span>
+          <b class="v-place">${placeHTML(y)}</b>
+          ${sub ? `<p class="v-way">${icon.subway}${esc(sub.text.replace(' 하차 후', ','))}</p>` : ''}
+          <div class="v-links">${mapLinks(y)}</div>
+        </div>
       </div>`;
 
     const gallery = y.gallery && y.gallery.length
@@ -465,57 +458,54 @@
       </div>`;
   }
 
-  /* 일정 — 날짜 탭 + 시간표. 각 강연에 연사, 소속, 제목, 강연 종류 */
+  /* 일정 — 시간표. 날짜를 나란히 놓고, 같은 시간대는 같은 줄에. 연사 이름과 주제만 */
   function viewSchedule(y) {
-    const tabs = y.days.length > 1
-      ? `<div class="tt-tabs" role="tablist">${y.days
-          .map((d, di) => `<button type="button" role="tab" data-day="${di + 1}" aria-selected="${di === 0}"><span>DAY ${di + 1}</span>${esc(d.label)}</button>`)
-          .join('')}</div>`
-      : '';
-    const panels = y.days
-      .map((d, di) => {
-        const rows = d.schedule
-          .map((s) => {
-            const [from, to] = s.time.split('–').map((x) => (x || '').trim());
-            const time = `<time>${esc(from)}${to ? `<span>– ${esc(to)}</span>` : ''}</time>`;
-            if (s.talk) {
-              const t = d.talks[s.talk - 1] || {};
-              if (!isFilled(t)) {
-                return `<li class="tt-talk tbd"><div class="tt-cell">${time}<div class="tt-main"><span class="no">Talk ${s.talk}</span><p class="tba">연사 추후 공개</p></div></div></li>`;
-              }
-              return `<li class="tt-talk${t.kind === 'plenary' ? ' is-plenary' : ''}"><a class="tt-cell" href="#abstract/d${di + 1}-t${s.talk}">
-                ${time}
-                <div class="tt-main">
-                  <span class="no">Talk ${s.talk}${kindBadge(t)}</span>
-                  ${whoLine(t)}
-                  <span class="title">${or(t.title)}</span>
-                </div>
-                <span class="chev">${icon.right}</span>
-              </a></li>`;
-            }
-            if (s.kind === 'lightning') {
-              const lt = d.lightning || [];
-              const body = lt.length
-                ? `<ul class="lt">${lt.map((l) => `<li><b>${esc(l.name)}</b><span>${esc(l.title)}</span></li>`).join('')}</ul>`
-                : '<p class="tba">연사 모집 예정</p>';
-              return `<li class="tt-talk lightning"><div class="tt-cell">${time}<div class="tt-main"><span class="no">Lightning Talk</span>${body}</div></div></li>`;
-            }
-            return `<li class="tt-sep ${s.kind || ''}">${time}<span>${esc(s.label)}</span></li>`;
-          })
-          .join('');
-        const chair = d.chairs && d.chairs.length ? esc(d.chairs.join(', ')) : '<em class="tba">추후 공개</em>';
-        return `
-          <div class="tt-panel" data-panel="${di + 1}"${di ? ' hidden' : ''}>
-            <div class="tt-head"><h2>DAY ${di + 1} <span>${esc(d.label)}</span></h2><p>Chair: ${chair}</p></div>
-            <ol class="tt-list">${rows}</ol>
-          </div>`;
-      })
+    const startOf = (t) => t.split('–')[0].trim();
+    const toMin = (hm) => { const [h, m] = hm.split(':').map(Number); return h * 60 + (m || 0); };
+    const starts = [...new Set(y.days.flatMap((d) => d.schedule.map((s) => startOf(s.time))))].sort((a, b) => toMin(a) - toMin(b));
+    const n = y.days.length;
+
+    const cell = (c, d, ref) => {
+      if (!c) return '<td class="tt-empty"></td>';
+      const at = c.time !== ref.time ? `<span class="tt-at">${esc(c.time)}</span>` : '';
+      if (c.talk) {
+        const t = d.talks[c.talk - 1] || {};
+        if (!isFilled(t)) return `<td class="tt-c tbd">${at}<span class="tt-name">연사 추후 공개</span></td>`;
+        // 색으로 구분하고, 글자 표시는 기조강연만
+        const tag = t.kind === 'plenary' ? `<span class="tt-tag">${KIND.plenary}</span>` : '';
+        return `<td class="tt-c ${esc(t.kind || '')}">${at}${tag}<span class="tt-name">${esc(t.ko)}</span>${t.title ? `<span class="tt-title">${esc(t.title)}</span>` : ''}</td>`;
+      }
+      if (c.kind === 'lightning') {
+        const lt = d.lightning || [];
+        return `<td class="tt-c lt">${at}<span class="tt-tag">Lightning Talk</span><span class="tt-title">${lt.length ? lt.map((l) => esc(l.name)).join(', ') : '연사 모집 예정'}</span></td>`;
+      }
+      return `<td class="tt-c sep ${esc(c.kind || '')}">${at}<span class="tt-name">${esc(c.label)}</span></td>`;
+    };
+
+    const rows = starts.map((st) => {
+      const cells = y.days.map((d) => d.schedule.find((s) => startOf(s.time) === st) || null);
+      const ref = cells.find(Boolean);
+      const [from, to] = ref.time.split('–').map((x) => (x || '').trim());
+      const th = `<th class="tt-time" scope="row"><b>${esc(from)}</b>${to ? `<span>${esc(to)}</span>` : ''}</th>`;
+      // 모든 날짜에 같은 휴식이 있으면 한 줄로 합침
+      const shared = n > 1 && cells.every((c) => c && !c.talk && c.kind === 'break' && c.label === ref.label && c.time === ref.time);
+      if (shared) return `<tr class="tt-band">${th}<td colspan="${n}">${esc(ref.label)}</td></tr>`;
+      return `<tr>${th}${cells.map((c, di) => cell(c, y.days[di], ref)).join('')}</tr>`;
+    });
+
+    const head = y.days
+      .map((d, di) => `<th scope="col"><span>DAY ${di + 1}</span><b>${esc(d.label)}</b>${d.chairs && d.chairs.length ? `<small>Chair: ${esc(d.chairs.join(', '))}</small>` : ''}</th>`)
       .join('');
+
     return `
       <section class="section tt"><div class="wrap">
-        <div class="tt-top">${tabs}<p class="tt-legend"><span class="badge plenary">기조강연</span><span class="badge invited">초청강연</span></p></div>
-        ${panels}
-        <p class="tt-hint">강연을 누르면 초록을 볼 수 있습니다.</p>
+        <p class="tt-legend"><span class="sw plenary"></span>기조강연<span class="sw invited"></span>초청강연</p>
+        <div class="tt-scroll reveal">
+          <table class="tt-table" style="--days:${n}">
+            <thead><tr><th class="tt-corner" aria-label="시간"></th>${head}</tr></thead>
+            <tbody>${rows.join('')}</tbody>
+          </table>
+        </div>
       </div></section>`;
   }
 
@@ -532,7 +522,6 @@
               if (!isFilled(t)) {
                 return `<div class="acc-row tbd" id="${id}"><span class="acc-time">${esc(s.time)}</span><span class="acc-head"><span class="no">Talk ${s.talk}</span><b>추후 공개</b></span><span></span></div>`;
               }
-              const f = fieldText(t);
               return `
                 <details class="acc-item" id="${id}">
                   <summary>
@@ -541,7 +530,6 @@
                       <span class="no">Talk ${s.talk}${kindBadge(t)}</span>
                       <span class="t">${or(t.title)}</span>
                       ${whoLine(t)}
-                      ${f ? `<span class="field">${esc(f)}</span>` : ''}
                     </span>
                     <span class="acc-chev">${icon.down}</span>
                   </summary>
@@ -612,18 +600,16 @@
   /* 장소 안내 */
   function viewVenue(y) {
     const v = y.venue;
-    const q = encodeURIComponent('성균관대학교 자연과학캠퍼스');
     return `
-      <section class="section"><div class="wrap venue">
+      <section class="section"><div class="wrap">
+        ${mapEmbed(y, 'wide reveal')}
+        <div class="venue">
         <div class="card reveal">
-          <h3>${esc(v.campus)}${v.building ? ` ${esc(v.building)}` : ''}</h3>
+          <span class="v-campus">${esc(v.campus)}</span>
+          <h3>${placeHTML(y)}</h3>
           <p class="addr">${esc(v.address)}</p>
           <dl class="rooms">${v.rooms.map(([k, val]) => `<div><dt>${esc(k)}</dt><dd>${or(val, '추후 안내')}</dd></div>`).join('')}</dl>
-          <div class="map-links">
-            <a class="chip" href="${esc(M.campusMap)}" target="_blank" rel="noopener">캠퍼스 맵 ↗</a>
-            <a class="chip" href="https://map.naver.com/p/search/${q}" target="_blank" rel="noopener">네이버 지도 ↗</a>
-            <a class="chip" href="https://map.kakao.com/?q=${q}" target="_blank" rel="noopener">카카오맵 ↗</a>
-          </div>
+          <div class="map-links">${mapLinks(y)}</div>
         </div>
         <div class="card reveal">
           <h3 style="margin-bottom:16px">찾아오시는 길</h3>
@@ -631,7 +617,32 @@
             ${M.directions.map((dd) => `<div><span class="ico">${icon[dd.kind] || icon.pin}</span><span><b>${esc(dd.label)}</b><p>${esc(dd.text).replace(/\n/g, '<br>')}</p></span></div>`).join('')}
           </div>
         </div>
+        </div>
       </div></section>`;
+  }
+
+  // 장소 한 줄: 건물 + 강의실 번호(칩으로 강조). 건물이 정해지지 않았으면 안내 문구
+  function placeHTML(y) {
+    const v = y.venue;
+    const room = (v.rooms || []).find((r) => r[1]);
+    if (!v.building) return '세부 장소 추후 안내';
+    return `${esc(v.building)}${room ? ` <span class="room">${esc(room[1])}</span>` : ''}`;
+  }
+
+  // 지도 바로가기 — 건물이 정해졌으면 건물로, 아니면 캠퍼스로
+  function mapLinks(y) {
+    const v = y.venue;
+    const q = encodeURIComponent(v.mapQuery || '성균관대학교 자연과학캠퍼스');
+    const campus = `${M.campusMap}${v.buildNo ? `&buildNo=${encodeURIComponent(v.buildNo)}` : ''}`;
+    const ext = 'target="_blank" rel="noopener"';
+    return `<a class="chip" href="${esc(campus)}" ${ext}>캠퍼스 맵 ↗</a><a class="chip" href="https://map.naver.com/p/search/${q}" ${ext}>네이버 지도 ↗</a><a class="chip" href="https://map.kakao.com/?q=${q}" ${ext}>카카오맵 ↗</a>`;
+  }
+
+  // 구글 지도 (API 키 없이 쓰는 embed). venue.mapQuery 가 없으면 캠퍼스 전체
+  function mapEmbed(y, cls = '') {
+    const q = y.venue.mapQuery || '성균관대학교 자연과학캠퍼스';
+    const zoom = y.venue.mapQuery ? 17 : 16;
+    return `<div class="map-embed ${cls}"><iframe src="https://www.google.com/maps?q=${encodeURIComponent(q)}&z=${zoom}&hl=ko&output=embed" title="${esc(q)} 지도" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>`;
   }
 
   /* 갤러리 */
@@ -658,21 +669,6 @@
         sync();
       });
       items.forEach((d) => d.addEventListener('toggle', sync));
-    }
-
-    // 일정: 날짜 탭 (#schedule/d2 로 바로 열기, 행사 중이면 오늘 날짜)
-    const tabs = [...document.querySelectorAll('.tt-tabs [data-day]')];
-    if (tabs.length) {
-      const show = (n, push) => {
-        tabs.forEach((b) => b.setAttribute('aria-selected', String(b.dataset.day === String(n))));
-        document.querySelectorAll('.tt-panel').forEach((pn) => { pn.hidden = pn.dataset.panel !== String(n); });
-        if (push) history.replaceState(null, '', `#schedule/d${n}`);
-      };
-      const todayIdx = y.days.findIndex((d) => parseDate(d.date).toDateString() === new Date().toDateString());
-      const m = /^d(\d+)$/.exec(arg || '');
-      show(m && Number(m[1]) <= tabs.length ? Number(m[1]) : todayIdx >= 0 ? todayIdx + 1 : 1);
-      tabs.forEach((b) => b.addEventListener('click', () => show(b.dataset.day, true)));
-      arg = null;
     }
 
     // 홈: 기조 강연자 넘겨 보기

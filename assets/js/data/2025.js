@@ -7,13 +7,13 @@ MCUS.addYear({
   dateLabel: '2025. 01. 17. (금) – 01. 18. (토)',
   venueShort: '성균관대학교 자연과학캠퍼스 제1공학관 23217, 23219',
   host: '성균관대학교 수학 학술동아리 MIMIC',
-  support: '성균관대학교 수학과', // 후원
+  support: '성균관대학교 수학과', // 후원 (재정 지원: 팜플렛, 다과 등)
   kakao: 'https://open.kakao.com/o/sXXiTWXg',
 
   overview: [
     { label: '개최 일자', value: '2025. 01. 17. (금) – 01. 18. (토)' },
     { label: '개최 장소', value: '성균관대학교 자연과학캠퍼스 (수원) 제1공학관 (23동) 23217, 23219' },
-    { label: '대상', value: '수학에 관심이 있는 학부생 이상 누구나' },
+    { label: '대상', value: '수학에 관심이 있는 누구나' },
     { label: '참가비', value: '무료', note: '중식 및 첫날 석식 제공' },
     { label: '주최', value: '성균관대학교 수학 학술동아리 MIMIC' },
     { label: '후원', value: '성균관대학교 수학과' },
@@ -27,7 +27,7 @@ MCUS.addYear({
       {
         title: '참가 신청 안내',
         rows: [
-          ['대상', '수학에 관심이 있는 학부생 이상 누구나'],
+          ['대상', '수학에 관심이 있는 누구나'],
           ['신청 방법', "'MCUS 2025 참가 신청서' 구글 폼 제출"],
           ['신청 기한', '2024. 12. 22. (일)'],
         ],
@@ -63,6 +63,7 @@ MCUS.addYear({
       talks: [
         {
           ko: '김시윤', en: 'Siyun Kim',
+          kind: 'invited',
           title: 'Derived Module of Hurewicz map and its application to knot theory',
           tags: ['topology', 'algebra'],
           abstract: 'In this talk, we take a look at a derived module of the Hurewicz map. Then we focus on how it can be applied to characterize boundary links.',
@@ -78,18 +79,21 @@ MCUS.addYear({
         },
         {
           ko: '정성균', en: 'Seongkyun Jung',
+          kind: 'invited',
           title: 'Continuous Nowhere differentiable Functions',
           tags: ['analysis', 'probability'],
           abstract: '해석개론 및 위상수학개론에서 잠깐 언급되는 것을 제외하고는 미분불가능 함수에 대한 논의는 학부 과정에서 거의 이루어지지 않는다. 이 발표에서는 최초의 미분불가능함수로 알려진 Weierstrass의 예시와 더불어 몇 가지 예시들을 구성하고 이러한 함수들이 가지는 성질들을 이야기한다. 구체적으로, 미분불가능함수들의 level set의 위상적 성질과 미분불가능 함수의 그래프의 dimension, 미분불가능함수를 생성하는 방식의 관점으로 Brownian motion을 이해하고자 한다. 마지막으로 Weierstrass의 예시를 확장하여 푸리에 급수로 정의된 미분불가능함수에 대한 Lacunary Fourier series의 결과들을 소개하고자 한다.',
         },
         {
           ko: '이승진', en: 'Seungjin Lee',
+          kind: 'invited',
           title: 'On the distortion of knots on embedded surfaces',
           tags: ['topology', 'geometry'],
           abstract: 'Our main result is a nontrivial lower bound for the distortion of some specific knots. In particular, we show that the distortion of the torus knot T(p,q) satisfies some results.',
         },
         {
           ko: '이재원', en: 'Jaewon Lee',
+          kind: 'invited',
           title: 'Introduction to knot concordance',
           tags: ['topology'],
           abstract: 'Knot concordance serves as one approach to tackling the smooth Poincaré conjecture in dimension 4. In this talk, we explore its connection and introduce a general notion called rational knot concordance as an initial step in this approach. Finally, we present several research progress on this topic.',
@@ -117,6 +121,7 @@ MCUS.addYear({
       talks: [
         {
           ko: '방세훈', en: 'Sehoon Bahng',
+          kind: 'invited',
           title: '정보를 일로 바꾸는 정보 엔진의 원리',
           tags: ['physics', 'probability'],
           abstract: '수학을 공부하면서 정보에 대한 여러분의 관점은 무엇인가요? 정보와 열역학의 관계는 1867년 물리학자 맥스웰의 사고 실험에서 제안되어 2000년대 확률 열역학으로 발전했습니다. 이번 발표에서 단순한 랜덤 워크 모델과 브라운 운동에 대해 소개하고, 정보를 일로 전환하는 장치인 정보 엔진의 원리를 살펴보겠습니다. 또한, 통계학과 정보 기하학의 논제를 물리적인 대상으로 옮겨 생각하는 대학원생의 고충을 함께 들어보는 시간을 가져보겠습니다.\n\nWhat perspective do you have on information while studying mathematics? The relationship between information and thermodynamics was proposed in 1867 by physicist Maxwell in his thought experiment and has evolved into stochastic thermodynamics in the 2000s. In this presentation, we will introduce simple random walk models and Brownian motion, and explore the principles of information engines, devices that convert information into work. Additionally, we will take some time to listen to the challenges faced by graduate students as they translate discussions of statistics and information geometry into physical contexts.',
@@ -132,18 +137,21 @@ MCUS.addYear({
         },
         {
           ko: '김지훈', en: 'Jihun Kim',
+          kind: 'invited',
           title: '확률적 생성모델을 이용한 Inverse problem 해결',
           tags: ['applied', 'probability'],
           abstract: 'Inverse problem이란 observation을 통해서 그것을 만들어낸 원인인 causal factor를 찾는 과정을 말한다. Inverse problem은 우리가 직접적으로 관측하지 못하는 변수를 추론하는 과정이기 때문에 수학적, 과학적으로 매우 중요하며 MRI, CT, X-RAY등 특히 의학분야에서도 굉장히 중요한 문제이다. 이러한 Inverse Problem을 생성형 모델, 특히 Score Based Model을 통해 해결하는 방법을 소개할 것이다.',
         },
         {
           ko: '허유민', en: 'Yumin Heo',
+          kind: 'invited',
           title: '딥러닝을 이용한 자연어처리 및 텍스트 생성 모델의 이해',
           tags: ['applied'],
           abstract: 'GPT, LLaMA 등 현재 많은 분야에서 이용되고 있는 LLM을 포함해, 딥러닝을 이용한 자연어처리 기술 전반에 대한 소개와 수학적 배경을 텍스트 생성 모델 중심으로 다룬다. LLM 등 현재 대부분의 SOTA 언어모델에서 이용되는 attention 기반 transformer 아키텍쳐를 소개하고, Variational AutoEncoder(VAE), diffusion 등 베이즈 정리와 변분추론 기반의 확률적 생성 모델을 텍스트 생성 분야에 적용하는 방법에 대해서도 다룬다.',
         },
         {
           ko: '정재민', en: 'Jaemin Jung',
+          kind: 'invited',
           title: 'Riemannian Geometry and Rauch Comparison theorem',
           tags: ['geometry'],
           abstract: '리만 기하학은 메트릭(metric)이 주어진 굽어진 공간에 대해 다루는 기하학입니다. 다양한 종류의 곡률(curvature)과 측지선(geodesic)을 다루게 되는데, 그에 관련한 많은 정리 중 특히 Rauch 비교 정리는 리만 기하학에서 곡률이 측지선의 거동에 미치는 영향을 연구하는 데에 중요한 도구입니다. 본 발표는 곡률의 정의와 그와 관련된 다양한 개념을 소개하고, Rauch 비교 정리를 중심으로 한 리만 기하의 주요 정리들을 다루며 그 따름 정리를 소개합니다.',
@@ -161,6 +169,8 @@ MCUS.addYear({
     campus: '성균관대학교 자연과학캠퍼스 (수원)',
     address: '(16419) 경기도 수원시 장안구 서부로 2066 성균관대학교 자연과학캠퍼스',
     building: '제1공학관 (23동)',
+    mapQuery: '성균관대학교 제1공학관', // 지도 검색어 (구글 지도, 네이버 지도, 카카오맵)
+    buildNo: '223', // 성균관대 캠퍼스 맵 건물 번호 (제1공학관 23동)
     rooms: [
       ['연사 진행 장소', '2F 23219'],
       ['휴게 장소', '2F Career Booth, 2F 23217'],
