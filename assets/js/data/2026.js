@@ -10,7 +10,6 @@ MCUS.addYear({
   kakao: 'https://open.kakao.com/o/sBKqgP0h',
 
   overview: [
-    { label: 'MCUS란?', value: '수학을 좋아하는 학부생들이 모여 세미나와 함께 학술 교류의 장을 즐길 수 있는 학회' },
     { label: '개최 일자', value: '2026. 01. 16. (금) – 01. 17. (토)' },
     { label: '개최 장소', value: '성균관대학교 자연과학캠퍼스 (수원) 반도체관 (40동) 400126' },
     { label: '대상', value: '수학에 관심이 있는 학부생 이상 누구나' },

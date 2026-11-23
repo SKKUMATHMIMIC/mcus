@@ -12,12 +12,12 @@ Mathematics Conference for Undergraduate Students (MCUS) 통합 웹사이트입�
 | `2026.html` | MCUS 2026 |
 | `2025.html` | MCUS 2025 |
 
-연도 페이지는 기존 MCUS 사이트와 같은 메뉴로 구성됩니다: **홈 · 개요 · 일정 · 초록 · 참가 신청 · 장소 안내 · 갤러리**
+연도 페이지 메뉴: **홈 · 일정 · 초록 · 참가 신청 · 장소 안내 · 갤러리**
 (한 파일 안에서 `2026.html#schedule`, `2026.html#abstract` 처럼 이동합니다.)
 
-- **홈** — 상단 제목, Quick Menus, 개요 카드 + 기조 강연자(넘겨 보기), Organizers
-- **일정** — 날짜별 타임테이블. 강연을 누르면 초록 페이지의 해당 강연이 펼쳐집니다.
-- **초록** — 시간 순서대로 강연이 나열되고, 누르면 연사 소개와 초록이 펼쳐집니다. '모두 펼치기' 지원.
+- **홈** — 첫 화면 아래 개요 정보(일시 · 장소 · 대상 · 참가비, `overview` 와 `venue` 에서 자동), 학술회 소개(`site.js` 의 `about`), 기조 강연자(넘겨 보기), 갤러리, Organizers
+- **일정** — 날짜 탭 + 타임테이블. 강연마다 연사 · 소속 · 제목 · 분야와 기조강연/초청강연 표시. `2026.html#schedule/d2` 로 Day 2를 바로 열 수 있습니다.
+- **초록** — 시간 순서대로 강연이 나열되고, 누르면 초록이 펼쳐집니다. '모두 펼치기' 지원.
   `2025.html#abstract/d1-t2` 처럼 링크하면 Day 1의 Talk 2가 펼쳐진 채로 열립니다.
 
 ## 내용 수정하기
@@ -26,14 +26,14 @@ Mathematics Conference for Undergraduate Students (MCUS) 통합 웹사이트입�
 
 ```
 assets/js/data/
-├── site.js    # 공통: 연락처, 오시는 길, 분야 태그 이름
+├── site.js    # 공통: 연락처, 오시는 길, 분야 태그 이름, 연도 홈의 학술회 소개 문구(about)
 ├── 2025.js
 ├── 2026.js
 └── 2027.js    # 2026과 같은 구조의 초안 — 빈 값('')은 '추후 공개'로 표시
 ```
 
 - **연사 추가**: `days[].talks[]` 의 `ko`(한글 이름), `en`(영문 이름), `title`, `abstract`, `tags` 를 채웁니다.
-  선택 항목: `affil`(소속), `kind`(`'plenary'` 기조강연 / `'invited'` 초청강연), `field`(연구 분야), `photo`(사진 경로, `assets/img/speakers/`)
+  선택 항목: `affil`(소속), `kind`(`'plenary'` 기조강연 / `'invited'` 초청강연), `field`(분야 — 없으면 `tags` 로 표시), `photo`(사진 경로, `assets/img/speakers/`, 기조강연자만 사용)
   초록 문단을 나누려면 `\n\n` 을 넣으세요.
 - **분야 태그**: `tags: ['topology', 'combinatorics']` 처럼 `site.js` 의 `fields` 키를 사용합니다.
 - **일정표**: `schedule` 의 `{ time, talk: n }` 은 같은 날 `talks` 의 n번째 강연을 가리킵니다.
@@ -53,7 +53,7 @@ assets/js/data/
 
 ## 디자인
 
-- 색 · 구성: 기존 MCUS 사이트(2025·2026)의 상단 배경, Quick Menus 띠, 개요(하늘색) · 기조 강연자(살구색) 카드를 그대로 이어받음 (`assets/css/style.css` 맨 위 `:root` 변수)
+- 색: 기존 MCUS 사이트(2025·2026)의 남색 · 하늘색 · 살구색(기조 강연자 카드)을 이어받음 (`assets/css/style.css` 맨 위 `:root` 변수)
 - 글꼴: Pretendard — MIMIC 동아리 사이트(skkumathmimic.github.io)와 동일
 - 연사의 `kind: 'plenary'` 는 홈의 '기조 강연자'에 사진(`photo`) · 소속 · 연구 분야(`field`)와 함께 표시됩니다.
 
