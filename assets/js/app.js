@@ -341,8 +341,8 @@
     const target = ovRow(y, /대상/);
     const fee = ovRow(y, /참가비/);
     const facts = [
-      ['일시', y.dateLabel.replace(/^\d{4}\. /, ''), `${y.days.length}일간`],
-      ['장소', placeText(y), ''],
+      ['일시', y.dateLabel.replace(/^\d{4}\. /, ''), ''],
+      ['장소', '', '', placeLines(y)],
       ['참가 대상', target.value || '추후 안내', target.note || ''],
       ['참가비', fee.value || '추후 안내', fee.note || ''],
     ];
@@ -364,7 +364,7 @@
         </div>
       </section>
       <div class="wrap"><dl class="glance-bar reveal">
-        ${facts.map(([k, v, sub]) => `<div><dt>${k}</dt><dd><b>${esc(v)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</dd></div>`).join('')}
+        ${facts.map(([k, v, sub, html]) => `<div><dt>${k}</dt><dd>${html || `<b>${esc(v)}</b>`}${sub ? `<small>${esc(sub)}</small>` : ''}</dd></div>`).join('')}
       </dl></div>`;
 
     const speakers = `
@@ -414,13 +414,12 @@
           </div>
           <div class="v-links">${mapLinks(y)}</div>
         </div>
-        ${mapEmbed(y)}
       </div>`;
 
     const gallery = y.gallery && y.gallery.length
       ? `
       <div class="sec-title row"><div><h2>갤러리</h2><span>Gallery</span></div><a class="more" href="#gallery">전체 보기 →</a></div>
-      <div class="gal-strip">${y.gallery.slice(0, 3).map((g) => `<a class="reveal" href="#gallery"><img src="${esc(g.src)}" alt="${esc(g.alt)}" loading="lazy"></a>`).join('')}</div>`
+      <a class="gal-one reveal" href="#gallery"><img src="${esc(y.gallery[0].src)}" alt="${esc(y.gallery[0].alt)}" loading="lazy"></a>`
       : '';
 
     const blocks = [intro, speakers, venue, gallery].filter(Boolean);
@@ -466,21 +465,19 @@
     const kindOf = (e) => (e.s.talk ? (e.d.talks[e.s.talk - 1] || {}).kind || 'talk' : e.s.kind || 'break');
     const timeText = (e) => `${fmt(e.from)}${e.open ? ' –' : e.soft ? ' –' : ` – ${fmt(e.to)}`}`;
 
-    // 칸 내용: 윗줄(종류 표시 + 시간), 이름(크게), 제목/설명(작게)
+    // 칸 내용: 시간(작게), 이름(크게), 제목/설명(작게). 강연 종류는 칸 색으로 구분
     const cellBody = (e) => {
       const at = `<span class="tt-at">${timeText(e)}</span>`;
-      const top = (label) => `<span class="tt-top">${label || '<span></span>'}${at}</span>`;
       if (e.s.talk) {
         const t = e.d.talks[e.s.talk - 1] || {};
-        if (!isFilled(t)) return `${top('')}<span class="tt-name tbd">연사 추후 공개</span>`;
-        const pill = KIND[t.kind] ? `<span class="tt-pill">${KIND[t.kind]}</span>` : '';
-        return `${top(pill)}<span class="tt-name">${esc(t.ko)}</span>${t.title ? `<span class="tt-title">${esc(t.title)}</span>` : ''}`;
+        if (!isFilled(t)) return `${at}<span class="tt-name tbd">연사 추후 공개</span>`;
+        return `${at}<span class="tt-name">${esc(t.ko)}</span>${t.title ? `<span class="tt-title">${esc(t.title)}</span>` : ''}`;
       }
       if (e.s.kind === 'lightning') {
         const lt = e.d.lightning || [];
-        return `${top('')}<span class="tt-name">${esc(e.s.label)}</span>${lt.length ? `<span class="tt-title">${lt.map((l) => esc(l.name)).join(', ')}</span>` : ''}`;
+        return `${at}<span class="tt-name">${esc(e.s.label)}</span>${lt.length ? `<span class="tt-title">${lt.map((l) => esc(l.name)).join(', ')}</span>` : ''}`;
       }
-      return `${top('')}<span class="tt-name">${esc(e.s.label)}</span>${e.s.note ? `<span class="tt-title">${esc(e.s.note)}</span>` : ''}`;
+      return `${at}<span class="tt-name">${esc(e.s.label)}</span>${e.s.note ? `<span class="tt-title">${esc(e.s.note)}</span>` : ''}`;
     };
 
     // 표 만들기: 각 칸은 rowspan 으로 시작~끝 시간만큼 이어짐
@@ -669,6 +666,14 @@
     // 건물과 강의실은 줄바꿈 없이 한 덩어리로 (줄이 바뀌면 캠퍼스 이름 뒤에서)
     const spot = [v.building, room && room[1]].filter(Boolean).join(' ').replace(/ /g, '\u00a0');
     return `${v.campus.replace(' (', '\u00a0(')} ${spot}`;
+  }
+
+  // 첫 화면 정보 막대용 장소: 캠퍼스(조금 작게) / 건물과 강의실 — 각각 한 줄
+  function placeLines(y) {
+    const v = y.venue;
+    const room = (v.rooms || []).find((r) => r[1]);
+    const spot = v.building ? [v.building, room && room[1]].filter(Boolean).join(' ') : '세부 장소 추후 안내';
+    return `<b class="g-place"><span class="g-campus">${esc(v.campus)}</span><span class="g-spot">${esc(spot)}</span></b>`;
   }
 
   // 지도 바로가기 — 건물이 정해졌으면 건물로, 아니면 캠퍼스로
