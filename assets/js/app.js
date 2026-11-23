@@ -52,7 +52,7 @@
   const KIND = { plenary: '기조강연', invited: '초청강연' };
   const kindBadge = (t) => (KIND[t.kind] ? `<span class="badge ${t.kind}">${KIND[t.kind]}</span>` : '');
   // 분야: field 가 있으면 그대로, 없으면 tags 를 분야 이름으로
-  const fieldText = (t) => t.field || (t.tags || []).map((k) => (M.fields || {})[k] || k).join(' · ');
+  const fieldText = (t) => t.field || (t.tags || []).map((k) => (M.fields || {})[k] || k).join(', ');
   // 연사 한 줄: 이름 (영문) · 소속
   const whoLine = (t) =>
     `<span class="who"><b>${esc(t.ko)}</b>${t.en ? ` <span class="en">${esc(t.en)}</span>` : ''}${t.affil ? `<span class="aff">${esc(t.affil)}</span>` : ''}</span>`;
@@ -111,6 +111,7 @@
     down: svg('<path d="M6 9l6 6 6-6"/>', 2.2),
     right: svg('<path d="M9 6l6 6-6 6"/>', 2.2),
     left: svg('<path d="M15 6l-6 6 6 6"/>', 2.2),
+    building: svg('<path d="M4 21V6l8-3 8 3v15M4 21h16M9 21v-5h6v5M8 9h.01M12 9h.01M16 9h.01M8 12.5h.01M12 12.5h.01M16 12.5h.01"/>'),
   };
 
   /* ---------- header & footer ---------- */
@@ -282,7 +283,7 @@
     const cards = yearsDesc.map((yr) => {
       const y = M.years[yr];
       const p = phase(y);
-      const stats = y.venue.building ? `${y.venue.building} · 자연과학캠퍼스` : '성균관대학교 자연과학캠퍼스';
+      const stats = y.venue.building ? `자연과학캠퍼스 ${y.venue.building}` : '성균관대학교 자연과학캠퍼스';
       const tag = p.key === 'done' ? '' : `<span class="pill live">${p.key === 'live' ? '진행 중' : '개최 예정'}</span>`;
       return `<a class="hist-card reveal" href="${yr}.html">
         <span class="h-ord">제${asc.indexOf(yr) + 1}회</span>${tag}
@@ -347,7 +348,7 @@
   // 개요 표(overview)에서 항목 찾기 — label 에 해당 단어가 들어간 행
   const ovRow = (y, re) => (y.overview || []).find((r) => re.test(r.label)) || {};
 
-  /* 홈 — 첫 화면(개요 정보 포함) · 학술회 소개 · 기조 강연자 · 갤러리 · Organizers */
+  /* 홈 — 첫 화면(개요 정보 포함), 학술회 소개, 기조 강연자, 장소 안내, 갤러리, Organizers */
   function viewHome(y) {
     const p = phase(y);
     const entries = talkEntries(y).filter((e) => isFilled(e.t));
@@ -359,8 +360,8 @@
     const fee = ovRow(y, /참가비/);
     const room = (y.venue.rooms || []).find((r) => r[1]);
     const facts = [
-      ['일시', y.dateLabel.replace(/^\d{4}\. /, ''), `${y.year}년 · ${y.days.length}일간`],
-      ['장소', y.venue.building || '세부 장소 추후 안내', [room && room[1], y.venue.campus.replace('성균관대학교 ', '성균관대 ').replace(' (수원)', '')].filter(Boolean).join(' · ')],
+      ['일시', y.dateLabel.replace(/^\d{4}\. /, ''), `${y.days.length}일간`],
+      ['장소', y.venue.building || '세부 장소 추후 안내', [room && room[1], y.venue.campus.replace('성균관대학교 ', '성균관대 ').replace(' (수원)', '')].filter(Boolean).join(', ')],
       ['대상', target.value || '추후 안내', target.note || ''],
       ['참가비', fee.value || '추후 안내', fee.note || ''],
     ];
@@ -369,7 +370,7 @@
       <section class="yhero net-hero">
         ${network(y.year)}
         <div class="wrap">
-          ${p.key !== 'done' ? `<span class="pill live">개최 예정 · ${ddayText(p)}</span>` : ''}
+          ${p.key !== 'done' ? `<span class="pill live">개최 예정 ${ddayText(p)}</span>` : ''}
           ${wordmark(y.year, 'yhero-mark draw')}
           <h1>${esc(y.titleKo)}</h1>
           <p class="en">${esc(y.titleEn)}</p>
@@ -400,7 +401,7 @@
                 <b>${esc(e.t.ko)}</b><span class="en">${esc(e.t.en)}</span>
                 ${e.t.affil ? `<span class="aff">${esc(e.t.affil)}</span>` : ''}
                 ${e.t.field ? `<p class="rf"><strong>Research field</strong>${esc(e.t.field)}</p>` : ''}
-                <p class="ptalk"><span class="when">${esc(e.d.label)} · ${esc(e.time)}</span>${esc(e.t.title)}</p>
+                <p class="ptalk"><span class="when">${esc(e.d.label)} ${esc(e.time)}</span>${esc(e.t.title)}</p>
               </div>
             </article>`
               )
@@ -420,13 +421,31 @@
         </div>`
       : '';
 
+    // 장소 안내 (가볍게) — 자세한 내용은 #venue
+    const v = y.venue;
+    const q = encodeURIComponent('성균관대학교 자연과학캠퍼스');
+    const sub = (M.directions || []).find((d) => d.kind === 'subway');
+    const mainRoom = (v.rooms || []).find((r) => r[1]);
+    const venue = `
+      <div class="sec-title row"><div><h2>장소 안내</h2><span>Venue</span></div><a class="more" href="#venue">자세히 보기 →</a></div>
+      <div class="v-lite reveal">
+        <div><span class="ico">${icon.pin}</span><span><small>장소</small><b>${v.building ? esc(v.building) : '세부 장소 추후 안내'}${mainRoom ? ` ${esc(mainRoom[1])}` : ''}</b><em>${esc(v.campus)}</em></span></div>
+        <div><span class="ico">${icon.building}</span><span><small>주소</small><b>${esc(v.address.replace(/^\(\d+\)\s*/, '').replace(' 성균관대학교 자연과학캠퍼스', ''))}</b><em>성균관대학교 자연과학캠퍼스</em></span></div>
+        ${sub ? `<div><span class="ico">${icon.subway}</span><span><small>오시는 길</small><b>${esc(sub.text.split(' 하차')[0])}</b><em>${esc(sub.text.replace(/^.*하차 후\s*/, ''))}</em></span></div>` : ''}
+      </div>
+      <div class="v-links">
+        <a class="chip" href="${esc(M.campusMap)}" target="_blank" rel="noopener">캠퍼스 맵 ↗</a>
+        <a class="chip" href="https://map.naver.com/p/search/${q}" target="_blank" rel="noopener">네이버 지도 ↗</a>
+        <a class="chip" href="https://map.kakao.com/?q=${q}" target="_blank" rel="noopener">카카오맵 ↗</a>
+      </div>`;
+
     const gallery = y.gallery && y.gallery.length
       ? `
       <div class="sec-title row"><div><h2>갤러리</h2><span>Gallery</span></div><a class="more" href="#gallery">전체 보기 →</a></div>
       <div class="gal-strip">${y.gallery.slice(0, 3).map((g) => `<a class="reveal" href="#gallery"><img src="${esc(g.src)}" alt="${esc(g.alt)}" loading="lazy"></a>`).join('')}</div>`
       : '';
 
-    const blocks = [intro, speakers, gallery].filter(Boolean);
+    const blocks = [intro, speakers, venue, gallery].filter(Boolean);
     blocks.push(organizersRow(y));
     return hero + blocks.map((b, i) => `<section class="section${i % 2 ? ' soft' : ''}"><div class="wrap">${b}</div></section>`).join('');
   }
@@ -486,7 +505,7 @@
         const chair = d.chairs && d.chairs.length ? esc(d.chairs.join(', ')) : '<em class="tba">추후 공개</em>';
         return `
           <div class="tt-panel" data-panel="${di + 1}"${di ? ' hidden' : ''}>
-            <div class="tt-head"><h2>DAY ${di + 1} <span>${esc(d.label)}</span></h2><p>Chair · ${chair}</p></div>
+            <div class="tt-head"><h2>DAY ${di + 1} <span>${esc(d.label)}</span></h2><p>Chair: ${chair}</p></div>
             <ol class="tt-list">${rows}</ol>
           </div>`;
       })
@@ -535,7 +554,7 @@
                 <details class="acc-item" id="d${di + 1}-lt">
                   <summary>
                     <span class="acc-time">${esc(s.time)}</span>
-                    <span class="acc-head"><span class="no">Lightning Talk</span><span class="t">${lt.map((l) => esc(l.name)).join(' · ')}</span></span>
+                    <span class="acc-head"><span class="no">Lightning Talk</span><span class="t">${lt.map((l) => esc(l.name)).join(', ')}</span></span>
                     <span class="acc-chev">${icon.down}</span>
                   </summary>
                   <div class="acc-body">
@@ -570,7 +589,7 @@
         <div class="card reg-status reveal">
           <div>
             <strong>${reg.open ? '참가 신청을 받고 있습니다' : esc(reg.closedLabel)}</strong>
-            <p>문의 · <a href="mailto:${esc(M.contact.email)}">${esc(M.contact.email)}</a>${y.kakao ? ` · <a href="${esc(y.kakao)}" target="_blank" rel="noopener">MCUS 오픈채팅</a>` : ''}</p>
+            <p>문의: <a href="mailto:${esc(M.contact.email)}">${esc(M.contact.email)}</a>${y.kakao ? `, <a href="${esc(y.kakao)}" target="_blank" rel="noopener">MCUS 오픈채팅</a>` : ''}</p>
           </div>
           ${btn}
         </div>
@@ -596,7 +615,7 @@
     return `
       <section class="section"><div class="wrap venue">
         <div class="card reveal">
-          <h3>${esc(v.campus)}${v.building ? ` · ${esc(v.building)}` : ''}</h3>
+          <h3>${esc(v.campus)}${v.building ? ` ${esc(v.building)}` : ''}</h3>
           <p class="addr">${esc(v.address)}</p>
           <dl class="rooms">${v.rooms.map(([k, val]) => `<div><dt>${esc(k)}</dt><dd>${or(val, '추후 안내')}</dd></div>`).join('')}</dl>
           <div class="map-links">

@@ -28,7 +28,7 @@ window.MCUS = {
 
   // 연도 페이지 홈에 들어가는 학술회 한 줄 소개 (모든 연도 공통)
   about: {
-    title: '어떤 수학이든, 함께 나누는 학술회',
+    title: '폭넓은 수학을 만나고, 관심사를 나누는 학술회',
     text: '연구자와 학생 연사의 강연을 통해 폭넓은 분야의 수학을 접하고, 학교와 학년, 전공 분야를 넘어 서로의 관심사를 나누는 학부생을 위한 수학 학술회입니다. 처음 접하는 분야라도 큰 흐름을 따라갈 수 있도록, 배경 개념과 맥락을 함께 소개하는 강연을 지향합니다.',
   },
 };
@@ -37,11 +37,11 @@ window.MCUS = {
 window.MCUS.fields = {
   topology: '위상수학',
   geometry: '기하학',
-  algebra: '대수학·표현론',
+  algebra: '대수학, 표현론',
   combinatorics: '조합론',
-  analysis: '해석학·PDE',
-  probability: '확률·통계',
-  applied: '응용수학·AI',
+  analysis: '해석학, PDE',
+  probability: '확률, 통계',
+  applied: '응용수학, AI',
   physics: '수리물리',
   crypto: '암호학',
 };
