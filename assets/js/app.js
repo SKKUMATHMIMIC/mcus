@@ -221,24 +221,11 @@
       <div class="topstrip">
         <div class="wrap">
           <a class="back" href="index.html">${icon.left}<span>MCUS 소개</span></a>
-          <nav class="yr-list" aria-label="연도별 학술회">
+          <nav aria-label="연도별 학술회">
             ${yearsDesc.map((yr) => `<a href="${yr}.html"${yr === y.year ? ' aria-current="page"' : ''}>MCUS ${yr}</a>`).join('')}
           </nav>
-          <details class="drop yr-pick">
-            <summary aria-label="다른 연도 학술회 보기">MCUS ${y.year}${icon.down}</summary>
-            <div class="menu">
-              ${yearsDesc
-                .map((yr) => {
-                  const yy = M.years[yr];
-                  const up = phase(yy).key !== 'done';
-                  return `<a href="${yr}.html"${yr === y.year ? ' aria-current="page"' : ''}><b>MCUS ${yr}</b>${up ? '<span class="tag">개최 예정</span>' : ''}<small>${esc(yy.dateLabel)}</small></a>`;
-                })
-                .join('')}
-            </div>
-          </details>
         </div>
       </div>`);
-    closeOnOutside(document.querySelector('.yr-pick'));
     el.classList.add('has-year');
     el.innerHTML = `
       <div class="wrap bar">
@@ -430,11 +417,11 @@
     // 참가 대상 / 참가비 는 한 줄씩 조금 크게, 주최 · 후원은 마지막 한 줄에 작게
     const metaRow = (cls, rows) => {
       const r = rows.filter(([, v]) => v);
-      return r.length ? `<div class="${cls}">${r.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</div>` : '';
+      return r.length ? `<div class="${cls}">${r.map(([k, v, note]) => `<div><dt>${k}</dt><dd>${esc(v)}${note ? `<small>${esc(note)}</small>` : ''}</dd></div>`).join('')}</div>` : '';
     };
     const meta =
-      metaRow('m-main', [['참가 대상', target.value]]) +
-      metaRow('m-main', [['참가비', [fee.value, fee.note].filter(Boolean).join(' · ')]]) +
+      metaRow('m-main', [['참가 대상', target.value, target.note]]) +
+      metaRow('m-main', [['참가비', fee.value || fee.note, fee.value ? fee.note : '']]) +
       metaRow('m-org', [['주최', y.host], ['후원', y.support]]);
     const dateHtml = esc(y.dateLabel).replace(/\((.)\)/g, '<span class="dow">($1)</span>');
 
