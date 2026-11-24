@@ -98,7 +98,7 @@ MCUS.addYear({
         { time: '17:10 – 17:50', talk: 7 },
       ],
       talks: [
-        { ko: '김민국', en: '', affil: 'Sungkyunkwan University', kind: 'invited', title: '', tags: [], abstract: '' },
+        { ko: '김민국', en: 'Mingook Kim', affil: 'Sungkyunkwan University', kind: 'invited', title: '', tags: [], abstract: '' },
         {
           ko: '민현기', en: 'Hyunki Min',
           affil: 'KAIST', kind: 'plenary',
@@ -173,7 +173,7 @@ MCUS.addYear({
           photo: 'assets/img/speakers/2027-seokhyeong-lee.jpg',
           field: 'Number theory',
           title: 'How to count lattices',
-          tags: ['algebra', 'geometry'],
+          tags: ['number', 'geometry'],
           abstract: 'Lattices are familiar objects in number theory and geometry. They also arise in less obvious places, where counting lattices can tell us something about the algebraic objects they describe. In this talk, I will introduce some classical questions about counting lattices and discuss how mathematicians have approached them. I will also give a sense of why these questions arise in different areas of mathematics and where they lead in current research.',
         },
         {

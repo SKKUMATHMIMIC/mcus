@@ -38,6 +38,7 @@ window.MCUS.fields = {
   topology: '위상수학',
   geometry: '기하학',
   algebra: '대수학, 표현론',
+  number: '정수론',
   combinatorics: '조합론',
   analysis: '해석학, PDE',
   probability: '확률, 통계',
