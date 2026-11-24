@@ -276,7 +276,7 @@
           <div class="f-col">
             <h4>문의</h4>
             <ul>
-              <li><a href="mailto:${esc(c.email)}">${esc(c.email)}</a></li>
+              <li class="f-mail"><a href="mailto:${esc(c.email)}">${esc(c.email)}</a></li>
               <li><a href="${esc(c.website)}" ${ext}>MIMIC 홈페이지 ↗</a></li>
               <li><a href="${esc(c.instagram)}" ${ext}>Instagram ↗</a></li>
               <li><a href="${esc(c.youtube)}" ${ext}>YouTube ↗</a></li>
