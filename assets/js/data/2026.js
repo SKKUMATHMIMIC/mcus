@@ -4,14 +4,14 @@ MCUS.addYear({
   titleEn: '2026 Mathematics Conference for Undergraduate Students',
   start: '2026-01-16',
   end: '2026-01-17',
-  dateLabel: '2026. 01. 16. (금) – 01. 17. (토)',
+  dateLabel: '2026. 1. 16. (금) – 1. 17. (토)',
   venueShort: '성균관대학교 자연과학캠퍼스 반도체관 1층 400126',
   host: '성균관대학교 수학 학술동아리 MIMIC',
   support: '성균관대학교 수학과', // 후원 (재정 지원: 팜플렛, 다과 등)
   kakao: 'https://open.kakao.com/o/sBKqgP0h',
 
   overview: [
-    { label: '개최 일자', value: '2026. 01. 16. (금) – 01. 17. (토)' },
+    { label: '개최 일자', value: '2026. 1. 16. (금) – 1. 17. (토)' },
     { label: '개최 장소', value: '성균관대학교 자연과학캠퍼스 (수원) 반도체관 1층 400126' },
     { label: '참가 대상', value: '수학에 관심이 있는 누구나', note: '주로 학부 3, 4학년' },
     { label: '참가비', value: '무료', note: '2일간 중식 및 첫날 석식(만찬) 제공' },
@@ -48,7 +48,7 @@ MCUS.addYear({
   days: [
     {
       date: '2026-01-16',
-      label: '1/16 (금)',
+      label: '1. 16. (금)',
       chairs: ['한채영', '조수연'],
       schedule: [
         { time: '10:00 – 10:30', talk: 1 },
@@ -127,7 +127,7 @@ MCUS.addYear({
     },
     {
       date: '2026-01-17',
-      label: '1/17 (토)',
+      label: '1. 17. (토)',
       chairs: ['이호준', '이민혁'],
       schedule: [
         { time: '10:00 – 10:30', talk: 1 },

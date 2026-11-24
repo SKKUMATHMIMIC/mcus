@@ -46,6 +46,8 @@
     const d = parseDate(s);
     return `${d.getMonth() + 1}. ${d.getDate()}. (${'일월화수목금토'[d.getDay()]})`;
   };
+  // '2027-01-14' → '2027. 1. 14. (목)'
+  const ymdLabel = (s) => `${parseDate(s).getFullYear()}. ${mdLabel(s)}`;
   const dLabel = (n) => (n === 0 ? 'D-DAY' : `D-${n}`);
 
   // 날짜 탭 — 초록과 (모바일) 일정에서 같이 씀. 고른 날짜는 다른 화면으로 옮겨도 유지
@@ -313,7 +315,7 @@
             ${y.registration.open && y.registration.formUrl ? `<a class="btn btn-ghost" href="${esc(y.registration.formUrl)}" target="_blank" rel="noopener">참가 신청하기</a>` : ''}
           </div>
         </div>
-        ${p.key !== 'done' ? `<div class="up-dday rise" style="--i:3"><b data-count="${p.days}">${ddayText(p)}</b><span>${esc(y.start.replace(/-/g, '. '))} 개막</span></div>` : ''}
+        ${p.key !== 'done' ? `<div class="up-dday rise" style="--i:3"><b data-count="${p.days}">${ddayText(p)}</b><span>${esc(ymdLabel(y.start))} 개막</span></div>` : ''}
       </div>
       </div>`;
 
@@ -458,7 +460,7 @@
       metaRow('m-main', [['참가 대상', target.value, target.note]]) +
       metaRow('m-main', [['참가비', fee.value || fee.note, fee.value ? fee.note : '']]) +
       metaRow('m-org', [['주최', y.host], ['후원', y.support]]);
-    const dateHtml = esc(y.dateLabel).replace(/\((.)\)/g, '<span class="dow">($1)</span>');
+    const dateHtml = esc(y.dateLabel).replace(/\((.)\)/g, '<span class="dow">($1)</span>').replace(/ – /, '<span class="dash">–</span>');
 
     const hero = `
       <section class="yhero net-hero${!activeNotices(y).length && p.key === 'done' ? ' bare' : ''}">

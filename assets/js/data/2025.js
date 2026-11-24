@@ -4,14 +4,14 @@ MCUS.addYear({
   titleEn: '2025 Mathematics Conference for Undergraduate Students',
   start: '2025-01-17',
   end: '2025-01-18',
-  dateLabel: '2025. 01. 17. (금) – 01. 18. (토)',
+  dateLabel: '2025. 1. 17. (금) – 1. 18. (토)',
   venueShort: '성균관대학교 자연과학캠퍼스 제1공학관 23동 2층 23219',
   host: '성균관대학교 수학 학술동아리 MIMIC',
   support: '성균관대학교 수학과', // 후원 (재정 지원: 팜플렛, 다과 등)
   kakao: 'https://open.kakao.com/o/sXXiTWXg',
 
   overview: [
-    { label: '개최 일자', value: '2025. 01. 17. (금) – 01. 18. (토)' },
+    { label: '개최 일자', value: '2025. 1. 17. (금) – 1. 18. (토)' },
     { label: '개최 장소', value: '성균관대학교 자연과학캠퍼스 (수원) 제1공학관 23동 2층 23219' },
     { label: '참가 대상', value: '수학에 관심이 있는 누구나', note: '주로 학부 3, 4학년' },
     { label: '참가비', value: '무료', note: '2일간 중식 및 첫날 석식(만찬) 제공' },
@@ -48,7 +48,7 @@ MCUS.addYear({
   days: [
     {
       date: '2025-01-17',
-      label: '1/17 (금)',
+      label: '1. 17. (금)',
       chairs: ['김민국'],
       schedule: [
         { time: '10:00 – 10:40', talk: 1 },
@@ -107,7 +107,7 @@ MCUS.addYear({
     },
     {
       date: '2025-01-18',
-      label: '1/18 (토)',
+      label: '1. 18. (토)',
       chairs: ['김시윤'],
       schedule: [
         { time: '10:00 – 10:40', talk: 1 },
