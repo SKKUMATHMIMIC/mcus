@@ -847,7 +847,7 @@
             <div class="${cls}"${idAttr}>
               <div class="rb-text">
                 <h3>${esc(b.title)}${status}</h3>
-                ${b.lead.map((p) => `<p>${esc(p)}</p>`).join('')}
+                ${b.lead.map((p) => `<p>${esc(p).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')}</p>`).join('')}
                 ${action ? `<div class="rb-action">${action}</div>` : ''}
               </div>
               <div>${dl}${note}</div>
