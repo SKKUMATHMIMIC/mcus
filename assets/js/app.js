@@ -408,11 +408,14 @@
 
     const target = ovRow(y, /대상/);
     const fee = ovRow(y, /참가비/);
-    // 일시 · 장소는 첫 화면(yhero-when)에 크게 — 아래 막대에는 나머지만
-    const facts = [
-      ['참가 대상', target.value || '추후 안내', target.note || ''],
-      ['참가비', fee.value || '추후 안내', fee.note || ''],
-    ];
+    // 일시 · 장소는 제목 아래 크게, 나머지(주최 · 후원 · 대상 · 참가비)는 첫 화면 맨 아래 작게
+    const meta = [
+      ['주최', y.host],
+      ['후원', y.support],
+      ['참가 대상', target.value],
+      ['참가비', [fee.value, fee.note].filter(Boolean).join(' · ')],
+    ].filter(([, v]) => v);
+    const dateHtml = esc(y.dateLabel).replace(/\((.)\)/g, '<span class="dow">($1)</span>');
 
     const hero = `
       <section class="yhero net-hero">
@@ -423,21 +426,18 @@
           ${wordmark(y.year, 'yhero-mark draw')}
           <h1>${esc(y.titleKo)}</h1>
           <p class="en">${esc(y.titleEn)}</p>
-          <dl class="yhero-when">
-            <div><dt>${icon.cal}<span class="sr">일시</span></dt><dd>${esc(y.dateLabel)}</dd></div>
-            <div><dt>${icon.pin}<span class="sr">장소</span></dt><dd>${placeLines(y)}</dd></div>
-          </dl>
-          <p class="host-line"><span>주최 <span class="sep">|</span> ${esc(y.host)}</span>${y.support ? `<span>후원 <span class="sep">|</span> ${esc(y.support)}</span>` : ''}</p>
+          <div class="yhero-when">
+            <p class="w-date">${dateHtml}</p>
+            <p class="w-place">${esc(placeText(y))}</p>
+          </div>
           <div class="yhero-actions">
             ${regOpen ? `<a class="btn btn-royal" href="${esc(reg.formUrl)}" target="_blank" rel="noopener">참가 신청하기 <span class="arrow">→</span></a>` : ''}
             <a class="btn ${regOpen ? 'btn-ghost' : 'btn-royal'}" href="#schedule">일정 보기</a>
             <a class="btn btn-ghost" href="#abstract">초록 보기</a>
           </div>
+          <dl class="yhero-meta">${meta.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
         </div>
-      </section>
-      <div class="wrap"><dl class="glance-bar reveal">
-        ${facts.map(([k, v, sub, html]) => `<div><dt>${k}</dt><dd>${html || `<b>${esc(v)}</b>`}${sub ? `<small>${esc(sub)}</small>` : ''}</dd></div>`).join('')}
-      </dl></div>`;
+      </section>`;
 
     const speakers = `
       <div class="sec-title row"><div><h2>기조 강연자</h2><span>Plenary Speakers</span></div>${
@@ -728,8 +728,10 @@
           .join('');
         return `
           <div class="abs-day" data-daypanel="${di}"${dayHidden(y, di, cur)}>
-            <div class="dayband"><div class="wrap"><h2>${esc(d.label)}<small>Chair - ${d.chairs && d.chairs.length ? esc(d.chairs.join(', ')) : '추후 공개'}</small></h2></div></div>
-            <div class="wrap"><div class="acc">${rows}</div></div>
+            <div class="wrap">
+              <div class="day-head"><h2>${esc(d.label)}</h2><span class="chair"><b>Chair</b>${d.chairs && d.chairs.length ? esc(d.chairs.join(', ')) : '추후 공개'}</span></div>
+              <div class="acc">${rows}</div>
+            </div>
           </div>`;
       })
       .join('');
@@ -823,14 +825,6 @@
     // 건물과 강의실은 줄바꿈 없이 한 덩어리로 (줄이 바뀌면 캠퍼스 이름 뒤에서)
     const spot = [v.building, room && room[1]].filter(Boolean).join(' ').replace(/ /g, '\u00a0');
     return `${v.campus.replace(' (', '\u00a0(')} ${spot}`;
-  }
-
-  // 첫 화면 정보 막대용 장소: 캠퍼스(조금 작게) / 건물과 강의실 — 각각 한 줄
-  function placeLines(y) {
-    const v = y.venue;
-    const room = (v.rooms || []).find((r) => r[1]);
-    const spot = v.building ? [v.building, room && room[1]].filter(Boolean).join(' ') : '세부 장소 추후 안내';
-    return `<b class="g-place"><span class="g-campus">${esc(v.campus)}</span><span class="g-spot">${esc(spot)}</span></b>`;
   }
 
   // 지도 바로가기 — 건물이 정해졌으면 건물로, 아니면 캠퍼스로

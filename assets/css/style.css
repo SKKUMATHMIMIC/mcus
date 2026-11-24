@@ -300,60 +300,25 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
 .net-hero:not(.go) .net, .net-hero:not(.go) .net line, .net-hero:not(.go) .net circle { animation-play-state: paused; }
 
 /* 연도 홈 첫 화면 */
-.yhero { text-align: center; padding: clamp(56px, 8vw, 96px) 0 clamp(96px, 11vw, 136px); }
+.yhero { text-align: center; padding: clamp(56px, 8vw, 96px) 0 clamp(48px, 6vw, 72px); }
 .yhero .pill { margin-bottom: 20px; background: rgba(16, 42, 140, 0.1); color: #102a8c; }
 .yhero .yhero-mark { display: block; width: min(70%, 320px); margin: 0 auto 26px; color: #15182a; }
 .yhero h1 { font-size: clamp(30px, 5vw, 54px); font-weight: 800; letter-spacing: -0.035em; }
 .yhero .en { margin-top: 8px; font-size: clamp(15px, 1.8vw, 19px); font-weight: 700; color: #5d6170; }
-.yhero .host-line { margin-top: 16px; font-size: 15px; font-weight: 600; color: #1a2a8a; }
-.yhero .host-line .sep { margin: 0 8px; opacity: 0.45; }
-.yhero .host-line { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 22px; }
-.yhero .host-line > span { white-space: nowrap; }
-.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-/* 첫 화면 일시 · 장소 */
-.yhero-when {
-  display: inline-flex; flex-wrap: wrap; justify-content: center; align-items: stretch;
-  margin: 26px auto 0; padding: 4px;
-  background: rgba(255, 255, 255, 0.72); border: 1px solid rgba(16, 42, 140, 0.14); border-radius: 16px;
-  box-shadow: 0 14px 34px -24px rgba(12, 22, 85, 0.45);
-  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-}
-.yhero-when > div { display: flex; align-items: center; gap: 10px; padding: 12px 22px; text-align: left; }
-.yhero-when > div + div { border-left: 1px solid rgba(16, 42, 140, 0.14); }
-.yhero-when dt { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: #102a8c; color: #fff; flex-shrink: 0; }
-.yhero-when dt svg { width: 18px; height: 18px; }
-.yhero-when dd { margin: 0; font-size: clamp(16px, 1.7vw, 19px); font-weight: 800; letter-spacing: -0.02em; color: #15182a; white-space: nowrap; }
-.yhero-when .g-place { font-weight: 800; }
-.yhero-when .g-campus { font-weight: 600; color: #4a4f60; margin-right: 0.35em; }
-@media (max-width: 1000px) {
-  .yhero-when { display: inline-grid; }
-  .yhero-when > div { padding: 10px 20px; }
-  .yhero-when > div + div { border-left: 0; border-top: 1px solid rgba(16, 42, 140, 0.12); }
-}
+
+
+
+.yhero-when { margin-top: 30px; }
+.yhero-when .w-date { font-size: clamp(22px, 2.6vw, 30px); font-weight: 800; letter-spacing: -0.02em; color: #102a8c; line-height: 1.3; }
+.yhero-when .w-date .dow { font-size: 0.72em; font-weight: 700; opacity: 0.75; }
+.yhero-when .w-place { margin-top: 6px; font-size: clamp(15px, 1.5vw, 17px); font-weight: 600; color: #2b3042; text-wrap: balance; }
+.yhero-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 26px; margin: 44px auto 0; max-width: 1040px; font-size: 13.5px; color: #4d5466; }
+.yhero-meta > div { display: flex; gap: 7px; }
+.yhero-meta dt { font-weight: 700; color: #1a2a8a; white-space: nowrap; }
+.yhero-meta dd { margin: 0; }
 .yhero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 30px; }
 .yhero .btn-ghost { color: #15182a; border-color: rgba(21, 24, 42, 0.25); background: rgba(255, 255, 255, 0.6); }
 
-/* 첫 화면 아래 걸친 '한눈에 보기' */
-.glance-bar {
-  position: relative;
-  z-index: 2;
-  margin-top: -56px;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  box-shadow: 0 18px 40px -22px rgba(12, 22, 85, 0.35);
-}
-.glance-bar > div { padding: 22px 24px; display: grid; gap: 6px; align-content: start; }
-.glance-bar > div + div { border-left: 1px solid var(--line); }
-.glance-bar dt { font-size: 13px; font-weight: 800; color: var(--blue); letter-spacing: 0.06em; }
-.glance-bar dd { margin: 0; display: grid; gap: 3px; }
-.glance-bar b { font-size: clamp(17px, 1.8vw, 19.5px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.4; }
-.glance-bar small { font-size: 13.5px; color: var(--ink-2); line-height: 1.5; }
-.glance-bar .g-place span { display: block; white-space: nowrap; }
-.glance-bar > div:first-child b { white-space: nowrap; }
-.glance-bar .g-campus { font-size: 0.86em; }
 
 /* 남색 상단 (연도 서브 페이지) */
 .subhero {
@@ -674,28 +639,27 @@ a.ag-card:active { filter: brightness(0.97); }
   -webkit-backdrop-filter: saturate(1.4) blur(12px); backdrop-filter: saturate(1.4) blur(12px);
   border-bottom: 1px solid var(--line);
 }
-.day-bar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 12px; padding-bottom: 12px; }
-.day-bar .text-btn { white-space: nowrap; flex-shrink: 0; }
-.day-tabs { display: inline-grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; padding: 4px; background: var(--bg-soft); border: 1px solid var(--line); border-radius: 14px; }
+.day-bar .wrap { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; }
+.day-bar .text-btn { white-space: nowrap; flex-shrink: 0; margin-bottom: 12px; }
+/* 밑줄 탭 — 페이지 제목 바로 아래, 선택한 날짜에 남색 밑줄 */
+.day-tabs { display: flex; gap: 4px; }
 .day-tabs button {
-  display: grid; justify-items: center; gap: 1px; padding: 7px 22px; border: 0; border-radius: 10px;
-  background: none; color: var(--ink-2); font: inherit; line-height: 1.3; cursor: pointer;
-  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+  display: grid; justify-items: start; gap: 2px; min-width: 150px; padding: 16px 20px 13px; margin-bottom: -1px;
+  border: 0; border-bottom: 3px solid transparent; background: none; color: #5b6275;
+  font: inherit; line-height: 1.3; text-align: left; cursor: pointer; transition: color 0.15s, border-color 0.15s;
 }
-.day-tabs button span { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; color: var(--ink-3); }
-.day-tabs button b { font-size: 15.5px; font-weight: 800; white-space: nowrap; letter-spacing: -0.01em; }
-.day-tabs button:hover:not([aria-selected='true']) { background: var(--surface); color: var(--ink); }
-.day-tabs button[aria-selected='true'] { background: var(--royal); color: #fff; box-shadow: 0 6px 14px -8px rgba(16, 42, 140, 0.7); }
-.day-tabs button[aria-selected='true'] span { color: rgba(255, 255, 255, 0.72); }
+.day-tabs button span { font-size: 11.5px; font-weight: 800; letter-spacing: 0.12em; }
+.day-tabs button b { font-size: 19px; font-weight: 800; white-space: nowrap; letter-spacing: -0.01em; }
+.day-tabs button:hover { color: var(--ink); }
+.day-tabs button[aria-selected='true'] { color: var(--royal); border-bottom-color: var(--royal); }
+.day-tabs button:not([aria-selected='true']) span { color: var(--ink-3); }
 .abs-tools { padding-top: 20px; }
-.dayband {
-  margin-top: 20px;
-  background: linear-gradient(90deg, #a9a9a9, #c9c9c9 45%, #ffffff);
-  color: #fff;
-}
-.dayband .wrap { padding-top: 18px; padding-bottom: 18px; }
-.dayband h2 { font-size: 22px; font-weight: 800; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12); }
-.dayband h2 small { font-size: 14px; font-weight: 600; margin-left: 10px; opacity: 0.9; }
+/* 날짜별 머리 — 날짜는 탭에 있으니 좌장만 작게 (탭이 없을 때만 날짜 제목 표시) */
+.day-head { display: flex; align-items: baseline; gap: 14px; padding-top: 24px; }
+.day-head h2 { font-size: 22px; font-weight: 800; }
+.day-bar ~ .abs-day .day-head h2 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.day-head .chair { font-size: 13.5px; color: var(--ink-3); }
+.day-head .chair b { margin-right: 6px; font-weight: 700; color: var(--ink-2); }
 
 .acc { margin-top: 8px; }
 .acc-item { border-bottom: 1px solid var(--line-strong); }
@@ -882,9 +846,6 @@ a.ag-card:active { filter: brightness(0.97); }
   .about-grid { grid-template-columns: 1fr; }
   .kinds .span2 { grid-column: span 3; }
   .kinds .span2:last-child { grid-column: 1 / -1; }
-  .glance-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .glance-bar > div:nth-child(3) { border-left: 0; }
-  .glance-bar > div:nth-child(n + 3) { border-top: 1px solid var(--line); }
   .org-row { grid-template-columns: 1fr; }
   .f-main { grid-template-columns: 1fr 1fr; }
   .f-brand { grid-column: 1 / -1; }
@@ -924,10 +885,6 @@ a.ag-card:active { filter: brightness(0.97); }
   .f-main { grid-template-columns: 1fr; gap: 26px; }
   .f-col ul { display: flex; flex-wrap: wrap; gap: 8px 18px; }
   .f-col h4 { margin-bottom: 8px; }
-  .glance-bar { grid-template-columns: 1fr; margin-top: -40px; }
-  .glance-bar > div { grid-template-columns: 56px minmax(0, 1fr); gap: 12px; padding: 14px 18px; align-items: baseline; }
-  .glance-bar > div + div { border-left: 0; border-top: 1px solid var(--line); }
-  .glance-bar b { font-size: 16px; }
   .pcard { flex-basis: 90%; grid-template-columns: 104px minmax(0, 1fr); gap: 16px; padding: 16px; }
   .pc-body b { font-size: 19px; }
   .ov-card dl div, .reg-block dl div, .venue .rooms div { grid-template-columns: 1fr; gap: 2px; }
@@ -977,30 +934,21 @@ a.ag-card:active { filter: brightness(0.97); }
   .subhero h1 { font-size: 28px; }
 
   /* 연도 홈 첫 화면 */
-  .yhero { padding: 34px 0 76px; }
+  .yhero { padding: 34px 0 36px; }
   .yhero .pill { margin-bottom: 16px; }
   .yhero .yhero-mark { width: min(62%, 240px); margin-bottom: 20px; }
   .yhero h1 { font-size: 27px; }
   .yhero .en { font-size: 14px; text-wrap: balance; }
-  .yhero-when { display: grid; width: 100%; margin-top: 20px; padding: 2px; border-radius: 14px; }
-  .yhero-when > div { padding: 10px 14px; gap: 12px; }
-  .yhero-when > div + div { border-left: 0; border-top: 1px solid rgba(16, 42, 140, 0.12); }
-  .yhero-when dt { width: 30px; height: 30px; border-radius: 9px; }
-  .yhero-when dt svg { width: 16px; height: 16px; }
-  .yhero-when dd { font-size: 15.5px; white-space: normal; }
-  .yhero-when .g-campus { display: block; font-size: 12.5px; margin: 0 0 1px; }
-  .yhero .host-line { margin-top: 14px; font-size: 13.5px; flex-direction: column; align-items: center; gap: 2px; }
+  .yhero-when { margin-top: 22px; }
+  .yhero-when .w-date { font-size: 21px; }
+  .yhero-when .w-place { font-size: 14.5px; }
+  .yhero-meta { margin-top: 30px; flex-direction: column; align-items: center; gap: 4px; font-size: 12.5px; }
+  .yhero-meta > div { gap: 6px; }
   .yhero-actions { margin-top: 24px; }
   .yhero-actions .btn { flex: 1 1 0; max-width: 170px; padding: 12px 14px; }
   .notices { margin-bottom: 18px; }
   .notice { font-size: 14px; padding: 8px 14px 8px 8px; }
 
-  .glance-bar { margin-top: -44px; border-radius: 14px; }
-  .glance-bar > div { grid-template-columns: 58px minmax(0, 1fr); gap: 10px; padding: 13px 16px; align-items: baseline; }
-  .glance-bar dt { font-size: 12.5px; letter-spacing: 0.02em; }
-  .glance-bar b { font-size: 15.5px; }
-  .glance-bar small { font-size: 12.5px; }
-  .glance-bar .g-place span { white-space: normal; }
 
   .y-intro h2 { font-size: 22px; }
   .y-intro p { font-size: 15px; line-height: 1.8; }
@@ -1086,20 +1034,16 @@ a.ag-card:active { filter: brightness(0.97); }
   .tt-note { text-align: left; font-size: 12.5px; margin-top: 18px; }
 
   /* 날짜 탭 — 화면 너비를 꽉 채움 */
-  .day-bar .wrap { padding-top: 10px; padding-bottom: 10px; }
-  .day-tabs { display: grid; flex: 1; min-width: 0; }
-  .day-bar .text-btn { padding: 6px 10px; font-size: 12.5px; }
-  .day-tabs button { padding: 6px 4px; }
+  .day-bar .wrap { align-items: center; }
+  .day-tabs { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); flex: 1; min-width: 0; gap: 0; }
+  .day-bar .text-btn { padding: 5px 10px; font-size: 12.5px; margin: 0; }
+  .day-tabs button { min-width: 0; justify-items: center; text-align: center; padding: 11px 2px 9px; }
   .day-tabs button span { font-size: 10.5px; }
-  .day-tabs button b { font-size: 14.5px; }
+  .day-tabs button b { font-size: 15px; }
 
   /* 초록 */
   .abs-tools { padding-top: 14px; }
   .text-btn { padding: 6px 14px; font-size: 13px; }
-  .dayband { margin-top: 12px; }
-  .dayband .wrap { padding-top: 14px; padding-bottom: 14px; }
-  .dayband h2 { font-size: 19px; }
-  .dayband h2 small { font-size: 12.5px; margin-left: 8px; }
   .acc-item > summary, .acc-row { padding: 16px 2px; gap: 6px 10px; }
   .acc-time { font-size: 13.5px; }
   .acc-head .t { font-size: 16px; }
@@ -1111,11 +1055,8 @@ a.ag-card:active { filter: brightness(0.97); }
   .acc-row.break .acc-head { font-size: 14px; }
   .acc-body { padding: 0 2px 22px; }
   .acc-body .abstract { font-size: 15px; line-height: 1.8; padding-top: 14px; }
-  /* 날짜는 위 탭에 이미 있으니, 회색 띠 대신 좌장만 작게 */
-  .day-bar ~ .abs-day .dayband { margin-top: 0; background: none; color: var(--ink-3); }
-  .day-bar ~ .abs-day .dayband .wrap { padding-top: 14px; padding-bottom: 0; }
-  .day-bar ~ .abs-day .dayband h2 { font-size: 0; text-shadow: none; }
-  .day-bar ~ .abs-day .dayband h2 small { font-size: 12.5px; font-weight: 600; margin: 0; opacity: 1; }
+  .day-head { padding-top: 16px; }
+  .day-head .chair { font-size: 12.5px; }
   .acc { margin-top: 4px; }
   /* 강연 한 칸: [시간 · TALK n · 배지 · ⌄] / 제목 / 연사 */
   .acc-item > summary, .acc-row.tbd { grid-template-columns: auto minmax(0, 1fr) 22px; align-items: center; gap: 6px 10px; padding: 16px 2px; }
