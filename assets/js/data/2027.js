@@ -170,8 +170,11 @@ MCUS.addYear({
         {
           ko: '이석형', en: 'Seok Hyeong Lee',
           affil: 'Seoul National University', kind: 'plenary', // QSMS 박사후연구원 (Ph.D. Princeton University, 2022)
+          photo: 'assets/img/speakers/2027-seokhyeong-lee.jpg',
           field: 'Number theory',
-          title: '', tags: [], abstract: '',
+          title: 'How to count lattices',
+          tags: ['algebra', 'geometry'],
+          abstract: 'Lattices are familiar objects in number theory and geometry. They also arise in less obvious places, where counting lattices can tell us something about the algebraic objects they describe. In this talk, I will introduce some classical questions about counting lattices and discuss how mathematicians have approached them. I will also give a sense of why these questions arise in different areas of mathematics and where they lead in current research.',
         },
         {
           ko: '배상현', en: 'Sanghyeon Bae',
