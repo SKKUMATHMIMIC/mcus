@@ -578,15 +578,17 @@
 
     // 시간 비례 — 1분 = PPM px. 강연·포스터 등이 있는 구간은 길이에 비례하고,
     // 휴식(점심·커피 브레이크·등록)만 있거나 아무 일정도 없는 구간은 작게 둠
-    const PPM = 3;
     const GAP = 6; // 칸 사이 세로 간격 — CSS 의 .tt-table border-spacing 세로값과 같게
     const isBreak = (e) => !e.s.talk && (e.s.kind || 'break') === 'break';
+    // 칸 높이에 맞춘 내용 배치 — 글자 높이(px)는 CSS 의 .tt-at / .tt-name / .tt-title 과 맞춤
+    const LH = { pad: 26, at: 20, name: 22, title: 19.5 };
+    // 기본 1분 = 3px. 가장 짧은 강연(예: 30분)도 시간 · 이름 · 제목 두 줄이 위아래로 들어가도록 필요하면 늘림
+    const shortest = Math.min(...all.filter((e) => e.s.talk).map((e) => e.to - e.from));
+    const PPM = Math.max(3, Math.ceil(((GAP + LH.pad + LH.at + LH.name + 3 + LH.title * 2) / shortest) * 10) / 10);
     const fixed = bounds.slice(0, -1).map((b, r) => all.some((e) => !isBreak(e) && e.from <= b && e.to >= bounds[r + 1]));
     // 행 높이에서 간격을 빼 두면, 여러 행에 걸친 칸도 (분 × PPM − GAP) 로 정확히 비례
     const rowStyle = (r) => (fixed[r] ? ` style="height:${(bounds[r + 1] - bounds[r]) * PPM - GAP}px"` : '');
 
-    // 칸 높이에 맞춘 내용 배치 — 글자 높이(px)는 CSS 의 .tt-at / .tt-name / .tt-title 과 맞춤
-    const LH = { pad: 26, at: 20, name: 22, title: 19.5 };
     function fit(e, r, span, hasTitle) {
       for (let k = r; k < r + span; k++) if (!fixed[k]) return null; // 비례 구간이 아니면 내용대로
       const avail = (e.to - e.from) * PPM - GAP - LH.pad;

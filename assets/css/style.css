@@ -973,10 +973,11 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
   .yhero-meta > div > div { gap: 6px; }
   .yhero-meta .m-main { font-size: 15px; }
   .yhero-meta .m-org { margin-top: 10px; font-size: 12.5px; }
-  .yhero-actions { margin-top: 24px; }
-  .yhero-actions .btn { flex: 1 1 0; max-width: 170px; padding: 12px 14px; }
+  /* 버튼 묶음 폭을 300px 로 두고 가운데. 버튼 2개면 반씩 나란히 */
+  .yhero-actions { margin: 24px auto 0; max-width: 300px; }
+  .yhero-actions .btn { flex: 1 1 0; padding: 12px 14px; }
   /* 버튼이 3개(참가 신청하기 + 일정 + 초록)일 때: 참가 신청하기는 한 줄 전체, 나머지 둘은 아래 줄에 나란히 */
-  .yhero-actions .btn:first-child:nth-last-child(3) { flex: 1 1 100%; max-width: 350px; }
+  .yhero-actions .btn:first-child:nth-last-child(3) { flex-basis: 100%; }
   /* 모집 알림: PC 처럼 한 줄 알약 모양, 가운데. 폭이 좁으니 마감 날짜는 빼고 D-day 만 */
   .notices { margin-bottom: 18px; }
   .yhero .notices, .upcoming .notices { justify-items: center; }
