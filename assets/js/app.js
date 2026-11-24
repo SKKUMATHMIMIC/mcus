@@ -620,7 +620,7 @@
           const f = fit(e, r, span, Boolean(full));
           if (!f) return `<td class="tt-c ${esc(cls)}" rowspan="${span}">${cellBody(e)}</td>`;
           const more = `${f.tight ? ' tight' : ''}${f.lines ? '' : ' notitle'}`;
-          return `<td class="tt-c ${esc(cls)}${more}" rowspan="${span}" style="--lines:${f.lines}"${full ? ` title="${esc(full)}"` : ''}><div class="tt-in" style="max-height:${f.avail}px">${cellBody(e)}</div></td>`;
+          return `<td class="tt-c ${esc(cls)}${more}" rowspan="${span}" style="--lines:${f.lines}"><div class="tt-in" style="max-height:${f.avail}px">${cellBody(e)}</div></td>`;
         }
         // 빈 시간: 다음 일정이 시작될 때까지 하나로 묶음
         let k = r;
@@ -644,10 +644,9 @@
       has((e) => e.s.kind === 'poster') && ['poster', '포스터 세션'],
       has((e) => e.s.kind === 'lightning') && ['lt', '라이트닝 토크'],
       has((e) => e.s.kind === 'social') && ['social', '만찬'],
-      ['rest', '휴식'],
     ].filter(Boolean);
 
-    // 모바일: 날짜를 골라 보는 세로 목록 (시간 · 일정). 강연은 누르면 초록으로
+    // 모바일: 날짜를 골라 보는 세로 목록 (시간 · 일정)
     const cur = dayIndex(y, arg);
     const agItem = (e, di) => {
       const k = kindOf(e);
