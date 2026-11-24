@@ -167,6 +167,7 @@
 
   const svg = (d, w = 2) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
   const icon = {
+    cal: svg('<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>'),
     pin: svg('<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>'),
     subway: svg('<rect x="5" y="3" width="14" height="14" rx="3"/><path d="M5 11h14M9 21l-2-4M15 21l2-4"/>'),
     bus: svg('<rect x="4" y="3" width="16" height="15" rx="2"/><path d="M4 11h16M7 18v3M17 18v3"/>'),
@@ -407,9 +408,8 @@
 
     const target = ovRow(y, /대상/);
     const fee = ovRow(y, /참가비/);
+    // 일시 · 장소는 첫 화면(yhero-when)에 크게 — 아래 막대에는 나머지만
     const facts = [
-      ['일시', y.dateLabel.replace(/^\d{4}\. /, ''), ''],
-      ['장소', '', '', placeLines(y)],
       ['참가 대상', target.value || '추후 안내', target.note || ''],
       ['참가비', fee.value || '추후 안내', fee.note || ''],
     ];
@@ -423,6 +423,10 @@
           ${wordmark(y.year, 'yhero-mark draw')}
           <h1>${esc(y.titleKo)}</h1>
           <p class="en">${esc(y.titleEn)}</p>
+          <dl class="yhero-when">
+            <div><dt>${icon.cal}<span class="sr">일시</span></dt><dd>${esc(y.dateLabel)}</dd></div>
+            <div><dt>${icon.pin}<span class="sr">장소</span></dt><dd>${placeLines(y)}</dd></div>
+          </dl>
           <p class="host-line"><span>주최 <span class="sep">|</span> ${esc(y.host)}</span>${y.support ? `<span>후원 <span class="sep">|</span> ${esc(y.support)}</span>` : ''}</p>
           <div class="yhero-actions">
             ${regOpen ? `<a class="btn btn-royal" href="${esc(reg.formUrl)}" target="_blank" rel="noopener">참가 신청하기 <span class="arrow">→</span></a>` : ''}
@@ -568,7 +572,8 @@
       if (e.s.talk) {
         const t = e.d.talks[e.s.talk - 1] || {};
         if (!isFilled(t)) return `${at}<span class="tt-name tbd">연사 추후 공개</span>`;
-        return `${at}<span class="tt-name">${esc(t.ko)}</span>${t.title ? `<span class="tt-title">${esc(t.title)}</span>` : ''}`;
+        const aff = t.affil ? `<small class="tt-aff">${esc(t.affil)}</small>` : '';
+        return `${at}<span class="tt-name${aff ? ' has-aff' : ''}">${esc(t.ko)}${aff}</span>${t.title ? `<span class="tt-title">${esc(t.title)}</span>` : ''}`;
       }
       if (e.s.kind === 'lightning') {
         const lt = e.d.lightning || [];
@@ -672,28 +677,35 @@
   function viewAbstract(y, arg) {
     const any = filledTalks(y).length > 0;
     const cur = dayIndex(y, arg);
+    // 긴 초록을 다 읽은 뒤 위로 올라가지 않고 닫을 수 있게 (모바일에서만 보임)
+    const closeBtn = `<button type="button" class="acc-close">접기 ${icon.down}</button>`;
+    // 강연 번호는 날마다 새로 세지 않고 첫날부터 이어서 (주소 #abstract/d2-t1 은 그대로)
+    let base = 0;
     const days = y.days
       .map((d, di) => {
+        const off = base;
+        base += d.schedule.filter((s) => s.talk).length;
         const rows = d.schedule
           .map((s) => {
             if (s.talk) {
               const t = d.talks[s.talk - 1] || {};
               const id = `d${di + 1}-t${s.talk}`;
+              const no = off + s.talk;
               if (!isFilled(t)) {
-                return `<div class="acc-row tbd" id="${id}"><span class="acc-time">${esc(s.time)}</span><span class="acc-head"><span class="no">Talk ${s.talk}</span><b>추후 공개</b></span><span></span></div>`;
+                return `<div class="acc-row tbd" id="${id}"><span class="acc-time">${esc(s.time)}</span><span class="acc-head"><span class="no">Talk ${no}</span><b>추후 공개</b></span><span></span></div>`;
               }
               return `
                 <details class="acc-item" id="${id}">
                   <summary>
                     <span class="acc-time">${esc(s.time)}</span>
                     <span class="acc-head">
-                      <span class="no">Talk ${s.talk}${kindBadge(t)}</span>
+                      <span class="no">Talk ${no}${kindBadge(t)}</span>
                       <span class="t">${or(t.title)}</span>
                       ${whoLine(t)}
                     </span>
                     <span class="acc-chev">${icon.down}</span>
                   </summary>
-                  <div class="acc-body"><div class="abstract">${t.abstract ? paras(t.abstract) : '<p class="tba">초록 추후 공개</p>'}</div></div>
+                  <div class="acc-body"><div class="abstract">${t.abstract ? paras(t.abstract) : '<p class="tba">초록 추후 공개</p>'}</div>${closeBtn}</div>
                 </details>`;
             }
             if (s.kind === 'lightning') {
@@ -707,7 +719,7 @@
                     <span class="acc-chev">${icon.down}</span>
                   </summary>
                   <div class="acc-body">
-                    <ul class="lt-list">${lt.map((l) => `<li><b>${esc(l.name)}</b><span>${esc(l.title)}</span></li>`).join('')}</ul>
+                    <ul class="lt-list">${lt.map((l) => `<li><b>${esc(l.name)}</b><span>${esc(l.title)}</span></li>`).join('')}</ul>${closeBtn}
                   </div>
                 </details>`;
             }
@@ -866,6 +878,14 @@
       });
       document.querySelectorAll('.acc-item').forEach((d) => d.addEventListener('toggle', sync));
     }
+    document.querySelectorAll('.acc-close').forEach((b) =>
+      b.addEventListener('click', () => {
+        const d = b.closest('details');
+        d.open = false;
+        const top = d.getBoundingClientRect().top - (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 0) - 70;
+        if (top < 0) window.scrollBy(0, top);
+      })
+    );
 
     // 날짜 탭 (초록 · 모바일 일정)
     const tabs = [...document.querySelectorAll('.day-tabs [data-day]')];
