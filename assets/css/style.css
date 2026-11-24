@@ -977,9 +977,13 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
   .yhero-actions .btn { flex: 1 1 0; max-width: 170px; padding: 12px 14px; }
   /* 버튼이 3개(참가 신청하기 + 일정 + 초록)일 때: 참가 신청하기는 한 줄 전체, 나머지 둘은 아래 줄에 나란히 */
   .yhero-actions .btn:first-child:nth-last-child(3) { flex: 1 1 100%; max-width: 350px; }
-  .notices { margin-bottom: 18px; justify-items: stretch; } /* 모집 알림은 화면 폭에 맞추고, 안의 글자는 가운데 */
-  /* 두 줄로 나뉘어도 왼쪽에 쏠리지 않게 가운데 정렬 */
-  .notice { display: flex; font-size: 14px; justify-content: center; text-align: center; gap: 2px 10px; padding: 7px 16px; }
+  /* 모집 알림: PC 처럼 한 줄 알약 모양, 가운데. 폭이 좁으니 마감 날짜는 빼고 D-day 만 */
+  .notices { margin-bottom: 18px; }
+  .yhero .notices, .upcoming .notices { justify-items: center; }
+  .notice { flex-wrap: nowrap; gap: 8px; padding: 6px 14px 6px 6px; border-radius: 999px; font-size: 14px; white-space: nowrap; }
+  .notice .n-tag { font-size: 12px; padding: 3px 9px; }
+  .notice .n-due { font-size: 13px; }
+  .notice .n-date { display: none; }
 
 
   .y-intro h2 { font-size: 22px; }

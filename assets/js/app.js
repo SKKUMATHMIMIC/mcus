@@ -46,8 +46,6 @@
     const d = parseDate(s);
     return `${d.getMonth() + 1}. ${d.getDate()}. (${'일월화수목금토'[d.getDay()]})`;
   };
-  // '2027-01-14' → '2027. 1. 14. (목)'
-  const ymdLabel = (s) => `${parseDate(s).getFullYear()}. ${mdLabel(s)}`;
   const dLabel = (n) => (n === 0 ? 'D-DAY' : `D-${n}`);
 
   // 날짜 탭 — 초록과 (모바일) 일정에서 같이 씀. 고른 날짜는 다른 화면으로 옮겨도 유지
@@ -86,7 +84,7 @@
         return `<a class="notice" href="${pageUrl(y.year, 'registration', b.id ? esc(b.id) : '')}">
           <span class="n-tag">${b.main ? '신청 중' : '모집 중'}</span>
           <b>${esc(b.notice)}</b>
-          <span class="n-due">${esc(mdLabel(b.until))}까지 · ${dLabel(n)}</span>
+          <span class="n-due"><span class="n-date">${esc(mdLabel(b.until))}까지 · </span>${dLabel(n)}</span>
           <span class="arrow" aria-hidden="true">→</span>
         </a>`;
       })
@@ -312,10 +310,9 @@
           <dl class="up-facts">${facts.map(([k, v]) => `<div ${rise()}><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
           <div class="up-actions rise" style="--i:${i++}">
             <a class="btn btn-royal" href="${pageUrl(y.year)}">MCUS ${y.year} 페이지로 <span class="arrow">→</span></a>
-            ${y.registration.open && y.registration.formUrl ? `<a class="btn btn-ghost" href="${esc(y.registration.formUrl)}" target="_blank" rel="noopener">참가 신청하기</a>` : ''}
           </div>
         </div>
-        ${p.key !== 'done' ? `<div class="up-dday rise" style="--i:3"><b data-count="${p.days}">${ddayText(p)}</b><span>${esc(ymdLabel(y.start))} 개막</span></div>` : ''}
+        ${p.key !== 'done' ? `<div class="up-dday rise" style="--i:3"><b data-count="${p.days}">${ddayText(p)}</b></div>` : ''}
       </div>
       </div>`;
 
