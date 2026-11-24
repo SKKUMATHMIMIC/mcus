@@ -163,7 +163,7 @@ MCUS.addYear({
         { time: '16:30 – 17:10', label: '포스터 세션', kind: 'poster', note: '반도체관, 화학관 사이 공터' },
         { time: '17:20 – 18:00', talk: 6 },
         { time: '18:10 – 18:30', label: '라이트닝 토크', kind: 'lightning' },
-        { time: '18:30 –', label: '만찬', kind: 'social', note: '종료 시간 미정' },
+        { time: '18:30 –', label: '만찬', kind: 'social', note: '장소 추후 안내' },
       ],
       talks: [
         { ko: '황다현', en: 'Dahyeon Hwang', affil: 'Yonsei University', kind: 'invited', title: '', tags: [], abstract: '' },

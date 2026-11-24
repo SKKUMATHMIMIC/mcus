@@ -618,6 +618,9 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
 .ag.lightning .ag-name { color: var(--lt-ink); }
 .ag.social .ag-card { background: var(--so-bg); border-color: var(--so-line); }
 .ag.social .ag-name { color: var(--so-ink); }
+/* 포스터 세션 · 만찬의 장소 안내는 조금 작게 */
+.ag.poster .ag-title, .ag.social .ag-title { font-size: 13px; color: var(--ink-2); }
+.tt-c.sep.poster .tt-title, .tt-c.sep.social .tt-title { font-size: 12px; }
 
 /* 초록 목록에서 쓰는 연사 줄, 번호, 배지 */
 .acc-head .no { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 800; letter-spacing: 0.06em; color: var(--ink-3); text-transform: uppercase; }
