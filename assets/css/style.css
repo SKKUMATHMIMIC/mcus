@@ -958,9 +958,9 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
   .yhero-meta .m-org { margin-top: 10px; font-size: 12.5px; }
   .yhero-actions { margin-top: 24px; }
   .yhero-actions .btn { flex: 1 1 0; max-width: 170px; padding: 12px 14px; }
-  .notices { margin-bottom: 18px; justify-items: center; }
+  .notices { margin-bottom: 18px; justify-items: stretch; } /* 모집 알림은 화면 폭에 맞추고, 안의 글자는 가운데 */
   /* 두 줄로 나뉘어도 왼쪽에 쏠리지 않게 가운데 정렬 */
-  .notice { font-size: 14px; justify-content: center; text-align: center; gap: 2px 10px; padding: 7px 16px; max-width: 300px; }
+  .notice { display: flex; font-size: 14px; justify-content: center; text-align: center; gap: 2px 10px; padding: 7px 16px; }
 
 
   .y-intro h2 { font-size: 22px; }
@@ -1023,8 +1023,8 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
   .about .eyebrow { font-size: 13px; }
   .about .statement { font-size: 25px; }
   .about-text > p { margin-top: 16px; font-size: 15px; line-height: 1.8; }
-  .ov-card { padding: 8px; border-radius: 12px; }
-  .ov-card dl { padding: 6px 14px; border-radius: 8px; }
+  .ov-card { padding: 8px; border-radius: 6px; } /* 모서리는 PC 와 같게 */
+  .ov-card dl { padding: 6px 14px; border-radius: 4px; }
   .ov-card dl div, .about-facts dl div { grid-template-columns: 64px minmax(0, 1fr); gap: 10px; padding: 10px 0; font-size: 14.5px; }
   .about-facts dd small { font-size: 12px; margin-top: 1px; }
   /* 소개 페이지 개요 표: 안쪽 칸을 좀 더 촘촘하게 */
