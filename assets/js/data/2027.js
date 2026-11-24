@@ -197,7 +197,7 @@ MCUS.addYear({
           abstract: 'For a field \\(k\\), finite-dimensional \\(k\\)-modules—that is, \\(k\\)-vector spaces—are completely classified by their dimensions. If we replace the field \\(k\\) by a general ring \\(R\\), however, the situation becomes much more complicated: \\(R\\)-modules can no longer be classified by a single numerical invariant, and even the notion of dimension is no longer straightforward.\n\nMotivated by this, we will explore algebraic K-theory, which may be viewed as a far-reaching generalization of the idea of dimension. Starting from projective modules and the Grothendieck group \\(K_0\\), we will see how K-theory naturally connects algebra, algebraic geometry, and number theory.\n\nIf time permits, we will also briefly introduce higher K-theory, initiated by Daniel Quillen, and give a glimpse of some modern perspectives on the subject.\n\n체 \\(k\\)에 대하여 유한차원 \\(k\\)-모듈, 즉 \\(k\\)-벡터공간은 그 차원에 의해 완전히 분류됩니다. 그러나 체 \\(k\\) 대신 일반적인 환 \\(R\\)을 생각하면 상황은 훨씬 복잡해집니다. \\(R\\)-모듈은 더 이상 하나의 수치적 불변량만으로 분류되지 않으며, ‘차원’이라는 개념 자체도 더 이상 자명하게 정의되지 않습니다.\n\n이러한 문제의식에서 출발하여, 이번 강연에서는 차원이라는 개념을 광범위하게 일반화한 것으로 볼 수 있는 대수적 K-이론을 소개하고자 합니다. 사영 모듈과 Grothendieck 군 \\(K_0\\)에서 시작하여, K-이론이 대수학, 대수기하학, 정수론 등 여러 분야와 어떻게 자연스럽게 연결되는지 살펴볼 예정입니다.\n\n시간이 허락한다면 Daniel Quillen으로부터 시작된 higher K-theory와, K-이론을 바라보는 몇 가지 현대적인 관점도 간략히 소개하고자 합니다.',
         },
         {
-          ko: '이은성', en: '',
+          ko: '이은성', en: 'Eunsung Lee',
           affil: 'Sungkyunkwan University', kind: 'invited',
           title: 'Topological Applications in Economics: Brouwer and Kakutani Fixed Point Theorems',
           tags: ['topology', 'applied'],
