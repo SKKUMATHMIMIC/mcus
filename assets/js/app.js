@@ -787,12 +787,14 @@
       ? `<a class="btn btn-royal" href="${esc(reg.formUrl)}" target="_blank" rel="noopener">참가 신청서 작성하기 <span class="arrow">→</span></a>`
       : `<span class="btn" aria-disabled="true">${esc(reg.closedLabel)}</span>`;
     // 마감 전인 모집(포스터 발표자 모집 등)은 맨 위에, 나머지는 신청 상태 카드 아래에
+    // 단, 참가 신청이 열려 있으면 신청 상태 카드와 참가 신청 안내를 먼저 보여 주고 모집은 그 아래에
     const isOpenCall = (b) => b.until && daysLeft(b.until) >= 0;
-    const first = reg.blocks.filter(isOpenCall);
+    const calls = reg.blocks.filter(isOpenCall);
     const rest = reg.blocks.filter((b) => !isOpenCall(b));
+    const callsHtml = calls.length ? `<div class="reg-blocks reg-${reg.open ? 'after' : 'first'}">${calls.map(regBlock).join('')}</div>` : '';
     return `
       <section class="section"><div class="wrap">
-        ${first.length ? `<div class="reg-blocks reg-first">${first.map(regBlock).join('')}</div>` : ''}
+        ${reg.open ? '' : callsHtml}
         <div class="card reg-status reveal">
           <div>
             <strong>${reg.open ? '참가 신청을 받고 있습니다' : esc(reg.closedLabel)}</strong>
@@ -803,6 +805,7 @@
         <div class="reg-blocks">
           ${rest.map(regBlock).join('')}
         </div>
+        ${reg.open ? callsHtml : ''}
       </div></section>`;
   }
 

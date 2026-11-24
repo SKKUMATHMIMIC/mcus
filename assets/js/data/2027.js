@@ -21,15 +21,15 @@ MCUS.addYear({
     { label: '개최 일자', value: '2027. 01. 14. (목) – 01. 16. (토)' },
     { label: '개최 장소', value: '성균관대학교 자연과학캠퍼스 (수원) 반도체관 1층 400126' },
     { label: '참가 대상', value: '수학에 관심이 있는 누구나', note: '주로 학부 3, 4학년' },
-    { label: '참가비', value: '무료', note: '3일간 중식 및 둘째 날 석식(만찬) 제공' },
+    { label: '참가비', value: '무료', note: '3일간 중식 및 2일차(1. 15.) 석식(만찬) 제공' },
     { label: '주최', value: '성균관대학교 수학 학술동아리 MIMIC' },
     { label: '후원', value: '성균관대학교 수학과' },
   ],
 
   registration: {
-    open: false,
+    open: true,
     closedLabel: '참가 신청 오픈 예정',
-    formUrl: '',
+    formUrl: 'https://forms.gle/4x1G2KPURGfJxgsc8',
     // blocks 의 선택 항목 (포스터 모집처럼 따로 받는 신청에 사용)
     //   id: 주소 (#registration/poster 로 바로 이동) · lead: 설명 문단
     //   until: 마감일 — 이 날까지 '모집 중' 표시, 지나면 '모집 마감'
