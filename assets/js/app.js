@@ -544,7 +544,7 @@
   function organizersRow(y) {
     return `
       <div class="org-row">
-        <h2>Organizers<small>주최 ${esc(y.host)}${y.support ? `<br>후원 ${esc(y.support)}` : ''}</small></h2>
+        <h2>Organizers<small>${esc(y.host)}</small></h2>
         ${
           y.organizers.length
             ? `<ul>${y.organizers.map(([ko, en]) => `<li>${esc(ko)} <span>(${esc(en)})</span></li>`).join('')}</ul>`
