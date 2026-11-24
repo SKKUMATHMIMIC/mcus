@@ -98,8 +98,9 @@ button { font-family: inherit; }
   border-radius: 8px;
   white-space: nowrap;
 }
-.site-nav a:hover { color: var(--ink); background: var(--bg-soft); }
-.site-nav a[aria-current='page'] { color: var(--ink); font-weight: 800; }
+.site-nav a:hover { color: var(--ink); } /* 배경 없이 글자만 진하게 */
+.site-nav a { -webkit-tap-highlight-color: transparent; transition: color 0.15s; }
+.site-nav a[aria-current] { color: var(--ink); font-weight: 800; }
 .site-nav .nav-new {
   display: inline-block;
   width: 6px; height: 6px;
@@ -614,7 +615,8 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
 .ag.plenary .ag-card { background: var(--pl-bg); border-color: var(--pl-line); }
 .ag.break .ag-card { background: var(--rs-bg); border-color: transparent; padding-top: 9px; padding-bottom: 9px; }
 .ag.break .ag-name { font-size: 14.5px; font-weight: 700; color: var(--ink-2); }
-.ag.break .ag-time { padding-top: 9px; }
+.ag.break { align-items: center; } /* 휴식 줄: 시간 묶음과 이름 칸을 위아래 가운데로 */
+.ag.break .ag-time { padding-top: 0; }
 .ag.break .ag-time b { font-size: 14px; color: var(--ink-2); }
 .ag.poster .ag-card { background: var(--po-bg); border-color: var(--po-line); }
 .ag.poster .ag-name { color: var(--po-ink); }
@@ -691,6 +693,10 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
 .acc-row.break { padding: 12px 8px; border-bottom: 1px solid var(--line); }
 .acc-row.break .acc-time { font-weight: 600; color: var(--ink-3); }
 .acc-row.break .acc-head { display: block; color: var(--ink-3); font-size: 15px; }
+/* 휴식 줄(점심 · 커피 브레이크 등): 시간과 이름을 한 줄에 맞추고 위아래 가운데 */
+.acc-row.break { align-items: center; }
+.acc-row.break > span:empty { display: none; }
+.acc-row.break .acc-time, .acc-row.break .acc-head { padding-top: 0; line-height: 1.4; }
 .acc-row.tbd { border-bottom: 1px solid var(--line-strong); }
 .acc-row.tbd b { color: var(--ink-3); font-weight: 700; }
 
@@ -872,6 +878,8 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
   .gallery figure:first-child { grid-column: 1 / -1; aspect-ratio: auto; }
   .acc-item > summary, .acc-row { grid-template-columns: 1fr 22px; gap: 4px 12px; padding: 16px 4px; }
   .acc-time { grid-column: 1 / -1; padding: 0; }
+  .acc-row.break { grid-template-columns: auto minmax(0, 1fr); gap: 12px; }
+  .acc-row.break .acc-time { grid-column: auto; }
   .acc-body { padding: 0 4px 24px; }
   .topstrip nav { gap: 12px; }
   .topstrip .wrap { font-size: 12.5px; }
@@ -915,17 +923,13 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
   .site-header.has-year .year-brand b { font-size: 16.5px; padding-left: 10px; }
   .site-header.has-year .site-nav {
     position: sticky; top: 0; z-index: 50; order: 0; width: auto;
-    height: 48px; padding: 0 calc(var(--gutter) - 10px); gap: 0; align-items: stretch;
+    height: 48px; padding: 0 calc(var(--gutter) - 10px); gap: 2px; align-items: center;
     background: color-mix(in srgb, var(--bg) 94%, transparent);
     -webkit-backdrop-filter: saturate(1.4) blur(12px); backdrop-filter: saturate(1.4) blur(12px);
     border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
   }
-  .site-header.has-year .site-nav a { position: relative; display: flex; align-items: center; padding: 0 10px; border-radius: 0; font-size: 14.5px; }
-  .site-header.has-year .site-nav a:hover { background: none; }
-  .site-header.has-year .site-nav a[aria-current] { color: var(--ink); font-weight: 800; }
-  .site-header.has-year .site-nav a[aria-current]::after {
-    content: ''; position: absolute; left: 10px; right: 10px; bottom: -1px; height: 2.5px; border-radius: 2px; background: var(--royal);
-  }
+  /* 메뉴 모양은 PC 와 같게: 선택된 메뉴만 글자가 진하고 굵게 */
+  .site-header.has-year .site-nav a { align-self: center; padding: 7px 10px; border-radius: 8px; font-size: 14.5px; }
   .topstrip .wrap { min-height: 34px; }
 
   /* 공통 섹션 */
@@ -1068,7 +1072,7 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
   .acc-head .t { font-size: 16px; }
   .who b { font-size: 15.5px; }
   .who .en { font-size: 13px; }
-  .acc-row.break { grid-template-columns: auto minmax(0, 1fr); align-items: baseline; gap: 10px; padding: 11px 2px; }
+  .acc-row.break { grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 10px; padding: 12px 2px; }
   .acc-row.break .acc-time { grid-column: auto; }
   .acc-row.break .acc-head { font-size: 14px; }
   .acc-body { padding: 0 2px 22px; }
