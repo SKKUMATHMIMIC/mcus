@@ -958,7 +958,7 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
   .yhero-meta .m-org { margin-top: 10px; font-size: 12.5px; }
   .yhero-actions { margin-top: 24px; }
   .yhero-actions .btn { flex: 1 1 0; max-width: 170px; padding: 12px 14px; }
-  .notices { margin-bottom: 18px; }
+  .notices { margin-bottom: 18px; justify-items: center; }
   /* 두 줄로 나뉘어도 왼쪽에 쏠리지 않게 가운데 정렬 */
   .notice { font-size: 14px; justify-content: center; text-align: center; gap: 2px 10px; padding: 7px 16px; max-width: 300px; }
 
@@ -1005,7 +1005,7 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
   /* 순서: 개요 → D-day → 버튼 → 구분선 (왼쪽 묶음을 풀어 D-day 를 버튼 위로) */
   .up-grid > div:first-child { display: contents; }
   .up-grid { justify-items: start; } /* 라벨(UPCOMING EVENT)은 PC 처럼 글자 폭만큼 */
-  .up-grid .up-facts, .up-grid .up-actions, .up-grid .up-dday { justify-self: stretch; }
+  .up-grid .up-facts, .up-grid .up-actions, .up-grid .up-dday, .up-grid .notices { justify-self: stretch; }
   .up-dday { order: 1; }
   .up-actions { order: 2; }
   .up-facts { margin-top: 18px; gap: 4px; }
@@ -1028,8 +1028,9 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
   .ov-card dl div, .about-facts dl div { grid-template-columns: 64px minmax(0, 1fr); gap: 10px; padding: 10px 0; font-size: 14.5px; }
   .about-facts dd small { font-size: 12px; margin-top: 1px; }
   /* 소개 페이지 개요 표: 안쪽 칸을 좀 더 촘촘하게 */
-  .ov-card.about-facts dl { padding: 2px 12px; }
-  .about-facts dl div { padding: 8px 0; font-size: 14px; gap: 8px; grid-template-columns: 60px minmax(0, 1fr); }
+  .ov-card.about-facts { padding: 16px; }
+  .ov-card.about-facts dl { padding: 0 12px; }
+  .about-facts dl div { padding: 7px 0; font-size: 13.5px; gap: 8px; grid-template-columns: 58px minmax(0, 1fr); }
 
   .kinds { gap: 10px; }
   .kinds li { padding: 16px 18px 18px; }
