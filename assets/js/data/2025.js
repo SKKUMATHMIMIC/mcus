@@ -188,7 +188,7 @@ MCUS.addYear({
     ['이호준', 'Hojoon Lee'],
     ['이형주', 'Hyungju Lee'],
     ['신경민', 'Kyoungmin Shin'],
-    ['한채영', 'Chaeyoung Han'],
+    ['한채영', 'Chae Young Han'],
     ['홍의진', 'Euijin Hong'],
   ],
 
