@@ -5,6 +5,10 @@
   const M = window.MCUS;
   const body = document.body;
   const yearsDesc = Object.keys(M.years).map(Number).sort((a, b) => b - a);
+  // 페이지 주소: 소개 './', 연도 '2027/', 메뉴 '2027/schedule/', 강연 '2027/abstract/#d1-t2'
+  const HOME_URL = './';
+  const pageUrl = (yr, route = 'home', anchor = '') =>
+    `${yr}/${route && route !== 'home' ? `${route}/` : ''}${anchor ? `#${anchor}` : ''}`;
   const latest = M.years[yearsDesc[0]];
 
   /* ---------- helpers ---------- */
@@ -48,7 +52,7 @@
   // 처음에는 학술회 당일이면 그날, 아니면 첫째 날
   const daySel = {};
   function dayIndex(y, arg) {
-    const m = /^d(\d+)-/.exec(arg || '');
+    const m = /^d(\d+)(?:-|$)/.exec(arg || ''); // #d2 또는 #d2-t3
     if (m && y.days[m[1] - 1]) return (daySel[y.year] = m[1] - 1);
     if (daySel[y.year] != null) return daySel[y.year];
     const t = new Date();
@@ -72,12 +76,12 @@
   const activeNotices = (y) =>
     (y.registration.blocks || []).filter((b) => b.notice && b.until && daysLeft(b.until) >= 0);
 
-  // 홈 알림 띠 — base: 다른 페이지에서 연결할 때 앞에 붙일 주소 (예: '2027.html')
-  const noticeBar = (y, base = '') =>
+  // 홈 알림 띠 → 그 해 참가 신청 페이지의 해당 모집 글
+  const noticeBar = (y) =>
     activeNotices(y)
       .map((b) => {
         const n = daysLeft(b.until);
-        return `<a class="notice" href="${base}#registration${b.id ? `/${esc(b.id)}` : ''}">
+        return `<a class="notice" href="${pageUrl(y.year, 'registration', b.id ? esc(b.id) : '')}">
           <span class="n-tag">모집 중</span>
           <b>${esc(b.notice)}</b>
           <span class="n-due">${esc(mdLabel(b.until))}까지 · ${dLabel(n)}</span>
@@ -194,9 +198,9 @@
     const el = document.getElementById('site-header');
     el.innerHTML = `
       <div class="wrap bar">
-        <a class="brand" href="index.html" aria-label="MCUS 소개">${wordmark()}<span>학부생을 위한<br>수학 학술회</span></a>
+        <a class="brand" href="${HOME_URL}" aria-label="MCUS 소개">${wordmark()}<span>학부생을 위한<br>수학 학술회</span></a>
         <nav class="site-nav" aria-label="주요 메뉴">
-          <a href="index.html" aria-current="page">소개</a>
+          <a href="${HOME_URL}" aria-current="page">소개</a>
           <details class="drop">
             <summary>학술회 ${icon.down}</summary>
             <div class="menu">
@@ -204,7 +208,7 @@
                 .map((yr) => {
                   const y = M.years[yr];
                   const up = phase(y).key !== 'done';
-                  return `<a href="${yr}.html"><b>MCUS ${yr}</b>${up ? '<span class="tag">개최 예정</span>' : ''}<small>${esc(y.dateLabel)}</small></a>`;
+                  return `<a href="${pageUrl(yr)}"><b>MCUS ${yr}</b>${up ? '<span class="tag">개최 예정</span>' : ''}<small>${esc(y.dateLabel)}</small></a>`;
                 })
                 .join('')}
             </div>
@@ -220,9 +224,9 @@
     el.insertAdjacentHTML('beforebegin', `
       <div class="topstrip">
         <div class="wrap">
-          <a class="back" href="index.html">${icon.left}<span>MCUS 소개</span></a>
+          <a class="back" href="${HOME_URL}">${icon.left}<span>MCUS 소개</span></a>
           <nav aria-label="연도별 학술회">
-            ${yearsDesc.map((yr) => `<a href="${yr}.html"${yr === y.year ? ' aria-current="page"' : ''}>MCUS ${yr}</a>`).join('')}
+            ${yearsDesc.map((yr) => `<a href="${pageUrl(yr)}"${yr === y.year ? ' aria-current="page"' : ''}>MCUS ${yr}</a>`).join('')}
           </nav>
         </div>
       </div>`);
@@ -230,11 +234,11 @@
     el.innerHTML = `
       <div class="wrap bar">
         <div class="year-brand">
-          <a href="index.html" aria-label="MCUS 소개">${wordmark()}</a>
-          <a href="#home"><b>MCUS ${y.year}</b></a>
+          <a href="${HOME_URL}" aria-label="MCUS 소개">${wordmark()}</a>
+          <a href="${pageUrl(y.year)}"><b>MCUS ${y.year}</b></a>
         </div>
         <nav class="site-nav" aria-label="MCUS ${y.year} 메뉴">
-          ${routes.map(([key, label]) => `<a href="#${key}" data-route="${key}">${label}</a>`).join('')}
+          ${routes.map(([key, label]) => `<a href="${pageUrl(y.year, key)}" data-route="${key}">${label}</a>`).join('')}
         </nav>
       </div>`;
   }
@@ -246,18 +250,18 @@
       <div class="wrap">
         <div class="f-main">
           <div class="f-brand">
-            <a class="f-mark" href="index.html" aria-label="MCUS 소개">${wordmark()}</a>
+            <a class="f-mark" href="${HOME_URL}" aria-label="MCUS 소개">${wordmark()}</a>
             <p>학부생을 위한 수학 학술회<span>Mathematics Conference for Undergraduate Students</span></p>
             <div class="f-orgs">
               <a href="${esc(c.website)}" ${ext}><small>주최</small><img src="assets/img/mimic-logo-clear.png" alt="성균관대학교 수학 학술동아리 MIMIC"></a>
-              ${latest.support ? `<div><small>후원</small><img src="assets/img/skku-math-logo-clear.png" alt="${esc(latest.support)}"></div>` : ''}
+              ${latest.support ? `<a href="https://math.skku.edu/math/index.do" ${ext}><small>후원</small><img src="assets/img/skku-math-logo-clear.png" alt="${esc(latest.support)}"></a>` : ''}
             </div>
           </div>
           <nav class="f-col" aria-label="학술회">
             <h4>학술회</h4>
             <ul>
-              <li><a href="index.html">MCUS 소개</a></li>
-              ${yearsDesc.map((yr) => `<li><a href="${yr}.html">MCUS ${yr}</a>${phase(M.years[yr]).key === 'done' ? '' : '<span class="f-tag">개최 예정</span>'}</li>`).join('')}
+              <li><a href="${HOME_URL}">MCUS 소개</a></li>
+              ${yearsDesc.map((yr) => `<li><a href="${pageUrl(yr)}">MCUS ${yr}</a>${phase(M.years[yr]).key === 'done' ? '' : '<span class="f-tag">개최 예정</span>'}</li>`).join('')}
             </ul>
           </nav>
           <div class="f-col">
@@ -296,7 +300,7 @@
     const rise = () => `class="rise" style="--i:${i++}"`;
     el.innerHTML = network(11, false) + `
       <div class="wrap">
-        ${activeNotices(y).length ? `<div class="notices rise" style="--i:${i++}">${noticeBar(y, `${y.year}.html`)}</div>` : ''}
+        ${activeNotices(y).length ? `<div class="notices rise" style="--i:${i++}">${noticeBar(y)}</div>` : ''}
       <div class="up-grid">
         <div>
           <span class="up-label rise" style="--i:${i++}">${label}</span>
@@ -305,7 +309,7 @@
           <p class="en rise" style="--i:${i++}">${esc(y.titleEn)}</p>
           <dl class="up-facts">${facts.map(([k, v]) => `<div ${rise()}><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
           <div class="up-actions rise" style="--i:${i++}">
-            <a class="btn btn-royal" href="${y.year}.html">MCUS ${y.year} 페이지로 <span class="arrow">→</span></a>
+            <a class="btn btn-royal" href="${pageUrl(y.year)}">MCUS ${y.year} 페이지로 <span class="arrow">→</span></a>
             ${y.registration.open && y.registration.formUrl ? `<a class="btn btn-ghost" href="${esc(y.registration.formUrl)}" target="_blank" rel="noopener">참가 신청하기</a>` : ''}
           </div>
         </div>
@@ -339,7 +343,7 @@
       const room = (y.venue.rooms || []).find((r) => /진행/.test(r[0]));
       const stats = y.venue.building ? `자연과학캠퍼스 ${[y.venue.building, room && room[1]].filter(Boolean).join(' ')}` : '성균관대학교 자연과학캠퍼스';
       const tag = p.key === 'done' ? '' : `<span class="pill live">${p.key === 'live' ? '진행 중' : '개최 예정'}</span>`;
-      return `<a class="hist-card reveal" href="${yr}.html">
+      return `<a class="hist-card reveal" href="${pageUrl(yr)}">
         <span class="h-ord">제${asc.indexOf(yr) + 1}회</span>${tag}
         ${wordmark(yr, 'h-mark')}
         <span class="h-date">${esc(y.dateLabel)}</span>
@@ -354,7 +358,8 @@
   }
 
   /* ==========================================================
-     연도 페이지 — 한 파일 안에서 #home, #schedule, #abstract … 로 이동
+     연도 페이지 — 2027/, 2027/schedule/, 2027/abstract/#d1-t2 …
+     (페이지 파일은 tools/pages.py 가 만들고, 같은 해 안에서는 새로고침 없이 이동)
      ========================================================== */
 
   function yearRoutes(y) {
@@ -378,12 +383,28 @@
 
     const views = { home: viewHome, schedule: viewSchedule, abstract: viewAbstract, registration: viewRegistration, venue: viewVenue, gallery: viewGallery };
 
+    // 사이트 맨 위 주소 (연도 페이지의 <base>)
+    const root = new URL(document.baseURI);
+    // 주소 → [메뉴, 강연 등 위치]. 예전 방식(#schedule, #abstract/d1-t2)도 받아 줌
+    const parse = (u) => {
+      const parts = decodeURIComponent(u.pathname.slice(root.pathname.length)).split('/').filter(Boolean);
+      const key = parts[0] === String(yr) ? parts[1] || 'home' : null;
+      const arg = decodeURIComponent(u.hash.slice(1));
+      if (key === 'home' && arg) {
+        const [k, a] = arg.split('/');
+        if (routes.some((x) => x[0] === k)) return [k, a || ''];
+        if (/^d\d+-(t|lt)\d*$/.test(k)) return ['abstract', k];
+      }
+      return [key, arg];
+    };
+
     function route() {
-      let [key, arg] = decodeURIComponent(location.hash.slice(1)).split('/');
-      // 예전 링크(#d1-t2) 호환
-      if (/^d\d+-(t|lt)\d*$/.test(key || '')) { arg = key; key = 'abstract'; }
+      const [key, arg] = parse(location);
       const r = routes.find((x) => x[0] === key) || routes[0];
       const [rk, label, en] = r;
+      // 없는 메뉴이거나 예전 방식 주소였다면 주소창을 바른 주소로
+      const want = new URL(pageUrl(yr, rk, arg), root).href;
+      if (location.href !== want) history.replaceState(null, '', want);
 
       document.querySelectorAll('.site-nav [data-route]').forEach((a) => a.toggleAttribute('aria-current', a.dataset.route === rk));
       const cur = document.querySelector('.site-nav [aria-current]');
@@ -398,7 +419,19 @@
       setupReveal();
     }
 
-    window.addEventListener('hashchange', route);
+    // 같은 해 안의 링크는 새로고침 없이 (날짜 선택 등이 그대로 유지됨)
+    document.addEventListener('click', (e) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = e.target.closest('a[href]');
+      if (!a || a.target || a.hasAttribute('download')) return;
+      const u = new URL(a.href);
+      if (u.origin !== location.origin || !u.pathname.startsWith(root.pathname)) return;
+      if (!parse(u)[0]) return; // 다른 연도 · 소개 페이지는 보통 이동
+      e.preventDefault();
+      if (u.href !== location.href) history.pushState(null, '', u.href);
+      route();
+    });
+    window.addEventListener('popstate', route);
     route();
   }
 
@@ -442,8 +475,8 @@
           </div>
           <div class="yhero-actions">
             ${regOpen ? `<a class="btn btn-royal" href="${esc(reg.formUrl)}" target="_blank" rel="noopener">참가 신청하기 <span class="arrow">→</span></a>` : ''}
-            <a class="btn ${regOpen ? 'btn-ghost' : 'btn-royal'}" href="#schedule">일정 보기</a>
-            <a class="btn btn-ghost" href="#abstract">초록 보기</a>
+            <a class="btn ${regOpen ? 'btn-ghost' : 'btn-royal'}" href="${pageUrl(y.year, 'schedule')}">일정 보기</a>
+            <a class="btn btn-ghost" href="${pageUrl(y.year, 'abstract')}">초록 보기</a>
           </div>
           <dl class="yhero-meta">${meta}</dl>
         </div>
@@ -480,14 +513,14 @@
           <span class="eyebrow">About MCUS</span>
           <h2>${esc(ab.title)}</h2>
           <p>${esc(ab.text)}</p>
-          <a class="more" href="index.html#about">MCUS 소개 더 보기 →</a>
+          <a class="more" href="${HOME_URL}#about">MCUS 소개 더 보기 →</a>
         </div>`
       : '';
 
-    // 장소 안내 (핵심만) — 자세한 내용은 #venue
+    // 장소 안내 (핵심만) — 자세한 내용은 장소 안내 페이지
     const sub = (M.directions || []).find((d) => d.kind === 'subway');
     const venue = `
-      <div class="sec-title row"><div><h2>장소 안내</h2><span>Venue</span></div><a class="more" href="#venue">자세히 보기 →</a></div>
+      <div class="sec-title row"><div><h2>장소 안내</h2><span>Venue</span></div><a class="more" href="${pageUrl(y.year, 'venue')}">자세히 보기 →</a></div>
       <div class="v-home reveal">
         <div class="v-card">
           <div>
@@ -500,8 +533,8 @@
 
     const gallery = y.gallery && y.gallery.length
       ? `
-      <div class="sec-title row"><div><h2>갤러리</h2><span>Gallery</span></div><a class="more" href="#gallery">전체 보기 →</a></div>
-      <a class="gal-one reveal" href="#gallery"><img src="${esc(y.gallery[0].src)}" alt="${esc(y.gallery[0].alt)}" loading="lazy"></a>`
+      <div class="sec-title row"><div><h2>갤러리</h2><span>Gallery</span></div><a class="more" href="${pageUrl(y.year, 'gallery')}">전체 보기 →</a></div>
+      <a class="gal-one reveal" href="${pageUrl(y.year, 'gallery')}"><img src="${esc(y.gallery[0].src)}" alt="${esc(y.gallery[0].alt)}" loading="lazy"></a>`
       : '';
 
     const blocks = [intro, speakers, venue, gallery].filter(Boolean);
@@ -685,7 +718,7 @@
   /* 초록 — 시간 순서대로, 누르면 초록이 펼쳐지는 목록 */
   function viewAbstract(y, arg) {
     const cur = dayIndex(y, arg);
-    // 강연 번호는 날마다 새로 세지 않고 첫날부터 이어서 (주소 #abstract/d2-t1 은 그대로)
+    // 강연 번호는 날마다 새로 세지 않고 첫날부터 이어서 (주소 abstract/#d2-t1 은 그대로)
     let base = 0;
     const days = y.days
       .map((d, di) => {

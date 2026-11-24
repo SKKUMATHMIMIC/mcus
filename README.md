@@ -5,20 +5,24 @@ Mathematics Conference for Undergraduate Students (MCUS) 통합 웹사이트입�
 
 ## 페이지 구성
 
-| 파일 | 내용 |
+| 주소 | 내용 |
 | --- | --- |
-| `index.html` | 소개 — 다가오는 학술회(자동), MCUS 소개 + 개요 표, 프로그램 구성, 역대 학술회(자동), MIMIC 소개 |
-| `2027.html` | MCUS 2027 (개최 예정) |
-| `2026.html` | MCUS 2026 |
-| `2025.html` | MCUS 2025 |
+| `/` (`index.html`) | 소개 — 다가오는 학술회(자동), MCUS 소개 + 개요 표, 프로그램 구성, 역대 학술회(자동), MIMIC 소개 |
+| `/2027/` | MCUS 2027 (개최 예정) |
+| `/2026/` | MCUS 2026 |
+| `/2025/` | MCUS 2025 |
 
 연도 페이지 메뉴: **홈, 일정, 초록, 참가 신청, 장소 안내, 갤러리** (참가 신청은 개최 전인 해에만, 갤러리는 사진이 있을 때만 표시)
-(한 파일 안에서 `2026.html#schedule`, `2026.html#abstract` 처럼 이동합니다.)
+주소는 `/2027/schedule/`, `/2027/abstract/`, `/2027/registration/`, `/2027/venue/`, `/2027/gallery/` 입니다.
+
+- `2027/…/index.html` 파일들은 `tools/pages.py` 가 자동으로 만드는 껍데기입니다. 직접 고치지 마세요.
+- 예전 주소(`2027.html#schedule`, `2027.html#abstract/d1-t2`)로 들어와도 새 주소로 자동 이동합니다.
 
 - **홈** — 첫 화면 아래 개요 정보(일시 · 장소 · 대상 · 참가비, `overview` 와 `venue` 에서 자동), 학술회 소개(`site.js` 의 `about`), 기조 강연자(넘겨 보기), 장소 안내(요약), 갤러리, Organizers
-- **일정** — 날짜 탭 + 타임테이블. 강연마다 연사, 소속, 제목과 기조강연/초청강연 표시. `2026.html#schedule/d2` 로 Day 2를 바로 열 수 있습니다.
-- **초록** — 시간 순서대로 강연이 나열되고, 누르면 초록이 펼쳐집니다. '모두 펼치기' 지원.
-  `2025.html#abstract/d1-t2` 처럼 링크하면 Day 1의 Talk 2가 펼쳐진 채로 열립니다.
+- **일정** — 타임테이블(모바일은 날짜 탭 + 목록). 강연마다 연사, 소속, 제목과 기조강연/초청강연 표시. `/2026/schedule/#d2` 로 Day 2를 바로 열 수 있습니다.
+- **초록** — 날짜 탭 + 시간 순서대로 강연이 나열되고, 누르면 초록이 펼쳐집니다.
+  `/2025/abstract/#d1-t2` 처럼 링크하면 Day 1의 두 번째 강연이 펼쳐진 채로 열립니다.
+- **참가 신청** — `/2027/registration/#poster` 처럼 모집 글(`blocks` 의 `id`)로 바로 연결할 수 있습니다.
 
 ## 내용 수정하기
 
@@ -46,8 +50,8 @@ assets/js/data/
 ## 새 연도 추가 (예: 2028)
 
 1. `assets/js/data/2027.js` 를 복사해 `2028.js` 로 만들고 내용을 수정
-2. `2027.html` 을 복사해 `2028.html` 로 만들고, `data-year="2028"` 및 제목 수정
-3. 모든 HTML 파일 하단에 `<script src="assets/js/data/2028.js"></script>` 추가
+2. `index.html` 하단에 `<script src="assets/js/data/2028.js?v=…"></script>` 추가 (다른 연도 줄과 같은 형식)
+3. `python3 tools/pages.py` 실행 → `/2028/` 과 그 아래 메뉴 페이지들이 만들어집니다 (다른 연도 페이지에도 2028 이 자동 반영)
 
 메뉴와 소개 페이지 상단의 '다가오는 학술회' 링크는 자동으로 갱신됩니다.
 
@@ -59,9 +63,10 @@ assets/js/data/
 
 ## 미리보기 & 배포
 
-- 미리보기: `index.html` 을 브라우저로 열면 됩니다. (빌드 과정 없음)
-- **CSS · JS를 고친 뒤 배포할 때**: HTML 파일들의 `?v=20261123` 숫자를 새 날짜로 바꿔 주세요.
+- 미리보기: 폴더 주소를 쓰므로 파일을 바로 여는 대신 간단한 서버로 봅니다.
+  저장소 폴더에서 `python3 -m http.server` 실행 후 `http://localhost:8000/` 접속.
+- **CSS · JS를 고친 뒤 배포할 때**: `index.html` 의 `?v=` 숫자(app.js · style.css · data 파일 줄)를 새 숫자로 바꾸고
+  `python3 tools/pages.py` 를 실행하면 연도 페이지들에도 같은 숫자가 들어갑니다.
   바꾸지 않으면 방문자 브라우저가 예전 `style.css` 를 계속 써서 화면이 깨져 보일 수 있습니다.
-  (한 번에 바꾸기: `sed -i '' 's/?v=[0-9]*/?v=새날짜/g' *.html`)
 - 배포: GitHub 저장소 Settings → Pages → Branch `main` / `root` 선택 시
-  `https://ssuyeoncho.github.io/MCUS/` 에서 공개됩니다.
+  `https://skkumathmimic.github.io/mcus/` 에서 공개됩니다. (저장소 이름이 주소가 됩니다)
