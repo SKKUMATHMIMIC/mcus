@@ -409,12 +409,15 @@
     const target = ovRow(y, /대상/);
     const fee = ovRow(y, /참가비/);
     // 일시 · 장소는 제목 아래 크게, 나머지(주최 · 후원 · 대상 · 참가비)는 첫 화면 맨 아래 작게
-    const meta = [
-      ['주최', y.host],
-      ['후원', y.support],
-      ['참가 대상', target.value],
-      ['참가비', [fee.value, fee.note].filter(Boolean).join(' · ')],
-    ].filter(([, v]) => v);
+    // 참가 대상 / 참가비 는 한 줄씩 조금 크게, 주최 · 후원은 마지막 한 줄에 작게
+    const metaRow = (cls, rows) => {
+      const r = rows.filter(([, v]) => v);
+      return r.length ? `<div class="${cls}">${r.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</div>` : '';
+    };
+    const meta =
+      metaRow('m-main', [['참가 대상', target.value]]) +
+      metaRow('m-main', [['참가비', [fee.value, fee.note].filter(Boolean).join(' · ')]]) +
+      metaRow('m-org', [['주최', y.host], ['후원', y.support]]);
     const dateHtml = esc(y.dateLabel).replace(/\((.)\)/g, '<span class="dow">($1)</span>');
 
     const hero = `
@@ -435,7 +438,7 @@
             <a class="btn ${regOpen ? 'btn-ghost' : 'btn-royal'}" href="#schedule">일정 보기</a>
             <a class="btn btn-ghost" href="#abstract">초록 보기</a>
           </div>
-          <dl class="yhero-meta">${meta.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
+          <dl class="yhero-meta">${meta}</dl>
         </div>
       </section>`;
 
@@ -535,7 +538,7 @@
     const rowOf = (m) => bounds.indexOf(m);
 
     // 시간 비례 — 1분 = PPM px. 강연·포스터 등이 있는 구간은 길이에 비례하고,
-    // 휴식(점심·티타임·등록)만 있거나 아무 일정도 없는 구간은 작게 둠
+    // 휴식(점심·커피 브레이크·등록)만 있거나 아무 일정도 없는 구간은 작게 둠
     const PPM = 3;
     const GAP = 6; // 칸 사이 세로 간격 — CSS 의 .tt-table border-spacing 세로값과 같게
     const isBreak = (e) => !e.s.talk && (e.s.kind || 'break') === 'break';
