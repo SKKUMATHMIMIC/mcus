@@ -328,7 +328,8 @@
     const cards = yearsDesc.map((yr) => {
       const y = M.years[yr];
       const p = phase(y);
-      const stats = y.venue.building ? `자연과학캠퍼스 ${y.venue.building}` : '성균관대학교 자연과학캠퍼스';
+      const room = (y.venue.rooms || []).find((r) => /진행/.test(r[0]));
+      const stats = y.venue.building ? `자연과학캠퍼스 ${[y.venue.building, room && room[1]].filter(Boolean).join(' ')}` : '성균관대학교 자연과학캠퍼스';
       const tag = p.key === 'done' ? '' : `<span class="pill live">${p.key === 'live' ? '진행 중' : '개최 예정'}</span>`;
       return `<a class="hist-card reveal" href="${yr}.html">
         <span class="h-ord">제${asc.indexOf(yr) + 1}회</span>${tag}
@@ -841,9 +842,8 @@
     return `
       <section class="section"><div class="wrap">
         <div class="gallery">
-          ${y.gallery.map((g) => `<button type="button" data-src="${esc(g.src)}" data-alt="${esc(g.alt)}"><img src="${esc(g.src)}" alt="${esc(g.alt)}" loading="lazy"></button>`).join('')}
+          ${y.gallery.map((g) => `<figure><img src="${esc(g.src)}" alt="${esc(g.alt)}" loading="lazy"></figure>`).join('')}
         </div>
-        <dialog class="lightbox" id="lightbox"><form method="dialog"><button aria-label="닫기">×</button></form><img alt=""><p></p></dialog>
       </div></section>`;
   }
 
@@ -913,20 +913,6 @@
       window.__mcusCarResize = update;
       window.addEventListener('resize', update);
       update();
-    }
-
-    // 갤러리 확대
-    const dlg = document.getElementById('lightbox');
-    if (dlg && typeof dlg.showModal === 'function') {
-      document.querySelectorAll('.gallery button').forEach((b) =>
-        b.addEventListener('click', () => {
-          dlg.querySelector('img').src = b.dataset.src;
-          dlg.querySelector('img').alt = b.dataset.alt;
-          dlg.querySelector('p').textContent = b.dataset.alt;
-          dlg.showModal();
-        })
-      );
-      dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
     }
 
     // #abstract/d1-t2 → 해당 강연을 펼치고 그 위치로

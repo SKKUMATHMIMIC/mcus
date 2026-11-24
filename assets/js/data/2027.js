@@ -118,7 +118,7 @@ MCUS.addYear({
           abstract: 'In the 1950s, Wigner modeled the energy levels of heavy nuclei by the eigenvalues of large random symmetric matrices. As the matrix size grows, the limiting behavior of these eigenvalues distribution is largely insensitive to the distribution of the matrix; this phenomenon, called universality, applies on all feasible scales, even at the scale of individual eigenvalues. The same spacing statistics of random matrices are conjectured to appear in “sufficiently chaotic” systems, such as chaotic billiards and zeros of the Riemann zeta function. We will review the development of mathematical results on eigenvalues of random symmetric matrices that culminated in spectral universality, along with their implications. We then discuss how these ideas apply to principal component analysis and to neural networks, where training creates outlier eigenvalues in weight matrices and loss Hessians.',
         },
         {
-          ko: '신준우', en: '',
+          ko: '신준우', en: 'Joon Woo Shin',
           affil: 'Yonsei University', kind: 'invited',
           title: 'Virasoro constraints and Jeffrey-Kirwan localization',
           tags: ['geometry', 'algebra'],
@@ -139,7 +139,7 @@ MCUS.addYear({
           abstract: '최적제어의 전통적 수치해법은 격자 기반 근사에 크게 의존하며, 이로 인해 고차원에서 차원의 저주에 직면한다. 강화학습과 딥러닝은 격차-free한 정책 학습을 가능하게 하지만, 목적함수의 gradient가 제공하는 정보만으로 격자-based에 준하는 최적성의 수학적 구조를 온전히 복원하기는 어렵다. 이와 동시에 long-horizon 또는 시간비일관적 문제에서는 장기적인 시간 의존성과 미래 효과를 안정적으로 학습하는 것 역시 중요한 난제로 남아 있다. 본 발표에서는 이러한 공간적·시간적 제약을 딥러닝의 다층적 미분 구조를 활용하여 극복하는 접근을 소개한다. 특히 강화학습의 주요 방법론인 Monte-Carlo 기반의 local policy improvement 처럼 고차원 stochastic control에서 필요한 gradient 정보를 직접 추정하고 이를 최적성의 수학적 조건과 연결하는 방법에 초점을 맞춘다. 마지막으로 이러한 방법론이 시간비일관 문제, exact no-action, long-horizon control과 같이 기존의 목적함수 최적화만으로는 원하는 최적성 구조에 도달하기 어려운 문제에서 실제로 어떻게 활용될 수 있는지를 발표자의 연구 사례를 통해 소개한다.',
         },
         {
-          ko: '조영우', en: '',
+          ko: '조영우', en: 'Young Woo Cho',
           affil: 'Yonsei University', kind: 'invited',
           title: 'How We Compute the Rank of the Mordell–Weil Group?',
           tags: ['algebra', 'geometry'],
@@ -169,7 +169,7 @@ MCUS.addYear({
         { ko: '황다현', en: 'Dahyeon Hwang', affil: 'Yonsei University', kind: 'invited', title: '', tags: [], abstract: '' },
         {
           ko: '이석형', en: 'Seok Hyeong Lee',
-          affil: '', kind: 'plenary', // 현재 소속 확인 필요 (Ph.D. Princeton University, 2022)
+          affil: 'Seoul National University', kind: 'plenary', // QSMS 박사후연구원 (Ph.D. Princeton University, 2022)
           field: 'Number theory',
           title: '', tags: [], abstract: '',
         },
@@ -233,6 +233,7 @@ MCUS.addYear({
         {
           ko: '김민수', en: 'Minsoo Kim',
           affil: 'KIAS (Korea Institute for Advanced Study)', kind: 'plenary', // Research Fellow
+          field: 'Computational Biophysics, AI-driven Protein Structure Prediction & Molecular Simulation', // 계산생물물리학, AI 기반 단백질 구조 예측 및 분자 동역학 시뮬레이션
           photo: 'assets/img/speakers/2027-minsoo-kim.jpg',
           title: 'From Moving Earth to Aligning Proteins',
           tags: ['analysis', 'applied'],
