@@ -1,7 +1,7 @@
 # MCUS — 학부생을 위한 수학 학술회
 
 Mathematics Conference for Undergraduate Students (MCUS) 통합 웹사이트입니다.
-주최: 성균관대학교 수학과 학술동아리 MIMIC, 후원: 성균관대학교 수학과
+주최: 성균관대학교 수학 학술동아리 MIMIC, 후원: 성균관대학교 수학과
 
 ## 페이지 구성
 

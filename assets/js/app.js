@@ -249,7 +249,7 @@
             <a class="f-mark" href="index.html" aria-label="MCUS 소개">${wordmark()}</a>
             <p>학부생을 위한 수학 학술회<span>Mathematics Conference for Undergraduate Students</span></p>
             <div class="f-orgs">
-              <a href="${esc(c.website)}" ${ext}><small>주최</small><img src="assets/img/mimic-logo-clear.png" alt="성균관대학교 수학과 학술동아리 MIMIC"></a>
+              <a href="${esc(c.website)}" ${ext}><small>주최</small><img src="assets/img/mimic-logo-clear.png" alt="성균관대학교 수학 학술동아리 MIMIC"></a>
               ${latest.support ? `<div><small>후원</small><img src="assets/img/skku-math-logo-clear.png" alt="${esc(latest.support)}"></div>` : ''}
             </div>
           </div>
