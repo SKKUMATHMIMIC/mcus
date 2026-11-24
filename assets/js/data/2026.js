@@ -52,7 +52,7 @@ MCUS.addYear({
       chairs: ['한채영', '조수연'],
       schedule: [
         { time: '10:00 – 10:30', talk: 1 },
-        { time: '10:40 – 11:30', talk: 2 },
+        { time: '10:40 – 11:20', talk: 2 },
         { time: '11:30 – 13:30', label: '점심 식사', kind: 'break' },
         { time: '13:30 – 14:00', talk: 3 },
         { time: '14:10 – 14:40', talk: 4 },
@@ -131,7 +131,7 @@ MCUS.addYear({
       chairs: ['이호준', '이민혁'],
       schedule: [
         { time: '10:00 – 10:30', talk: 1 },
-        { time: '10:40 – 11:30', talk: 2 },
+        { time: '10:40 – 11:20', talk: 2 },
         { time: '11:30 – 13:30', label: '점심 식사', kind: 'break' },
         { time: '13:30 – 14:00', talk: 3 },
         { time: '14:10 – 14:40', talk: 4 },
