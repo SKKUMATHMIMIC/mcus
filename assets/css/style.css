@@ -155,6 +155,20 @@ button { font-family: inherit; }
 .topstrip .back svg { width: 14px; height: 14px; }
 .topstrip nav { display: flex; gap: 16px; overflow-x: auto; scrollbar-width: none; }
 .topstrip nav a[aria-current='page'] { color: #fff; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+/* 모바일 전용 연도 선택 (PC 에서는 위 목록) */
+.topstrip { position: relative; z-index: 60; }
+.yr-pick { display: none; position: relative; }
+.topstrip .yr-pick summary {
+  display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px 4px 12px; border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.4); background: rgba(255, 255, 255, 0.1);
+  color: #fff; font-size: 13px; font-weight: 700; line-height: 1.3;
+}
+.topstrip .yr-pick summary:hover, .topstrip .yr-pick[open] summary { background: rgba(255, 255, 255, 0.2); color: #fff; }
+.topstrip .yr-pick summary svg { width: 14px; height: 14px; }
+.topstrip .yr-pick .menu { top: calc(100% + 8px); min-width: 230px; }
+.topstrip .yr-pick .menu a { color: var(--ink); white-space: normal; }
+.topstrip .yr-pick .menu a[aria-current='page'] { background: var(--bg-soft); box-shadow: inset 3px 0 0 var(--royal); }
+.topstrip .yr-pick .menu a[aria-current='page'] b { color: var(--royal); }
 
 /* 연도 페이지 로고 */
 .year-brand { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
@@ -439,6 +453,9 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
   padding: 8px 8px 12px; scrollbar-width: none;
 }
 .car-track::-webkit-scrollbar { display: none; }
+/* 카드가 한 화면에 다 들어가면 넘기지 않음 (앞뒤 복사본은 숨김) */
+.car.static .car-track { overflow-x: hidden; }
+.car.static .pcard.clone { display: none; }
 .pcard {
   flex: 0 0 calc((100% - 20px) / 2);
   scroll-snap-align: start;
@@ -695,7 +712,6 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
 .acc-body .lt-list li { display: grid; grid-template-columns: 110px 1fr; gap: 12px; font-size: 16px; }
 .acc-body .lt-list b { font-weight: 700; }
 .acc-body .lt-list span { color: #343a48; }
-.acc-close { display: none; }
 
 /* ==========================================================
    참가 신청 · 장소 안내 · 갤러리
@@ -922,6 +938,8 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
     content: ''; position: absolute; left: 10px; right: 10px; bottom: -1px; height: 2.5px; border-radius: 2px; background: var(--royal);
   }
   .topstrip .wrap { min-height: 34px; }
+  .topstrip .yr-list { display: none; }
+  .yr-pick { display: block; }
 
   /* 공통 섹션 */
   .section { padding: 44px 0; }
@@ -954,7 +972,8 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
   .yhero-actions { margin-top: 24px; }
   .yhero-actions .btn { flex: 1 1 0; max-width: 170px; padding: 12px 14px; }
   .notices { margin-bottom: 18px; }
-  .notice { font-size: 14px; padding: 8px 14px 8px 8px; }
+  /* 두 줄로 나뉘어도 왼쪽에 쏠리지 않게 가운데 정렬 */
+  .notice { font-size: 14px; justify-content: center; text-align: center; gap: 6px 10px; padding: 11px 16px; }
 
 
   .y-intro h2 { font-size: 22px; }
@@ -1080,8 +1099,6 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
   .acc-item[open] { background: var(--bg-soft); border-radius: 12px; border-bottom-color: transparent; margin: 6px -10px; padding: 0 10px; }
   .acc-item[open] > summary:hover { background: none; }
   .acc-item[open] .abstract { border-top-color: var(--line-strong); }
-  .acc-close { display: flex; align-items: center; justify-content: center; gap: 4px; width: 100%; margin-top: 18px; padding: 10px; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--surface); font: inherit; font-size: 13.5px; font-weight: 600; color: var(--ink-2); cursor: pointer; }
-  .acc-close svg { width: 15px; height: 15px; transform: rotate(180deg); }
 
   /* 참가 신청 */
   .reg-status { padding: 18px; gap: 12px; border-radius: 14px; }

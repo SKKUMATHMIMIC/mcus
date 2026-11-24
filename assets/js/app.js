@@ -221,11 +221,24 @@
       <div class="topstrip">
         <div class="wrap">
           <a class="back" href="index.html">${icon.left}<span>MCUS 소개</span></a>
-          <nav aria-label="연도별 학술회">
+          <nav class="yr-list" aria-label="연도별 학술회">
             ${yearsDesc.map((yr) => `<a href="${yr}.html"${yr === y.year ? ' aria-current="page"' : ''}>MCUS ${yr}</a>`).join('')}
           </nav>
+          <details class="drop yr-pick">
+            <summary aria-label="다른 연도 학술회 보기">MCUS ${y.year}${icon.down}</summary>
+            <div class="menu">
+              ${yearsDesc
+                .map((yr) => {
+                  const yy = M.years[yr];
+                  const up = phase(yy).key !== 'done';
+                  return `<a href="${yr}.html"${yr === y.year ? ' aria-current="page"' : ''}><b>MCUS ${yr}</b>${up ? '<span class="tag">개최 예정</span>' : ''}<small>${esc(yy.dateLabel)}</small></a>`;
+                })
+                .join('')}
+            </div>
+          </details>
         </div>
       </div>`);
+    closeOnOutside(document.querySelector('.yr-pick'));
     el.classList.add('has-year');
     el.innerHTML = `
       <div class="wrap bar">
@@ -684,8 +697,6 @@
   /* 초록 — 시간 순서대로, 누르면 초록이 펼쳐지는 목록 */
   function viewAbstract(y, arg) {
     const cur = dayIndex(y, arg);
-    // 긴 초록을 다 읽은 뒤 위로 올라가지 않고 닫을 수 있게 (모바일에서만 보임)
-    const closeBtn = `<button type="button" class="acc-close">접기 ${icon.down}</button>`;
     // 강연 번호는 날마다 새로 세지 않고 첫날부터 이어서 (주소 #abstract/d2-t1 은 그대로)
     let base = 0;
     const days = y.days
@@ -712,7 +723,7 @@
                     </span>
                     <span class="acc-chev">${icon.down}</span>
                   </summary>
-                  <div class="acc-body"><div class="abstract">${t.abstract ? paras(t.abstract) : '<p class="tba">초록 추후 공개</p>'}</div>${closeBtn}</div>
+                  <div class="acc-body"><div class="abstract">${t.abstract ? paras(t.abstract) : '<p class="tba">초록 추후 공개</p>'}</div></div>
                 </details>`;
             }
             if (s.kind === 'lightning') {
@@ -726,7 +737,7 @@
                     <span class="acc-chev">${icon.down}</span>
                   </summary>
                   <div class="acc-body">
-                    <ul class="lt-list">${lt.map((l) => `<li><b>${esc(l.name)}</b><span>${esc(l.title)}</span></li>`).join('')}</ul>${closeBtn}
+                    <ul class="lt-list">${lt.map((l) => `<li><b>${esc(l.name)}</b><span>${esc(l.title)}</span></li>`).join('')}</ul>
                   </div>
                 </details>`;
             }
@@ -866,14 +877,6 @@
 
   /* 화면별 동작 */
   function setupView(y, rk, arg) {
-    document.querySelectorAll('.acc-close').forEach((b) =>
-      b.addEventListener('click', () => {
-        const d = b.closest('details');
-        d.open = false;
-        const top = d.getBoundingClientRect().top - (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 0) - 70;
-        if (top < 0) window.scrollBy(0, top);
-      })
-    );
 
     // 날짜 탭 (초록 · 모바일 일정)
     const tabs = [...document.querySelectorAll('.day-tabs [data-day]')];
@@ -900,36 +903,63 @@
     if (car) {
       const track = car.querySelector('.car-track');
       const cards = [...track.children];
+      const n = cards.length;
       const btns = [...document.querySelectorAll('[data-car]')];
       const dots = [...document.querySelectorAll('[data-dot]')];
-      const step = () => (cards[1] ? cards[1].offsetLeft - cards[0].offsetLeft : track.clientWidth);
-      const update = () => {
-        const max = track.scrollWidth - track.clientWidth;
-        const scrollable = max > 4;
-        btns.forEach((b) => { b.hidden = !scrollable; });
-        const visible = Math.max(1, Math.round(track.clientWidth / step()));
-        dots.forEach((d, k) => { d.hidden = !scrollable || k > cards.length - visible; });
-        if (!scrollable) return;
-        btns[0].disabled = track.scrollLeft <= 4;
-        btns[1].disabled = track.scrollLeft >= max - 4;
-        const i = Math.round(track.scrollLeft / step());
-        dots.forEach((d, k) => d.setAttribute('aria-current', String(k === i)));
-      };
-      btns.forEach((b) => b.addEventListener('click', () => { track.scrollBy({ left: Number(b.dataset.car) * step(), behavior: 'smooth' }); restart(); }));
-      dots.forEach((d) => d.addEventListener('click', () => { track.scrollTo({ left: Number(d.dataset.dot) * step(), behavior: 'smooth' }); restart(); }));
 
-      // 자동 넘김: 5초마다 다음 연사, 끝에서는 처음으로.
+      // 끝없이 이어지게: 카드 전체를 앞뒤에 한 벌씩 복사해 두고,
+      // 복사본 구간에 들어가면 (움직임이 끝난 뒤) 같은 모양의 원래 카드 위치로 순간 이동
+      const clone = (c) => { const k = c.cloneNode(true); k.setAttribute('aria-hidden', 'true'); k.inert = true; k.classList.add('clone'); return k; };
+      if (n > 1) {
+        track.prepend(...cards.map(clone));
+        track.append(...cards.map(clone));
+      }
+      // 간격 계산은 원래 카드로 (복사본이 숨겨져 있을 때도 맞도록)
+      const step = () => (cards[1] ? cards[1].offsetLeft - cards[0].offsetLeft : track.clientWidth);
+      const visible = () => Math.max(1, Math.round(track.clientWidth / step()));
+      const looping = () => n > 1 && n > visible();
+      const pos = () => Math.round(track.scrollLeft / step()); // 복사본 포함 몇 번째 카드가 왼쪽 끝인지
+      const jump = (i) => { track.style.scrollBehavior = 'auto'; track.scrollLeft = i * step(); track.style.scrollBehavior = ''; };
+      const go = (i) => track.scrollTo({ left: i * step(), behavior: 'smooth' });
+      let cur = 0; // 지금 보이는 원래 카드 번호 (0 ~ n-1)
+
+      const update = () => {
+        const loop = looping();
+        if (car.classList.contains('static') === loop) {
+          car.classList.toggle('static', !loop);
+          if (loop) jump(n + cur);
+        }
+        btns.forEach((b) => { b.hidden = !loop; });
+        dots.forEach((d) => { d.hidden = !loop; });
+        if (!loop) { track.scrollLeft = 0; return; }
+        cur = (((pos() - n) % n) + n) % n;
+        dots.forEach((d, k) => d.setAttribute('aria-current', String(k === cur)));
+      };
+      // 움직임이 멈추면 복사본 구간인지 확인해서 원래 카드로 옮김
+      const settle = () => {
+        if (!looping()) return;
+        const i = pos();
+        if (i < n) jump(i + n);
+        else if (i >= 2 * n) jump(i - n);
+        update();
+      };
+      let settleT;
+      track.addEventListener('scroll', () => {
+        requestAnimationFrame(update);
+        clearTimeout(settleT);
+        settleT = setTimeout(settle, 140);
+      }, { passive: true });
+
+      btns.forEach((b) => b.addEventListener('click', () => { go(pos() + Number(b.dataset.car)); restart(); }));
+      dots.forEach((d) => d.addEventListener('click', () => { go(n + Number(d.dataset.dot)); restart(); }));
+
+      // 자동 넘김: 5초마다 다음 연사 (마지막 다음은 자연스럽게 첫 연사로 이어짐).
       // 마우스를 올리거나 손가락을 대고 있는 동안, 화면 밖에 있을 때, 다른 탭에 있을 때는 멈춤.
       // '동작 줄이기' 설정을 켠 기기에서는 자동으로 넘기지 않음
       const AUTO_MS = 5000;
       const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
       const hold = { hover: false, touch: false, focus: false, offscreen: true };
-      const next = () => {
-        const max = track.scrollWidth - track.clientWidth;
-        if (max <= 4) return;
-        if (track.scrollLeft >= max - 4) track.scrollTo({ left: 0, behavior: 'smooth' });
-        else track.scrollBy({ left: step(), behavior: 'smooth' });
-      };
+      const next = () => { if (looping()) go(pos() + 1); };
       function restart() {
         clearInterval(window.__mcusCarTimer);
         if (reduce || document.hidden || Object.values(hold).some(Boolean)) return;
@@ -949,12 +979,15 @@
       window.__mcusCarRestart = restart;
       window.__mcusCarIO = new IntersectionObserver(([en]) => set('offscreen', !en.isIntersecting), { threshold: 0.4 });
       window.__mcusCarIO.observe(car);
-      track.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
+
+      // 화면 크기가 바뀌면 보고 있던 카드를 그대로 유지
+      const onResize = () => { update(); if (looping()) jump(n + cur); };
       // 다른 탭으로 갔다 와도 resize 리스너가 쌓이지 않도록 하나만 유지
       if (window.__mcusCarResize) window.removeEventListener('resize', window.__mcusCarResize);
-      window.__mcusCarResize = update;
-      window.addEventListener('resize', update);
+      window.__mcusCarResize = onResize;
+      window.addEventListener('resize', onResize);
       update();
+      if (looping()) jump(n); // 원래 첫 카드에서 시작
     }
 
     // #abstract/d1-t2 → 해당 강연을 펼치고 그 위치로
