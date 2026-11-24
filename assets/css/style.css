@@ -726,6 +726,7 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
 .reg-block dt { font-weight: 700; }
 .reg-block dd { margin: 0; color: var(--ink-2); }
 .reg-block dd .email { color: var(--ink); font-weight: 700; overflow-wrap: anywhere; }
+.reg-block dd.due { color: var(--ink); font-weight: 700; }
 .reg-block .note { margin-top: 12px; font-size: 13.5px; color: var(--ink-3); }
 .reg-block .note::before { content: '※ '; }
 .reg-block .note + .note { margin-top: 4px; }

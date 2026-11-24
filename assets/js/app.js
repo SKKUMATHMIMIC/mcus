@@ -830,7 +830,8 @@
     // 이메일 주소는 눈에 잘 띄도록 굵게
     const mail = (v) => v.replace(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g, '<b class="email">$&</b>');
     const dd = (v) => mail(or(v, '추후 안내').replace(/\n/g, '<br>'));
-    const dl = `<dl>${b.rows.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${dd(v)}</dd></div>`).join('')}</dl>`;
+    // 'OO 기한' 항목(신청 기한, 제출 기한 …)은 진하게
+    const dl = `<dl>${b.rows.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd${/기한$/.test(k) && v ? ' class="due"' : ''}>${dd(v)}</dd></div>`).join('')}</dl>`;
     const note = [].concat(b.note || []).map((t) => `<p class="note">${mail(esc(t))}</p>`).join('');
     const action = main ? main.btn
       : b.action && open ? `<a class="btn btn-royal" href="${esc(b.action.href)}">${esc(b.action.label)} <span class="arrow">→</span></a>` : '';
