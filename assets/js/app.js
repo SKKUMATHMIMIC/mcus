@@ -55,13 +55,17 @@
     const iso = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
     return Math.max(0, y.days.findIndex((d) => d.date === iso));
   }
-  // extra: 탭 오른쪽에 둘 버튼 (초록의 '모두 펼치기')
-  const dayBar = (y, cur, extra = '') =>
+  const dayBar = (y, cur) =>
     y.days.length > 1
       ? `<div class="day-anchor"></div><div class="day-bar"><div class="wrap"><div class="day-tabs" role="tablist" aria-label="날짜 선택">${y.days
           .map((d, i) => `<button type="button" role="tab" data-day="${i}" aria-selected="${i === cur}"><span>DAY ${i + 1}</span><b>${esc(d.label)}</b></button>`)
-          .join('')}</div>${extra}</div></div>`
+          .join('')}</div></div></div>`
       : '';
+  // 날짜별 좌장 (초록 · 모바일 일정)
+  const chairLine = (d, inline) => {
+    const c = `<span class="chair"><b>Chair</b>${d.chairs && d.chairs.length ? esc(d.chairs.join(', ')) : '추후 공개'}</span>`;
+    return inline ? c : `<div class="day-head">${c}</div>`;
+  };
   const dayHidden = (y, i, cur) => (y.days.length > 1 && i !== cur ? ' hidden' : '');
 
   // 마감 전인 신청 블록 중 홈에 알릴 것 (registration.blocks 의 notice)
@@ -162,7 +166,8 @@
       return `<svg class="net ${cls}" viewBox="0 0 ${S} ${S}" aria-hidden="true">${lines.join('')}${dots.join('')}</svg>`;
     };
     // 크기는 화면 너비로만 정해져서, 글꼴이 늦게 로드돼 높이가 바뀌어도 그림이 움직이지 않음
-    return cluster('tr', 800, 820, -20, 30, 760, -1, 1) + (withLeft ? cluster('bl', 560, -20, 580, 18, 520, 1, -1) : '');
+    // 아래쪽은 서서히 사라지게 (.net-layer 마스크) — 첫 화면 아래 끝에서 선이 뚝 잘려 보이지 않도록
+    return `<div class="net-layer" aria-hidden="true">${cluster('tr', 800, 820, -20, 30, 760, -1, 1)}${withLeft ? cluster('bl', 560, -20, 580, 18, 520, 1, -1) : ''}</div>`;
   }
 
   const svg = (d, w = 2) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
@@ -421,8 +426,8 @@
     const dateHtml = esc(y.dateLabel).replace(/\((.)\)/g, '<span class="dow">($1)</span>');
 
     const hero = `
-      <section class="yhero net-hero">
-        ${network(y.year)}
+      <section class="yhero net-hero${!activeNotices(y).length && p.key === 'done' ? ' bare' : ''}">
+        ${network(7)}
         <div class="wrap">
           ${activeNotices(y).length ? `<div class="notices">${noticeBar(y)}</div>` : ''}
           ${p.key !== 'done' ? `<span class="pill live">개최 예정 ${ddayText(p)}</span>` : ''}
@@ -649,17 +654,17 @@
       if (e.s.talk) {
         const t = e.d.talks[e.s.talk - 1] || {};
         if (!isFilled(t)) return `<li class="ag ${esc(k)}">${time}<div class="ag-card">${kindBadge(t)}<b class="ag-name tbd">연사 추후 공개</b></div></li>`;
-        return `<li class="ag ${esc(k)}">${time}<a class="ag-card" href="#abstract/d${di + 1}-t${e.s.talk}">${kindBadge(t)}<b class="ag-name">${esc(t.ko)}${t.affil ? `<small>${esc(t.affil)}</small>` : ''}</b>${t.title ? `<span class="ag-title">${esc(t.title)}</span>` : ''}</a></li>`;
+        return `<li class="ag ${esc(k)}">${time}<div class="ag-card">${kindBadge(t)}<b class="ag-name">${esc(t.ko)}${t.affil ? `<small>${esc(t.affil)}</small>` : ''}</b>${t.title ? `<span class="ag-title">${esc(t.title)}</span>` : ''}</div></li>`;
       }
       const sub = cellTitle(e);
       const inner = `<b class="ag-name">${esc(e.s.label)}</b>${sub ? `<span class="ag-title">${esc(sub)}</span>` : ''}`;
-      if (k === 'lightning' && (e.d.lightning || []).length) return `<li class="ag lightning">${time}<a class="ag-card" href="#abstract/d${di + 1}-lt">${inner}</a></li>`;
+      if (k === 'lightning' && (e.d.lightning || []).length) return `<li class="ag lightning">${time}<div class="ag-card">${inner}</div></li>`;
       return `<li class="ag ${esc(k)}">${time}<div class="ag-card">${inner}</div></li>`;
     };
     const agenda = `
         <div class="tt-mobile">
           ${dayBar(y, cur)}
-          ${days.map((evs, di) => `<ol class="ag-list" data-daypanel="${di}"${dayHidden(y, di, cur)}>${evs.map((e) => agItem(e, di)).join('')}</ol>`).join('')}
+          ${days.map((evs, di) => `<div data-daypanel="${di}"${dayHidden(y, di, cur)}>${chairLine(y.days[di])}<ol class="ag-list">${evs.map((e) => agItem(e, di)).join('')}</ol></div>`).join('')}
         </div>`;
 
     return `
@@ -678,7 +683,6 @@
 
   /* 초록 — 시간 순서대로, 누르면 초록이 펼쳐지는 목록 */
   function viewAbstract(y, arg) {
-    const any = filledTalks(y).length > 0;
     const cur = dayIndex(y, arg);
     // 긴 초록을 다 읽은 뒤 위로 올라가지 않고 닫을 수 있게 (모바일에서만 보임)
     const closeBtn = `<button type="button" class="acc-close">접기 ${icon.down}</button>`;
@@ -732,15 +736,14 @@
         return `
           <div class="abs-day" data-daypanel="${di}"${dayHidden(y, di, cur)}>
             <div class="wrap">
-              <div class="day-head"><h2>${esc(d.label)}</h2><span class="chair"><b>Chair</b>${d.chairs && d.chairs.length ? esc(d.chairs.join(', ')) : '추후 공개'}</span></div>
+              <div class="day-head"><h2>${esc(d.label)}</h2>${chairLine(d, true)}</div>
               <div class="acc">${rows}</div>
             </div>
           </div>`;
       })
       .join('');
-    const toggle = any ? '<button class="text-btn" type="button" data-toggle-all>모두 펼치기</button>' : '';
     return `
-      ${dayBar(y, cur, toggle) || `<div class="wrap abs-tools">${toggle}</div>`}
+      ${dayBar(y, cur)}
       ${days}
       <div class="section tight"></div>`;
   }
@@ -751,8 +754,13 @@
     const btn = reg.open && reg.formUrl
       ? `<a class="btn btn-royal" href="${esc(reg.formUrl)}" target="_blank" rel="noopener">참가 신청서 작성하기 <span class="arrow">→</span></a>`
       : `<span class="btn" aria-disabled="true">${esc(reg.closedLabel)}</span>`;
+    // 마감 전인 모집(포스터 발표자 모집 등)은 맨 위에, 나머지는 신청 상태 카드 아래에
+    const isOpenCall = (b) => b.until && daysLeft(b.until) >= 0;
+    const first = reg.blocks.filter(isOpenCall);
+    const rest = reg.blocks.filter((b) => !isOpenCall(b));
     return `
       <section class="section"><div class="wrap">
+        ${first.length ? `<div class="reg-blocks reg-first">${first.map(regBlock).join('')}</div>` : ''}
         <div class="card reg-status reveal">
           <div>
             <strong>${reg.open ? '참가 신청을 받고 있습니다' : esc(reg.closedLabel)}</strong>
@@ -761,7 +769,7 @@
           ${btn}
         </div>
         <div class="reg-blocks">
-          ${reg.blocks.map(regBlock).join('')}
+          ${rest.map(regBlock).join('')}
         </div>
       </div></section>`;
   }
@@ -858,23 +866,6 @@
 
   /* 화면별 동작 */
   function setupView(y, rk, arg) {
-    // 초록: 모두 펼치기 / 접기
-    // 초록: 모두 펼치기 / 접기 — 지금 보이는 날짜만
-    const toggleAll = document.querySelector('[data-toggle-all]');
-    const visItems = () => [...document.querySelectorAll('.acc-item')].filter((d) => !d.closest('[hidden]'));
-    const sync = () => {
-      const items = visItems();
-      if (toggleAll) toggleAll.textContent = items.length && items.every((d) => d.open) ? '모두 접기' : '모두 펼치기';
-    };
-    if (toggleAll) {
-      toggleAll.addEventListener('click', () => {
-        const items = visItems();
-        const open = !items.every((d) => d.open);
-        items.forEach((d) => { d.open = open; });
-        sync();
-      });
-      document.querySelectorAll('.acc-item').forEach((d) => d.addEventListener('toggle', sync));
-    }
     document.querySelectorAll('.acc-close').forEach((b) =>
       b.addEventListener('click', () => {
         const d = b.closest('details');
@@ -895,14 +886,16 @@
           daySel[y.year] = i;
           tabs.forEach((t) => t.setAttribute('aria-selected', String(t === b)));
           panels.forEach((p) => { p.hidden = Number(p.dataset.daypanel) !== i; });
-          sync();
           // 목록 중간까지 내려와 있었다면 새 날짜의 처음으로
           if (anchor && anchor.getBoundingClientRect().top < 0) anchor.scrollIntoView({ block: 'start' });
         })
       );
     }
 
-    // 홈: 기조 강연자 넘겨 보기
+    // 홈: 기조 강연자 넘겨 보기 (+ 자동 넘김)
+    // 다른 화면으로 가면 이전 자동 넘김을 정리
+    clearInterval(window.__mcusCarTimer);
+    if (window.__mcusCarIO) window.__mcusCarIO.disconnect();
     const car = document.querySelector('[data-carousel]');
     if (car) {
       const track = car.querySelector('.car-track');
@@ -922,8 +915,40 @@
         const i = Math.round(track.scrollLeft / step());
         dots.forEach((d, k) => d.setAttribute('aria-current', String(k === i)));
       };
-      btns.forEach((b) => b.addEventListener('click', () => track.scrollBy({ left: Number(b.dataset.car) * step(), behavior: 'smooth' })));
-      dots.forEach((d) => d.addEventListener('click', () => track.scrollTo({ left: Number(d.dataset.dot) * step(), behavior: 'smooth' })));
+      btns.forEach((b) => b.addEventListener('click', () => { track.scrollBy({ left: Number(b.dataset.car) * step(), behavior: 'smooth' }); restart(); }));
+      dots.forEach((d) => d.addEventListener('click', () => { track.scrollTo({ left: Number(d.dataset.dot) * step(), behavior: 'smooth' }); restart(); }));
+
+      // 자동 넘김: 5초마다 다음 연사, 끝에서는 처음으로.
+      // 마우스를 올리거나 손가락을 대고 있는 동안, 화면 밖에 있을 때, 다른 탭에 있을 때는 멈춤.
+      // '동작 줄이기' 설정을 켠 기기에서는 자동으로 넘기지 않음
+      const AUTO_MS = 5000;
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const hold = { hover: false, touch: false, focus: false, offscreen: true };
+      const next = () => {
+        const max = track.scrollWidth - track.clientWidth;
+        if (max <= 4) return;
+        if (track.scrollLeft >= max - 4) track.scrollTo({ left: 0, behavior: 'smooth' });
+        else track.scrollBy({ left: step(), behavior: 'smooth' });
+      };
+      function restart() {
+        clearInterval(window.__mcusCarTimer);
+        if (reduce || document.hidden || Object.values(hold).some(Boolean)) return;
+        window.__mcusCarTimer = setInterval(next, AUTO_MS);
+      }
+      const set = (k, v) => { hold[k] = v; restart(); };
+      car.addEventListener('mouseenter', () => set('hover', true));
+      car.addEventListener('mouseleave', () => set('hover', false));
+      car.addEventListener('touchstart', () => set('touch', true), { passive: true });
+      car.addEventListener('touchend', () => setTimeout(() => set('touch', false), 1500), { passive: true });
+      car.addEventListener('focusin', () => set('focus', true));
+      car.addEventListener('focusout', () => set('focus', false));
+      if (!window.__mcusCarVis) {
+        window.__mcusCarVis = true;
+        document.addEventListener('visibilitychange', () => window.__mcusCarRestart && window.__mcusCarRestart());
+      }
+      window.__mcusCarRestart = restart;
+      window.__mcusCarIO = new IntersectionObserver(([en]) => set('offscreen', !en.isIntersecting), { threshold: 0.4 });
+      window.__mcusCarIO.observe(car);
       track.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
       // 다른 탭으로 갔다 와도 resize 리스너가 쌓이지 않도록 하나만 유지
       if (window.__mcusCarResize) window.removeEventListener('resize', window.__mcusCarResize);
