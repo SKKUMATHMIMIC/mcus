@@ -295,9 +295,10 @@
     let i = 0;
     const rise = () => `class="rise" style="--i:${i++}"`;
     el.innerHTML = network(11, false) + `
-      <div class="wrap up-grid">
+      <div class="wrap">
+        ${activeNotices(y).length ? `<div class="notices rise" style="--i:${i++}">${noticeBar(y, `${y.year}.html`)}</div>` : ''}
+      <div class="up-grid">
         <div>
-          ${activeNotices(y).length ? `<div class="notices rise" style="--i:${i++}">${noticeBar(y, `${y.year}.html`)}</div>` : ''}
           <span class="up-label rise" style="--i:${i++}">${label}</span>
           ${wordmark(y.year, 'up-mark draw')}
           <h1 ${rise()}>${esc(y.titleKo)}</h1>
@@ -309,6 +310,7 @@
           </div>
         </div>
         ${p.key !== 'done' ? `<div class="up-dday rise" style="--i:3"><b data-count="${p.days}">${ddayText(p)}</b><span>${esc(y.start.replace(/-/g, '. '))} 개막</span></div>` : ''}
+      </div>
       </div>`;
 
     // D-day 숫자가 0부터 올라가는 효과 (움직임 줄이기 설정이면 생략)

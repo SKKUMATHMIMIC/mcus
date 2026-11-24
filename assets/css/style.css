@@ -729,7 +729,7 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
 
 /* 홈 알림 띠 (모집 중인 신청 안내) */
 .notices { display: grid; gap: 8px; justify-items: start; margin-bottom: 22px; }
-.yhero .notices { justify-items: center; }
+.yhero .notices, .upcoming .notices { justify-items: center; } /* 모집 알림은 소개 · 연도 홈 모두 가운데 */
 .notice {
   display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 12px;
   max-width: 100%; padding: 8px 16px 8px 8px;
@@ -1005,7 +1005,7 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
   /* 순서: 개요 → D-day → 버튼 → 구분선 (왼쪽 묶음을 풀어 D-day 를 버튼 위로) */
   .up-grid > div:first-child { display: contents; }
   .up-grid { justify-items: start; } /* 라벨(UPCOMING EVENT)은 PC 처럼 글자 폭만큼 */
-  .up-grid .up-facts, .up-grid .up-actions, .up-grid .up-dday, .up-grid .notices { justify-self: stretch; }
+  .up-grid .up-facts, .up-grid .up-actions, .up-grid .up-dday { justify-self: stretch; }
   .up-dday { order: 1; }
   .up-actions { order: 2; }
   .up-facts { margin-top: 18px; gap: 4px; }
