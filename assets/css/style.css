@@ -719,7 +719,6 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
 .reg-status p { color: var(--ink-2); font-size: 14.5px; margin-top: 2px; }
 .reg-blocks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
 .reg-blocks.reg-first { margin-bottom: 20px; }
-.reg-blocks.reg-after { margin-top: 20px; }
 .reg-block { padding: 26px 28px; }
 .reg-block h3 { font-size: 19px; font-weight: 800; margin-bottom: 8px; }
 .reg-block dl { margin: 0; }
@@ -729,6 +728,11 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
 .reg-block dd .email { color: var(--ink); font-weight: 700; overflow-wrap: anywhere; }
 .reg-block .note { margin-top: 12px; font-size: 13.5px; color: var(--ink-3); }
 .reg-block .note::before { content: '※ '; }
+.reg-block .note + .note { margin-top: 4px; }
+/* 참가 신청 블록 — 옅은 남색 바탕으로 다른 블록과 구분 */
+.reg-block.main { background: #eef1fa; border-color: #cdd5ee; }
+.reg-block.main dl div { border-bottom-color: #d6dcef; }
+.reg-block.main .note { color: #5b6275; }
 .reg-block h3 { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
 .reg-block h3 .pill { font-size: 12.5px; padding: 3px 10px; }
 .reg-block .rb-action { margin-top: 18px; }
@@ -1107,7 +1111,6 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
   .reg-status .btn { width: 100%; }
   .reg-blocks { gap: 12px; }
   .reg-blocks.reg-first { margin-bottom: 12px; }
-  .reg-blocks.reg-after { margin-top: 12px; }
   .reg-block { padding: 20px 18px; }
   .reg-block h3 { font-size: 17.5px; }
   .reg-block.wide { gap: 14px; }

@@ -786,15 +786,26 @@
     const btn = reg.open && reg.formUrl
       ? `<a class="btn btn-royal" href="${esc(reg.formUrl)}" target="_blank" rel="noopener">참가 신청서 작성하기 <span class="arrow">→</span></a>`
       : `<span class="btn" aria-disabled="true">${esc(reg.closedLabel)}</span>`;
-    // 마감 전인 모집(포스터 발표자 모집 등)은 맨 위에, 나머지는 신청 상태 카드 아래에
-    // 단, 참가 신청이 열려 있으면 신청 상태 카드와 참가 신청 안내를 먼저 보여 주고 모집은 그 아래에
     const isOpenCall = (b) => b.until && daysLeft(b.until) >= 0;
-    const calls = reg.blocks.filter(isOpenCall);
-    const rest = reg.blocks.filter((b) => !isOpenCall(b));
-    const callsHtml = calls.length ? `<div class="reg-blocks reg-${reg.open ? 'after' : 'first'}">${calls.map(regBlock).join('')}</div>` : '';
+    const main = reg.blocks.find((b) => b.main);
+    const others = reg.blocks.filter((b) => !b.main);
+    // 참가 신청 블록(main)이 있는 해: 신청이 열려 있으면 참가 신청 → 나머지(적힌 순서),
+    // 아직 열리기 전이면 마감 전인 모집(포스터 등)을 참가 신청 블록보다 먼저
+    if (main) {
+      const order = reg.open ? [main, ...others] : [...others.filter(isOpenCall), main, ...others.filter((b) => !isOpenCall(b))];
+      return `
+      <section class="section"><div class="wrap">
+        <div class="reg-blocks">
+          ${order.map((b) => regBlock(b, b.main ? { btn, open: reg.open } : null)).join('')}
+        </div>
+      </div></section>`;
+    }
+    // 참가 신청 블록이 없는 해(2025, 2026): 신청 상태 카드 + 안내 블록, 마감 전인 모집은 맨 위에
+    const calls = others.filter(isOpenCall);
+    const rest = others.filter((b) => !isOpenCall(b));
     return `
       <section class="section"><div class="wrap">
-        ${reg.open ? '' : callsHtml}
+        ${calls.length ? `<div class="reg-blocks reg-first">${calls.map((b) => regBlock(b)).join('')}</div>` : ''}
         <div class="card reg-status reveal">
           <div>
             <strong>${reg.open ? '참가 신청을 받고 있습니다' : esc(reg.closedLabel)}</strong>
@@ -803,31 +814,37 @@
           ${btn}
         </div>
         <div class="reg-blocks">
-          ${rest.map(regBlock).join('')}
+          ${rest.map((b) => regBlock(b)).join('')}
         </div>
-        ${reg.open ? callsHtml : ''}
       </div></section>`;
   }
 
   // 신청 블록 하나. 설명(lead)이 있는 블록은 한 줄 전체를 차지하고, 마감일(until)이 있으면 모집 상태를 표시
-  function regBlock(b) {
+  // main: 참가 신청 블록 { btn: 참가 신청서 버튼, open: 신청이 열렸는지 }
+  function regBlock(b, main) {
     const n = b.until ? daysLeft(b.until) : null;
     const open = n == null || n >= 0;
-    const status = n == null ? '' : open ? `<span class="pill live">모집 중 ${dLabel(n)}</span>` : '<span class="pill muted">모집 마감</span>';
+    const word = main ? '신청' : '모집';
+    const status = n == null || (main && !main.open && open) ? ''
+      : open ? `<span class="pill live">${word} 중 ${dLabel(n)}</span>` : `<span class="pill muted">${word} 마감</span>`;
     // 이메일 주소는 눈에 잘 띄도록 굵게
-    const dd = (v) => or(v, '추후 안내').replace(/\n/g, '<br>').replace(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g, '<b class="email">$&</b>');
+    const mail = (v) => v.replace(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g, '<b class="email">$&</b>');
+    const dd = (v) => mail(or(v, '추후 안내').replace(/\n/g, '<br>'));
     const dl = `<dl>${b.rows.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${dd(v)}</dd></div>`).join('')}</dl>`;
-    const note = b.note ? `<p class="note">${esc(b.note)}</p>` : '';
-    const action = b.action && open ? `<a class="btn btn-royal" href="${esc(b.action.href)}">${esc(b.action.label)} <span class="arrow">→</span></a>` : '';
+    const note = [].concat(b.note || []).map((t) => `<p class="note">${mail(esc(t))}</p>`).join('');
+    const action = main ? main.btn
+      : b.action && open ? `<a class="btn btn-royal" href="${esc(b.action.href)}">${esc(b.action.label)} <span class="arrow">→</span></a>` : '';
+    const cls = `card reg-block${b.lead ? ' wide' : ''}${main ? ' main' : ''} reveal`;
+    const idAttr = b.id ? ` id="${esc(b.id)}"` : '';
     if (!b.lead) {
       return `
-            <div class="card reg-block reveal"${b.id ? ` id="${esc(b.id)}"` : ''}>
+            <div class="${cls}"${idAttr}>
               <h3>${esc(b.title)}${status}</h3>
               ${dl}${note}${action ? `<div class="rb-action">${action}</div>` : ''}
             </div>`;
     }
     return `
-            <div class="card reg-block wide reveal"${b.id ? ` id="${esc(b.id)}"` : ''}>
+            <div class="${cls}"${idAttr}>
               <div class="rb-text">
                 <h3>${esc(b.title)}${status}</h3>
                 ${b.lead.map((p) => `<p>${esc(p)}</p>`).join('')}
