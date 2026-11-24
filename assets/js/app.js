@@ -473,7 +473,7 @@
             <p class="w-place">${esc(placeText(y))}</p>
           </div>
           <div class="yhero-actions">
-            ${regOpen ? `<a class="btn btn-royal" href="${esc(reg.formUrl)}" target="_blank" rel="noopener">참가 신청하기 <span class="arrow">→</span></a>` : ''}
+            ${regOpen ? `<a class="btn btn-royal" href="${pageUrl(y.year, 'registration', (reg.blocks.find((b) => b.main) || {}).id || '')}">참가 신청하기 <span class="arrow">→</span></a>` : ''}
             <a class="btn ${regOpen ? 'btn-ghost' : 'btn-royal'}" href="${pageUrl(y.year, 'schedule')}">일정 보기</a>
             <a class="btn btn-ghost" href="${pageUrl(y.year, 'abstract')}">초록 보기</a>
           </div>
