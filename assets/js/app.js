@@ -74,7 +74,7 @@
 
   // 마감 전인 신청 블록 중 홈에 알릴 것 (registration.blocks 의 notice)
   const activeNotices = (y) =>
-    (y.registration.blocks || []).filter((b) => b.notice && b.until && daysLeft(b.until) >= 0);
+    (y.registration.blocks || []).filter((b) => b.notice && b.until && daysLeft(b.until) >= 0 && (!b.main || y.registration.open));
 
   // 홈 알림 띠 → 그 해 참가 신청 페이지의 해당 모집 글
   const noticeBar = (y) =>
@@ -82,7 +82,7 @@
       .map((b) => {
         const n = daysLeft(b.until);
         return `<a class="notice" href="${pageUrl(y.year, 'registration', b.id ? esc(b.id) : '')}">
-          <span class="n-tag">모집 중</span>
+          <span class="n-tag">${b.main ? '신청 중' : '모집 중'}</span>
           <b>${esc(b.notice)}</b>
           <span class="n-due">${esc(mdLabel(b.until))}까지 · ${dLabel(n)}</span>
           <span class="arrow" aria-hidden="true">→</span>

@@ -42,6 +42,7 @@ MCUS.addYear({
         id: 'apply',
         main: true,
         title: '참가 신청',
+        notice: 'MCUS 2027 참가 신청을 받습니다',
         until: '2027-01-07',
         lead: ['MCUS 2027에 참가를 원하시는 분은 아래 신청서를 작성해 주시기 바랍니다.'],
         rows: [
