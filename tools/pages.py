@@ -40,6 +40,13 @@ def page(year, route):
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{title}</title>
   <meta name="description" content="{year} 학부생을 위한 수학 학술회(MCUS {year}) — 개요, 연사, 일정">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{title}">
+  <meta property="og:description" content="{year} 학부생을 위한 수학 학술회(MCUS {year}) — 개요, 연사, 일정">
+  <meta property="og:image" content="https://skkumathmimic.github.io/mcus/assets/img/og-image.png">
+  <meta property="og:image:width" content="1024">
+  <meta property="og:image:height" content="1024">
+  <meta name="twitter:card" content="summary">
   <link rel="icon" href="assets/img/favicon.svg?v=4" type="image/svg+xml">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
