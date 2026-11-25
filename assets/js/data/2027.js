@@ -183,7 +183,13 @@ MCUS.addYear({
         { time: '19:00 –', label: '만찬', kind: 'social', note: '장소 추후 안내' },
       ],
       talks: [
-        { ko: '황다현', en: 'Dahyeon Hwang', affil: 'Yonsei University', kind: 'invited', title: '', tags: [], abstract: '' },
+        {
+          ko: '황다현', en: 'Dahyeon Hwang',
+          affil: 'Yonsei University', kind: 'invited',
+          title: 'From Poincaré to Perelman: How a PDE Solved a Problem in Topology',
+          tags: ['geometry', 'topology', 'analysis'],
+          abstract: 'Calculus and topology meet in the study of how a space’s geometry changes over time. This talk introduces Ricci flow, a nonlinear partial differential equation that evolves a Riemannian metric according to its curvature. On surfaces, we will derive a nonlinear heat equation for the conformal factor and use the Gauss–Bonnet theorem to show how the Euler characteristic determines the rate of change of area. In three dimensions, Hamilton’s theorem on manifolds with positive Ricci curvature provides a first example of how the flow can determine the topology of a manifold.\n\nRicci flow can develop singularities in finite time. We will compute the evolution of a shrinking round cylinder and see how rescaling makes its singularity easier to study. This example motivates introduction to Perelman’s W-entropy and how its monotonicity prevents local collapse at the scales used to analyze singularities. We will conclude by outlining how surgery allows the flow to continue and how finite-time extinction, together with the record of those surgeries, leads to the proof of the Poincaré conjecture.',
+        },
         {
           ko: '이석형', en: 'Seok Hyeong Lee',
           affil: 'Seoul National University', kind: 'plenary', // QSMS 박사후연구원 (Ph.D. Princeton University, 2022)
