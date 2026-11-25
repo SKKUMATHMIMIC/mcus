@@ -325,6 +325,7 @@ MCUS.addYear({
   },
 
   organizers: [
+    ['김민호', 'Minho Kim'],
     ['김승원', 'Seungwon Kim'],
     ['김종근', 'Jonggeun Kim'],
     ['김태훈', 'Taehoon Kim'],
@@ -332,6 +333,7 @@ MCUS.addYear({
     ['이상목', 'Sangmok Lee'],
     ['정은서', 'Eunseo Jung'],
     ['조수연', 'Suyeon Cho'],
+    ['최두호', 'Dooho Choi'],
     ['홍선우', 'Sunwoo Hong'],
   ],
 
