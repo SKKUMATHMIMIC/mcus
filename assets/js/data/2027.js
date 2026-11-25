@@ -115,7 +115,13 @@ MCUS.addYear({
         { time: '17:10 – 17:50', talk: 7 },
       ],
       talks: [
-        { ko: '김민국', en: 'Mingook Kim', affil: 'Sungkyunkwan University', kind: 'invited', title: '', tags: [], abstract: '' },
+        {
+          ko: '김민국', en: 'Mingook Kim',
+          affil: 'Sungkyunkwan University', kind: 'invited',
+          title: 'Simple homotopy equivalence and the Whitehead group of spaces',
+          tags: ['topology', 'algebra'],
+          abstract: 'We say two spaces are simple homotopy equivalent if there is a finite iteration process of elementary expansion or elementary collapse.\nIndeed simple homotopy equivalence is a homotopy equivalence, it tells more about the relation of two spaces than homotopy equivalence.\nThe following questions are natural:\nQ1) When does homotopy equivalence imply simple homotopy equivalence?\nQ2) When does simple homotopy equivalence imply homeomorphism?\n\nIn this talk, we give the answer of these questions constructing the Whitehead group.',
+        },
         {
           ko: '민현기', en: 'Hyunki Min',
           affil: 'KAIST', kind: 'plenary',
