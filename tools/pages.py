@@ -101,3 +101,15 @@ for y in years:
         (d / r / 'index.html').write_text(page(y, r))
     (ROOT / f'{y}.html').write_text(redirect(y))
     print(f'{y}: /{y}/ + {", ".join(ROUTES)}')
+
+
+# 검색엔진용 사이트맵 (루트 저장소 robots.txt 가 이 파일을 가리킵니다)
+SITE = 'https://skkumathmimic.github.io/mcus/'
+urls = [SITE] + [f'{SITE}{y}/{r}' for y in years for r in [''] + [r + '/' for r in ROUTES]]
+(ROOT / 'sitemap.xml').write_text(
+    '<?xml version="1.0" encoding="UTF-8"?>\n'
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    + ''.join(f'  <url><loc>{u}</loc></url>\n' for u in urls)
+    + '</urlset>\n'
+)
+print(f'sitemap.xml: {len(urls)} URLs')
