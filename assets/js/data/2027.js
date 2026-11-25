@@ -319,6 +319,7 @@ MCUS.addYear({
     ['서동현', 'Donghyun Seo'],
     ['이상목', 'Sangmok Lee'],
     ['정은서', 'Eunseo Jung'],
+    ['조수연', 'Suyeon Cho'],
     ['홍선우', 'Sunwoo Hong'],
   ],
 
