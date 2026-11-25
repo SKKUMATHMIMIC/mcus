@@ -203,7 +203,7 @@ MCUS.addYear({
           abstract: 'Many planning problems require a sequence of decisions as uncertain information becomes available over time. This talk introduces stochastic programming as a framework for modeling such problems. We then discuss the curse of dimensionality that arises in multistage problems as the number of state variables grows. To address this computational challenge, we introduce stochastic dual dynamic programming (SDDP), which combines scenario sampling with cutting-plane approximations of future costs. The talk concludes with a brief look at applications in energy systems and portfolio optimization.',
         },
         {
-          ko: '이민서', en: '',
+          ko: '이민서', en: 'Minseo Lee',
           affil: 'POSTECH', kind: 'invited',
           title: 'Topology of Complex Hypersurface Singularities',
           tags: ['topology', 'geometry'],
