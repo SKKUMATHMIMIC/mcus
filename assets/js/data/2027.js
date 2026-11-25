@@ -77,7 +77,7 @@ MCUS.addYear({
       {
         id: 'lightning',
         title: '라이트닝 토크 연사 모집',
-        until: '2027-01-03',
+        until: '2027-01-07',
         lead: [
           '라이트닝 토크(Lightning Talk)는 학부생 연사가 5분 동안 수학과 관련해 공부하거나 탐구한 주제를 짧고 가볍게 소개하는 시간입니다.',
         ],
@@ -85,7 +85,7 @@ MCUS.addYear({
           ['발표 일시', '2027. 1. 15. (금) 18:10 – 18:30\n2027. 1. 16. (토) 09:50 – 10:20'],
           ['모집 대상', '학부생'],
           ['신청 방법', "참가 신청서에서 '참여' 선택 후, 발표 주제와 자료를 skkumathmimic@gmail.com 으로 제출"],
-          ['제출 기한', '2027. 1. 3. (일)'],
+          ['제출 기한', '2027. 1. 7. (목)'],
         ],
         note: [
           '최대 인원을 초과하면 조기 마감될 수 있습니다.',
@@ -312,7 +312,15 @@ MCUS.addYear({
     ],
   },
 
-  organizers: [],
+  organizers: [
+    ['김승원', 'Seungwon Kim'],
+    ['김종근', 'Jonggeun Kim'],
+    ['김태훈', 'Taehoon Kim'],
+    ['서동현', 'Donghyun Seo'],
+    ['이상목', 'Sangmok Lee'],
+    ['정은서', 'Eunseo Jung'],
+    ['홍선우', 'Sunwoo Hong'],
+  ],
 
   gallery: [],
 });
