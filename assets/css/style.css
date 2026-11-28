@@ -707,6 +707,9 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
 .acc-row.tbd b { color: var(--ink-3); font-weight: 700; }
 
 .acc-body .abstract { margin-top: 6px; padding-top: 18px; border-top: 1px dashed var(--line-strong); font-size: 16.5px; line-height: 1.85; color: #343a48; display: grid; gap: 14px; }
+/* 영어 · 한글 초록: 언어별 덩어리 사이를 넓게 띄우고 덩어리로 구분 */
+.acc-body .abstract.bilingual { gap: 36px; }
+.abs-lang { display: grid; gap: 14px; }
 .acc-body .lt-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 .acc-body .lt-list li { display: grid; grid-template-columns: 110px 1fr; gap: 12px; font-size: 16px; }
 .acc-body .lt-list b { font-weight: 700; }
@@ -1097,6 +1100,8 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
   .acc-row.break .acc-head { font-size: 14px; }
   .acc-body { padding: 0 2px 22px; }
   .acc-body .abstract { font-size: 15px; line-height: 1.8; padding-top: 14px; }
+  .acc-body .abstract.bilingual { gap: 28px; }
+  .abs-lang { gap: 12px; }
   .day-head { padding-top: 16px; }
   .day-head .chair { font-size: 14px; }
   .acc { margin-top: 4px; }

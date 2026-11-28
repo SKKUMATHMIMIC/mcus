@@ -20,6 +20,21 @@
 
   const paras = (s) => esc(s).split(/\n{2,}/).map((p) => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('');
 
+  // 초록에 영어 · 한글이 함께 있으면(문단이 한 언어씩 두 덩어리) 언어별로 나눠 사이를 띄움
+  const HANGUL = /[가-힣]/;
+  function abstractHtml(s) {
+    const runs = [];
+    s.split(/\n{2,}/).forEach((p) => {
+      const lang = HANGUL.test(p) ? 'ko' : 'en';
+      const last = runs[runs.length - 1];
+      if (last && last.lang === lang) last.ps.push(p); else runs.push({ lang, ps: [p] });
+    });
+    if (runs.length !== 2) return `<div class="abstract">${paras(s)}</div>`;
+    return `<div class="abstract bilingual">${runs.map((r) =>
+      `<div class="abs-lang" lang="${r.lang}">${paras(r.ps.join('\n\n'))}</div>`
+    ).join('')}</div>`;
+  }
+
   function parseDate(s) {
     const [y, m, d] = s.split('-').map(Number);
     return new Date(y, m - 1, d);
@@ -745,7 +760,7 @@
                     </span>
                     <span class="acc-chev">${icon.down}</span>
                   </summary>
-                  <div class="acc-body"><div class="abstract">${t.abstract ? paras(t.abstract) : '<p class="tba">초록 추후 공개</p>'}</div></div>
+                  <div class="acc-body">${t.abstract ? abstractHtml(t.abstract) : '<div class="abstract"><p class="tba">초록 추후 공개</p></div>'}</div>
                 </details>`;
             }
             if (s.kind === 'lightning') {
