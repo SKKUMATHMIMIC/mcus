@@ -710,6 +710,9 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
 /* 영어 · 한글 초록: 언어별 덩어리 사이를 넓게 띄우고 덩어리로 구분 */
 .acc-body .abstract.bilingual { gap: 36px; }
 .abs-lang { display: grid; gap: 14px; }
+/* 두 언어 사이: 짧고 옅게 사라지는 선 (강연 사이 구분선과 헷갈리지 않게 일부러 다르게) */
+.abs-lang + .abs-lang { position: relative; }
+.abs-lang + .abs-lang::before { content: ''; position: absolute; left: 0; top: -18px; width: min(220px, 45%); height: 1px; background: linear-gradient(to right, rgba(27, 31, 42, 0.12), rgba(27, 31, 42, 0)); }
 .acc-body .lt-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 .acc-body .lt-list li { display: grid; grid-template-columns: 110px 1fr; gap: 12px; font-size: 16px; }
 .acc-body .lt-list b { font-weight: 700; }
@@ -1102,6 +1105,7 @@ a.chip:hover { border-color: var(--ink); color: var(--ink); }
   .acc-body .abstract { font-size: 15px; line-height: 1.8; padding-top: 14px; }
   .acc-body .abstract.bilingual { gap: 28px; }
   .abs-lang { gap: 12px; }
+  .abs-lang + .abs-lang::before { top: -14px; }
   .day-head { padding-top: 16px; }
   .day-head .chair { font-size: 14px; }
   .acc { margin-top: 4px; }
